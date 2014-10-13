@@ -109,7 +109,7 @@ class VkApi
         if (empty($token)) {
 
             $url = "https://oauth.vk.com/authorize?client_id="
-                   . $this->appId . "&redirect_uri=http://192.168.1.141/vk.php&display=page&response_type=code&scope=video,offline,groups,friends,photos,notify";
+                   . $this->appId . "&redirect_uri=http://192.168.1.141/index.php&display=page&response_type=code&scope=video,offline,groups,friends,photos,notify";
  
             header('Location: ' . $url);
             // ищем юзера с нашим id
@@ -291,11 +291,11 @@ class VkApi
  
 // Пример использования
 $vk = new VkApi(array(
-    'apiKey' => 'E8tyn9sgbwaM2MG9ZCSq',
-    'appId' => '4581515',
+    'apiKey' => '',
+    'appId' => '',
     //'login' => '<LOGIN>',
    // 'password' => '<PASSWORD>',
-    'authRedirectUrl' => 'http://192.168.1.141/vk.php',
+    'authRedirectUrl' => 'http://192.168.1.141/index.php',
 ));
   
   //var_dump($_GET);
