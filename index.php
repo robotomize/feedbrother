@@ -359,8 +359,14 @@ for ($i=1; $i <count($viewMyGroups['0']) ; $i++)
 //$GetProfile = file_get_contents("https://api.vk.com/method/execute.feeder?access_token=$token");
   //               $profile = json_decode($GetProfile , true);
 //var_dump($profile);
-    
-$viewMyFeed[] = $vk->getExecuteFeedFriends('var a=API.groups.get({"user_id":"6139701"}); var b=a; var d=0;
+
+
+
+    $i=0;
+if(isset($_GET['id']))
+{
+
+     $codeStr = 'var a=API.groups.get({"user_id":"'.$_GET['id'].'"}); var b=a; var d=0;
 var c = [];
 //return b.length;
 while (d < 24)
@@ -370,25 +376,8 @@ while (d < 24)
  d = d+1; 
 //return d;
 };
-return c;');
-
-
-//var_dump($viewMyFeed);
-
-
-$end_time = microtime();
-    $end_array = explode(" ",$end_time);
-    $end_time = $end_array[1] + $end_array[0];
-    $time = $end_time - $start_time;
-
-    printf("Страница сгенерирована за %f секунд",$time)."<br>";
-
-    $i=0;
-if(isset($_GET['id']))
-{
-
-     $aaa = 'var a=API.groups.get({"user_id":"'.$_GET['id'].'"});';
-    
+return c;';
+$viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
     /*
    // echo $_GET['id'];
     $viewUsr[] = $vk->getUsers($_GET['id']);   // информация о пользователе
@@ -416,9 +405,8 @@ if(isset($_GET['id']))
 
              = $viewUsrGroups['0'][$i]['name'];
         */    
-
-        }
-          
+var_dump($viewMyFeed);     
+      
         
          //echo $viewUsrWallcache['0']['1']['text'];
         
@@ -429,10 +417,16 @@ else
     $listFriends[] = $vk->getFriends();
 for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) echo "<pre><img src='".$listFriends[$i][$j]['photo_medium']."'><br><a href='http://192.168.1.141/vk.php?id=".$listFriends[$i][$j]['uid']."'>".$listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']." ".$listFriends[$i][$j]['uid']."</a></pre>";
 
- 
 
 }
+    
 
+$end_time = microtime();
+    $end_array = explode(" ",$end_time);
+    $end_time = $end_array[1] + $end_array[0];
+    $time = $end_time - $start_time;
+
+    printf("Страница сгенерирована за %f секунд",$time)."<br>";
 
 
 /*
