@@ -289,7 +289,7 @@ class VkApi
    
    
  
-// Пример использования
+
 $vk = new VkApi(array(
     'apiKey' => '',
     'appId' => '',
@@ -338,27 +338,7 @@ for ($i=1; $i <count($viewMyGroups['0']) ; $i++)
         }
 
     }
-//echo $_SESSION['tok']."\n";
-//echo $_SESSION['id'];
-//echo $_SESSION['fullname'];
-//$listwall[] = $vk->getWallGroups("24532152");
-//var_dump($listwall);
 
-//echo $_SESSION['id'];
-//var_dump($viewMyGroups);
- //$query = mysql_query("SELECT * FROM Cachegroups WHERE id_user='$_SESSION[id]'");
-
- //mysql_query("INSERT INTO users VALUES (null, '$owner_id', '$profileimg', '$fullName', '$profilescreenname')") or die(mysql_error());
-       
-
- // $viewUsr[] = $vk->getUsers($_GET['owner_id']);
-//var_dump($viewUsr);
-//var_dump($_GET['gor']);
-    //$token = $_SESSION['tok'];
-    //echo $_SESSION['tok'];
-//$GetProfile = file_get_contents("https://api.vk.com/method/execute.feeder?access_token=$token");
-  //               $profile = json_decode($GetProfile , true);
-//var_dump($profile);
 
 
 
