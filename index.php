@@ -292,8 +292,8 @@ class VkApi
  
 // Пример использования
 $vk = new VkApi(array(
-    'apiKey' => '',
-    'appId' => '',
+    'apiKey' => 'E8tyn9sgbwaM2MG9ZCSq',
+    'appId' => '4581515',
     //'login' => '<LOGIN>',
    // 'password' => '<PASSWORD>',
     'authRedirectUrl' => 'http://192.168.1.141/index.php',
@@ -392,44 +392,27 @@ if(isset($_GET['id']))
 //$viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
 
 $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
-
-
-    /*
-   // echo $_GET['id'];
-    $viewUsr[] = $vk->getUsers($_GET['id']);   // информация о пользователе
-    $viewUsrGroups[] = $vk->getGroups($_GET['id']);  //список групп
-   // $viewUsrWall[] = $vk->getWallGroups("9161696");  // 100 записей заданной группы
-   // var_dump($viewUsrGroups);
-    //echo $viewUsrGroups['0']['1']['gid'];
-   
-        for ($ii=1; $ii < 20; $ii++)
+    for($cc=1; $cc<count($viewMyFeed['0']); $cc++)
+    {
+        //echo $viewMyFeed['0']['0']['groups'][$cc]['name']."\n<br>"; 
+        for($jj = 1; $jj<5; $jj++)
         {
-        //формируем ленту итогового массива
-           
-           $viewUsrWallcache[] = $vk->getWallGroups($viewUsrGroups['0'][$ii]['gid']);
-         
-   // exit;
+               echo $viewMyFeed['0'][$cc]['wall'][$jj]['text']."\n<br>";
+               echo "<img src=".$viewMyFeed['0'][$cc]['wall'][$jj]['attachments']['0']['photo']['src_big'].">\n<br>";
+               echo "______________________________________________________________________________________________\n<br>";
+        } 
+    
 
-            //echo $ii;
-          //  echo $viewUsrGroups['0'][$ii]['gid']."\n";
-        //  echo count($viewUsrGroups['0'])-1;
-           
-         /*   for($j=0; $j<10;$j++)
-            {
-                $FeedStripArray[$i] = array($viewUsrWallcache[]); 0000
-            }
-
-             = $viewUsrGroups['0'][$i]['name'];
-        */    
-   
-      
-        
+    }
+     
+     // echo $cc;
+          
+          
          //echo $viewUsrWallcache['0']['1']['text'];
-        
-   // var_dump($viewUsrWallcache); 
-           echo $viewMyFeed['0']['0']['groups']['0']['name'];  
-           echo $viewMyFeed['0']['0']['wall']['1']['text']; 
-           
+       // var_dump($viewMyFeed);
+   //var_dump($viewUsrWallcache); 
+          
+
      $end_time = microtime();
     $end_array = explode(" ",$end_time);
     $end_time = $end_array[1] + $end_array[0];
