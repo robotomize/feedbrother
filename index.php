@@ -1,9 +1,10 @@
 <?php
+
+set_time_limit(3600);
  $start_time = microtime();
     $start_array = explode(" ",$start_time);
     $start_time = $start_array[1] + $start_array[0];
-set_time_limit(3600);
- 
+
 $host = "localhost";   
 $user = "root";   
 $pass = "13";    
@@ -289,7 +290,7 @@ class VkApi
    
    
  
-
+// Пример использования
 $vk = new VkApi(array(
     'apiKey' => '',
     'appId' => '',
@@ -304,7 +305,11 @@ $vk = new VkApi(array(
 //var_dump($myy);
 
 //echo $_SESSION['id'];
+ 
+/* код для сохранения инфы о твоих группах в базе, устаревшая версия
 $viewMyGroups[] = $vk->getGroups($_SESSION['id']);  //список групп
+
+
 //var_dump($viewMyGroups);
 //echo $_SESSION['id'];
 //echo count($viewMyGroups['0']);
@@ -338,7 +343,29 @@ for ($i=1; $i <count($viewMyGroups['0']) ; $i++)
         }
 
     }
+*/
+//echo $_SESSION['tok']."\n";
+//echo $_SESSION['id'];
+//echo $_SESSION['fullname'];
+//$listwall[] = $vk->getWallGroups("24532152");
+//var_dump($listwall);
 
+//echo $_SESSION['id'];
+//var_dump($viewMyGroups);
+ //$query = mysql_query("SELECT * FROM Cachegroups WHERE id_user='$_SESSION[id]'");
+
+ //mysql_query("INSERT INTO users VALUES (null, '$owner_id', '$profileimg', '$fullName', '$profilescreenname')") or die(mysql_error());
+       
+
+ // $viewUsr[] = $vk->getUsers($_GET['owner_id']);
+//var_dump($viewUsr);
+//var_dump($_GET['gor']);
+    //$token = $_SESSION['tok'];
+    //echo $_SESSION['tok'];
+//$GetProfile = file_get_contents("https://api.vk.com/method/execute.feeder?access_token=$token");
+  //               $profile = json_decode($GetProfile , true);
+//var_dump($profile);
+    
 
 
 
@@ -347,16 +374,23 @@ if(isset($_GET['id']))
 {
 
      $codeStr = 'var a=API.groups.get({"user_id":"'.$_GET['id'].'"}); var b=a; var d=0;
-var c = [];
-//return b.length;
-while (d < 24)
-{
-//return b[d];
- c.push(API.wall.get({"owner_id":-b[d],"count":"5","extended":"1"}));
- d = d+1; 
-//return d;
-};
-return c;';
+        var c = [];
+        while (d < 24)
+        {
+         c.push(API.wall.get({"owner_id":-b[d],"count":"5","extended":"1"}));
+         d = d+1; 
+        };
+        return c;';
+       // $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
+      
+
+
+//$viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
+
+//$viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
+
+//$viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
+
 $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
 
 
@@ -387,29 +421,38 @@ $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
 
              = $viewUsrGroups['0'][$i]['name'];
         */    
-    echo $viewMyFeed['0']['0']['groups']['0']['name'];  
-           echo $viewMyFeed['0']['0']['wall']['1']['text']; 
-      var_dump($viewMyFeed);
+   
+      
         
          //echo $viewUsrWallcache['0']['1']['text'];
         
    // var_dump($viewUsrWallcache); 
+           echo $viewMyFeed['0']['0']['groups']['0']['name'];  
+           echo $viewMyFeed['0']['0']['wall']['1']['text']; 
+           
+     $end_time = microtime();
+    $end_array = explode(" ",$end_time);
+    $end_time = $end_array[1] + $end_array[0];
+    $time = $end_time - $start_time;
+    printf("Страница сгенерирована за %f секунд",$time)."<br>";
+      //var_dump($viewMyFeed);
+    
 }
 else
 {
     $listFriends[] = $vk->getFriends();
-for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) echo "<pre><img src='".$listFriends[$i][$j]['photo_medium']."'><br><a href='http://192.168.1.141/vk.php?id=".$listFriends[$i][$j]['uid']."'>".$listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']." ".$listFriends[$i][$j]['uid']."</a></pre>";
 
-
-}
-    
-
-$end_time = microtime();
+     $end_time = microtime();
     $end_array = explode(" ",$end_time);
     $end_time = $end_array[1] + $end_array[0];
     $time = $end_time - $start_time;
-
     printf("Страница сгенерирована за %f секунд",$time)."<br>";
+
+for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) echo "<pre><img src='".$listFriends[$i][$j]['photo_medium']."'><br><a href='http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']."'>".$listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']." ".$listFriends[$i][$j]['uid']."</a></pre>";
+
+
+}
+
 
 
 /*
