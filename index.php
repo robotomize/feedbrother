@@ -369,7 +369,7 @@ $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
         
         for($jj = 1; $jj<5; $jj++)
         {    
-               echo "<img src=".$viewMyFeed['0'][$cc]['groups']['0']['photo'].">&nbsp".$viewMyFeed['0'][$cc]['groups']['0']['name']."\n<br><br>"; 
+              // echo "<img src=".$viewMyFeed['0'][$cc]['groups']['0']['photo'].">&nbsp".$viewMyFeed['0'][$cc]['groups']['0']['name']."\n<br><br>"; 
                echo $viewMyFeed['0'][$cc]['wall'][$jj]['text']."\n<br>";
                echo "<img src=".$viewMyFeed['0'][$cc]['wall'][$jj]['attachments']['0']['photo']['src_big'].">\n<br>";
                echo "\n<br><br><br>";
