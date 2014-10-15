@@ -387,8 +387,9 @@ $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
 
              = $viewUsrGroups['0'][$i]['name'];
         */    
-  echo $viewMyFeed['0']['0']['groups']['0']['name'].", ".$viewMyFeed['0']['0']['groups']['0']['screen_name'].", ".$viewMyFeed['0']['0']['groups']['0']['photo_50'];    
-      
+    echo $viewMyFeed['0']['0']['groups']['0']['name'];  
+           echo $viewMyFeed['0']['0']['wall']['1']['text']; 
+      var_dump($viewMyFeed);
         
          //echo $viewUsrWallcache['0']['1']['text'];
         
