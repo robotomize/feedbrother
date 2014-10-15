@@ -315,34 +315,6 @@ $viewMyGroups[] = $vk->getGroups($_SESSION['id']);  //список групп
 //echo count($viewMyGroups['0']);
 
 
-// удаление из базы в случае если ты выписался из сообществ, пока не реализовано
-for ($i=1; $i <count($viewMyGroups['0']) ; $i++) 
-    { 
-        $myid = $_SESSION['id'];
-        $gidGroup = $viewMyGroups['0'][$i]['gid'];
-       if(empty(mysql_fetch_assoc(mysql_query("SELECT id FROM Cachegroups WHERE id_user='$myid' and id_group='$gidGroup'"))))
-        {
-       // echo $viewMyGroups['0'][$i]['name']."\n";
-      //echo $i;
-      //break;
-        //echo $i;
-        //echo $viewMyGroups['0']['1']['gid'];
-        $gidGroup = $viewMyGroups['0'][$i]['gid'];
-        //echo $gidGroup;
-        $nameGroup = strip_tags(str_replace("'","",$viewMyGroups['0'][$i]['name']));
-        //echo $nameGroup;
-        $descriptionGroup = strip_tags(str_replace("'","",$viewMyGroups['0'][$i]['description']));
-       // echo $descriptionGroup;
-        $screen_nameGroup = $viewMyGroups['0'][$i]['screen_name'];
-        $activityGroup = $viewMyGroups['0'][$i]['is_closed'];
-        $members_countGroup = $viewMyGroups['0'][$i]['members_count'];
-// ошибка, добавляются группы повторно или по несколько штук, проблема не решена
-//break;
-        mysql_query("INSERT INTO Cachegroups VALUES (null, '$_SESSION[id]', '$nameGroup', '$descriptionGroup', '$screen_nameGroup', '$activityGroup', '$members_countGroup','$gidGroup')") or die(mysql_error());
-        //break;
-        }
-
-    }
 */
 //echo $_SESSION['tok']."\n";
 //echo $_SESSION['id'];
@@ -394,12 +366,13 @@ if(isset($_GET['id']))
 $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
     for($cc=1; $cc<count($viewMyFeed['0']); $cc++)
     {
-        //echo $viewMyFeed['0']['0']['groups'][$cc]['name']."\n<br>"; 
+        
         for($jj = 1; $jj<5; $jj++)
-        {
+        {    
+               echo "<img src=".$viewMyFeed['0'][$cc]['groups']['0']['photo'].">&nbsp".$viewMyFeed['0'][$cc]['groups']['0']['name']."\n<br><br>"; 
                echo $viewMyFeed['0'][$cc]['wall'][$jj]['text']."\n<br>";
                echo "<img src=".$viewMyFeed['0'][$cc]['wall'][$jj]['attachments']['0']['photo']['src_big'].">\n<br>";
-               echo "______________________________________________________________________________________________\n<br>";
+               echo "\n<br><br><br>";
         } 
     
 
@@ -409,7 +382,7 @@ $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
           
           
          //echo $viewUsrWallcache['0']['1']['text'];
-       // var_dump($viewMyFeed);
+      // var_dump($viewMyFeed);
    //var_dump($viewUsrWallcache); 
           
 
@@ -434,6 +407,36 @@ else
 for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) echo "<pre><img src='".$listFriends[$i][$j]['photo_medium']."'><br><a href='http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']."'>".$listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']." ".$listFriends[$i][$j]['uid']."</a></pre>";
 
 
+
+// Для модуля обработки статистики решил оставить этот код и только, когда приложение не работает с лентой, хотя если на главной будет выводиться моя лена, то уберу
+// удаление из базы в случае если ты выписался из сообществ, пока не реализовано
+for ($i=1; $i <count($viewMyGroups['0']) ; $i++) 
+    { 
+        $myid = $_SESSION['id'];
+        $gidGroup = $viewMyGroups['0'][$i]['gid'];
+       if(empty(mysql_fetch_assoc(mysql_query("SELECT id FROM Cachegroups WHERE id_user='$myid' and id_group='$gidGroup'"))))
+        {
+       // echo $viewMyGroups['0'][$i]['name']."\n";
+      //echo $i;
+      //break;
+        //echo $i;
+        //echo $viewMyGroups['0']['1']['gid'];
+        $gidGroup = $viewMyGroups['0'][$i]['gid'];
+        //echo $gidGroup;
+        $nameGroup = strip_tags(str_replace("'","",$viewMyGroups['0'][$i]['name']));
+        //echo $nameGroup;
+        $descriptionGroup = strip_tags(str_replace("'","",$viewMyGroups['0'][$i]['description']));
+       // echo $descriptionGroup;
+        $screen_nameGroup = $viewMyGroups['0'][$i]['screen_name'];
+        $activityGroup = $viewMyGroups['0'][$i]['is_closed'];
+        $members_countGroup = $viewMyGroups['0'][$i]['members_count'];
+// ошибка, добавляются группы повторно или по несколько штук, проблема не решена
+//break;
+        mysql_query("INSERT INTO Cachegroups VALUES (null, '$_SESSION[id]', '$nameGroup', '$descriptionGroup', '$screen_nameGroup', '$activityGroup', '$members_countGroup','$gidGroup')") or die(mysql_error());
+        //break;
+        }
+
+    }
 }
 
 
