@@ -352,12 +352,14 @@ var c = [];
 while (d < 24)
 {
 //return b[d];
- c.push(API.wall.get({"owner_id":-b[d],"count":"5"}));
+ c.push(API.wall.get({"owner_id":-b[d],"count":"5","extended":"1"}));
  d = d+1; 
 //return d;
 };
 return c;';
 $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
+
+
     /*
    // echo $_GET['id'];
     $viewUsr[] = $vk->getUsers($_GET['id']);   // информация о пользователе
@@ -385,7 +387,7 @@ $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
 
              = $viewUsrGroups['0'][$i]['name'];
         */    
-var_dump($viewMyFeed);     
+  echo $viewMyFeed['0']['0']['groups']['0']['name'].", ".$viewMyFeed['0']['0']['groups']['0']['screen_name'].", ".$viewMyFeed['0']['0']['groups']['0']['photo_50'];    
       
         
          //echo $viewUsrWallcache['0']['1']['text'];
