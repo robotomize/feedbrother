@@ -254,7 +254,16 @@ class VkApi
  
         return $this->_responce($request);
     }
-       
+    
+       public function getGroupsById($ids)
+    {
+        $request = $this->get('groups.getById', array(
+            'group_ids' => $ids,            
+            
+        ));
+ 
+        return $this->_responce($request);
+    }
  
  
         private function _params($params) {
@@ -342,44 +351,37 @@ $vk = new VkApi(array(
 
 
     $i=0;
+    $strr = "";
 if(isset($_GET['id']))
 {
+$GroupIds[] = $vk->getGroupsforWall($_GET['id']);
+for($mm=0;$mm<count($GroupIds['0']);$mm++)
+{
+    if($strr == "") $strr = $GroupIds['0'][$mm];
+    else $strr = $strr.",".$GroupIds['0'][$mm];
+}
+echo $strr;
+$Groupinfo[] = $vk->getGroupsById($strr);
+var_dump($Groupinfo);
 
-     $codeStr = 'var a=API.groups.get({"user_id":"'.$_GET['id'].'"}); var b=a; var d=0;
+    $codeStr = 'var a=API.groups.get({"user_id":"'.$_GET['id'].'"}); var b=a; var d=0;
         var c = [];
         while (d < 24)
         {
-         c.push(API.wall.get({"owner_id":-b[d],"count":"3","extended":"1"}));
+         c.push(API.wall.get({"owner_id":-b[d],"count":"4"}));
          d = d+1; 
         };
-        return c;';
-       // $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
-      
-
-
-//$viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
-
-//$viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
-
-//$viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
+        return c;';       
 
 $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
-
-
-     $end_time = microtime();
-    $end_array = explode(" ",$end_time);
-    $end_time = $end_array[1] + $end_array[0];
-    $time = $end_time - $start_time;
-    printf("Страница сгенерирована за %f секунд",$time)."<br>";
-
     for($cc=1; $cc<count($viewMyFeed['0']); $cc++)
     {
         
-        for($jj = 1; $jj<5; $jj++)
+        for($jj = 1; $jj<4; $jj++)
         {    
               // echo "<img src=".$viewMyFeed['0'][$cc]['groups']['0']['photo'].">&nbsp".$viewMyFeed['0'][$cc]['groups']['0']['name']."\n<br><br>"; 
-               echo $viewMyFeed['0'][$cc]['wall'][$jj]['text']."\n<br>";
-               echo "<img src=".$viewMyFeed['0'][$cc]['wall'][$jj]['attachments']['0']['photo']['src_big'].">\n<br>";
+               echo $viewMyFeed['0'][$cc][$jj]['text']."\n<br>";
+               echo "<img src=".$viewMyFeed['0'][$cc][$jj]['attachments']['0']['photo']['src_big'].">\n<br>";
                echo "\n<br><br><br>";
         } 
     
@@ -394,6 +396,11 @@ $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
    //var_dump($viewUsrWallcache); 
           
 
+     $end_time = microtime();
+    $end_array = explode(" ",$end_time);
+    $end_time = $end_array[1] + $end_array[0];
+    $time = $end_time - $start_time;
+    printf("Страница сгенерирована за %f секунд",$time)."<br>";
       //var_dump($viewMyFeed);
     
 }
@@ -401,7 +408,17 @@ else
 {
     $listFriends[] = $vk->getFriends();
 
-    // Для модуля обработки статистики решил оставить этот код и только, когда приложение не работает с лентой, хотя если на главной будет выводиться моя лена, то уберу
+     $end_time = microtime();
+    $end_array = explode(" ",$end_time);
+    $end_time = $end_array[1] + $end_array[0];
+    $time = $end_time - $start_time;
+    printf("Страница сгенерирована за %f секунд",$time)."<br>";
+
+for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) echo "<pre><img src='".$listFriends[$i][$j]['photo_medium']."'><br><a href='http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']."'>".$listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']." ".$listFriends[$i][$j]['uid']."</a></pre>";
+
+
+
+// Для модуля обработки статистики решил оставить этот код и только, когда приложение не работает с лентой, хотя если на главной будет выводиться моя лена, то уберу
 // удаление из базы в случае если ты выписался из сообществ, пока не реализовано
     $viewMyGroups[] = $vk->getGroups($_SESSION['id']);  //список групп
 for ($i=1; $i <count($viewMyGroups['0']) ; $i++) 
@@ -431,19 +448,6 @@ for ($i=1; $i <count($viewMyGroups['0']) ; $i++)
         }
 
     }
-
-
-     $end_time = microtime();
-    $end_array = explode(" ",$end_time);
-    $end_time = $end_array[1] + $end_array[0];
-    $time = $end_time - $start_time;
-    printf("Страница сгенерирована за %f секунд",$time)."<br>";
-
-for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) echo "<pre><img src='".$listFriends[$i][$j]['photo_medium']."'><br><a href='http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']."'>".$listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']." ".$listFriends[$i][$j]['uid']."</a></pre>";
-
-
-
-
 }
 
 
