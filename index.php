@@ -307,7 +307,7 @@ $vk = new VkApi(array(
 //echo $_SESSION['id'];
  
 /* код для сохранения инфы о твоих группах в базе, устаревшая версия
-$viewMyGroups[] = $vk->getGroups($_SESSION['id']);  //список групп
+
 
 
 //var_dump($viewMyGroups);
@@ -349,7 +349,7 @@ if(isset($_GET['id']))
         var c = [];
         while (d < 24)
         {
-         c.push(API.wall.get({"owner_id":-b[d],"count":"5","extended":"1"}));
+         c.push(API.wall.get({"owner_id":-b[d],"count":"3","extended":"1"}));
          d = d+1; 
         };
         return c;';
@@ -364,6 +364,14 @@ if(isset($_GET['id']))
 //$viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
 
 $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
+
+
+     $end_time = microtime();
+    $end_array = explode(" ",$end_time);
+    $end_time = $end_array[1] + $end_array[0];
+    $time = $end_time - $start_time;
+    printf("Страница сгенерирована за %f секунд",$time)."<br>";
+
     for($cc=1; $cc<count($viewMyFeed['0']); $cc++)
     {
         
@@ -386,11 +394,6 @@ $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
    //var_dump($viewUsrWallcache); 
           
 
-     $end_time = microtime();
-    $end_array = explode(" ",$end_time);
-    $end_time = $end_array[1] + $end_array[0];
-    $time = $end_time - $start_time;
-    printf("Страница сгенерирована за %f секунд",$time)."<br>";
       //var_dump($viewMyFeed);
     
 }
@@ -398,18 +401,9 @@ else
 {
     $listFriends[] = $vk->getFriends();
 
-     $end_time = microtime();
-    $end_array = explode(" ",$end_time);
-    $end_time = $end_array[1] + $end_array[0];
-    $time = $end_time - $start_time;
-    printf("Страница сгенерирована за %f секунд",$time)."<br>";
-
-for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) echo "<pre><img src='".$listFriends[$i][$j]['photo_medium']."'><br><a href='http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']."'>".$listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']." ".$listFriends[$i][$j]['uid']."</a></pre>";
-
-
-
-// Для модуля обработки статистики решил оставить этот код и только, когда приложение не работает с лентой, хотя если на главной будет выводиться моя лена, то уберу
+    // Для модуля обработки статистики решил оставить этот код и только, когда приложение не работает с лентой, хотя если на главной будет выводиться моя лена, то уберу
 // удаление из базы в случае если ты выписался из сообществ, пока не реализовано
+    $viewMyGroups[] = $vk->getGroups($_SESSION['id']);  //список групп
 for ($i=1; $i <count($viewMyGroups['0']) ; $i++) 
     { 
         $myid = $_SESSION['id'];
@@ -437,6 +431,19 @@ for ($i=1; $i <count($viewMyGroups['0']) ; $i++)
         }
 
     }
+
+
+     $end_time = microtime();
+    $end_array = explode(" ",$end_time);
+    $end_time = $end_array[1] + $end_array[0];
+    $time = $end_time - $start_time;
+    printf("Страница сгенерирована за %f секунд",$time)."<br>";
+
+for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) echo "<pre><img src='".$listFriends[$i][$j]['photo_medium']."'><br><a href='http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']."'>".$listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']." ".$listFriends[$i][$j]['uid']."</a></pre>";
+
+
+
+
 }
 
 
