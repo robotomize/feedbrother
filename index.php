@@ -363,25 +363,39 @@ for($mm=0;$mm<count($GroupIds['0']);$mm++)
 //echo $strr;
 $Groupinfo[] = $vk->getGroupsById($strr);
 
+// целое число запросов к группам 
 
-    $codeStr = 'var a=API.groups.get({"user_id":"'.$_GET['id'].'"}); var b=a; var d=0;
+$CountDivGroups = floor(count($Groupinfo['0'])/24);
+
+// остаток от деления на 24, максимальное число запросов в группам
+
+$CounterModGroups = count($Groupinfo['0']) % 24;
+$CounterWallget = 0;
+$CounterWallget24 = 24;
+
+
+
+
+//echo $CounterModGroups;
+
+//echo $ccc;
+
+while($ccc<$CountDivGroups)
+{
+
+    $codeStr = 'var a=API.groups.get({"user_id":"'.$_GET['id'].'"}); var b=a; var d='.$CounterWallget.'; var v='.$CounterWallget24.';
         var c = [];
-        while (d < 24)
+        while (d < v)
         {
          c.push(API.wall.get({"owner_id":-b[d],"count":"4"}));
          d = d+1; 
         };
         return c;';       
 
-$viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
+    $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
 
-
-     $end_time = microtime();
-    $end_array = explode(" ",$end_time);
-    $end_time = $end_array[1] + $end_array[0];
-    $time = $end_time - $start_time;
-    printf("Страница сгенерирована за %f секунд",$time)."<br>";
-var_dump($Groupinfo['0']);
+    
+//var_dump($Groupinfo['0']);
     for($cc=1; $cc<count($viewMyFeed['0']); $cc++)
     {
         
@@ -405,7 +419,57 @@ var_dump($Groupinfo['0']);
     
 
     }
-    var_dump($viewMyFeed['0']);
+    unset($viewMyFeed);
+
+    $CounterWallget = $CounterWallget + 24;
+    $CounterWallget24 = $CounterWallget24 + 24;
+    $ccc++;
+}
+
+if($CounterModGroups != 0)
+{
+    unset($viewMyFeed);
+    $CounterMod = $ccc*24;
+
+    $codeStr = 'var a=API.groups.get({"user_id":"'.$_GET['id'].'"}); var b=a; var d='.$CounterMod.'; var v='.$CounterModGroups.';
+        var c = [];
+        while (d < v)
+        {
+         c.push(API.wall.get({"owner_id":-b[d],"count":"4"}));
+         d = d+1; 
+        };
+        return c;';       
+
+    $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
+    //var_dump($viewMyFeed);
+    for($cc=1; $cc<count($viewMyFeed['0']); $cc++)
+    {
+        
+        for($jj = 1; $jj<4; $jj++)
+        {    
+              // echo "<img src=".$viewMyFeed['0'][$cc]['groups']['0']['photo'].">&nbsp".$viewMyFeed['0'][$cc]['groups']['0']['name']."\n<br><br>"; 
+               //echo $viewMyFeed['0'][$cc][$jj]['from_id']."\n<br>";
+               for($vv=0; $vv<count($Groupinfo['0']);$vv++)
+               {
+
+                    if("-".$Groupinfo['0'][$vv]['gid'] == $viewMyFeed['0'][$cc][$jj]['from_id']) 
+                    {
+                        echo "<img src=".$Groupinfo['0'][$vv]['photo']."> ".$Groupinfo['0'][$vv]['name']."\n<br>";
+                        break;
+                    }
+               }
+               echo $viewMyFeed['0'][$cc][$jj]['text']."\n<br>";
+               echo "<img src=".$viewMyFeed['0'][$cc][$jj]['attachments']['0']['photo']['src_big'].">\n<br>";
+               echo "\n<br><br><br>";
+        } 
+    
+
+    }
+
+}
+
+
+   // var_dump($viewMyFeed['0']);
      
      // echo $cc;
           
@@ -416,6 +480,11 @@ var_dump($Groupinfo['0']);
           
 
       //var_dump($viewMyFeed);
+     $end_time = microtime();
+    $end_array = explode(" ",$end_time);
+    $end_time = $end_array[1] + $end_array[0];
+    $time = $end_time - $start_time;
+    printf("Страница сгенерирована за %f секунд",$time)."<br>";
     
 }
 else
