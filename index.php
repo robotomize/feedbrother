@@ -1,17 +1,16 @@
 <?php
 
 set_time_limit(3600);
+//замер времени выполнения кода 
  $start_time = microtime();
     $start_array = explode(" ",$start_time);
     $start_time = $start_array[1] + $start_array[0];
 
+// пока не используется PDO, используется обычный драйвер, отлвоа ошибок ничего нет
 $host = "localhost";   
 $user = "root";   
 $pass = "13";    
-
  if(!mysql_connect($host, $user, $pass)) exit(mysql_error()); 
- 
-
 mysql_query("SET character_set_client='UTF8'"); 
 mysql_query("SET character_set_results='UTF8'"); 
 mysql_query("SET collation_connection='UTF8'");
@@ -26,6 +25,7 @@ mysql_select_db("frfeed") or die(mysql_error());
  * @class VkApi
  * @author Maslakov Alexander <jmas.ukraine@gmail.com>
  */
+
 class VkApi
 {
     public $apiKey;
@@ -296,6 +296,32 @@ class VkApi
     }
 
 }
+
+public function timeAgo($timestamp, $granularity=2, $format='Y-m-d H:i:s')
+{ 
+    $difference = time() - $timestamp; 
+    if($difference < 0) return '0 с назад'; 
+    elseif($difference < 864000)
+        { 
+            $periods = array('нд' => 604800,'дн' => 86400,'ч' => 3600,'м' => 60,'с' => 1); 
+            $output = ''; 
+            foreach($periods as $key => $value)
+                { if($difference >= $value)
+                    { $time = round($difference / $value); 
+                        $difference %= $value; $output .= ($output ? ' ' : '').$time.' '; 
+                        $output .= (($time > 1 && $key == 'дней') ? $key.'секунд' : $key); 
+                        $granularity--; 
+                    } if($granularity == 0) break; 
+                    } 
+                    return ($output ? $output : '0 с').' назад'; 
+                } 
+                else return date($format, $timestamp); 
+}
+
+public function TimeFeedSort($arrayTimestamp)
+{
+
+}
    
    
  
@@ -308,60 +334,17 @@ $vk = new VkApi(array(
     'authRedirectUrl' => 'http://192.168.1.141/index.php',
 ));
   
-  //var_dump($_GET);
-//$myy[] = $vk->getFriends();
-
-//var_dump($myy);
-
-//echo $_SESSION['id'];
- 
-/* код для сохранения инфы о твоих группах в базе, устаревшая версия
-
-
-
-//var_dump($viewMyGroups);
-//echo $_SESSION['id'];
-//echo count($viewMyGroups['0']);
-
-
-*/
-//echo $_SESSION['tok']."\n";
-//echo $_SESSION['id'];
-//echo $_SESSION['fullname'];
-//$listwall[] = $vk->getWallGroups("24532152");
-//var_dump($listwall);
-
-//echo $_SESSION['id'];
-//var_dump($viewMyGroups);
- //$query = mysql_query("SELECT * FROM Cachegroups WHERE id_user='$_SESSION[id]'");
-
- //mysql_query("INSERT INTO users VALUES (null, '$owner_id', '$profileimg', '$fullName', '$profilescreenname')") or die(mysql_error());
-       
-
- // $viewUsr[] = $vk->getUsers($_GET['owner_id']);
-//var_dump($viewUsr);
-//var_dump($_GET['gor']);
-    //$token = $_SESSION['tok'];
-    //echo $_SESSION['tok'];
-//$GetProfile = file_get_contents("https://api.vk.com/method/execute.feeder?access_token=$token");
-  //               $profile = json_decode($GetProfile , true);
-//var_dump($profile);
-    
-
-
-
-    $i=0;
-    $strr = "";
+$GroupIdsStr = "";
 if(isset($_GET['id']))
 {
 $GroupIds[] = $vk->getGroupsforWall($_GET['id']);
 for($mm=0;$mm<count($GroupIds['0']);$mm++)
 {
-    if($strr == "") $strr = $GroupIds['0'][$mm];
-    else $strr = $strr.",".$GroupIds['0'][$mm];
+    if($GroupIdsStr == "") $GroupIdsStr = $GroupIds['0'][$mm];
+    else $GroupIdsStr = $GroupIdsStr.",".$GroupIds['0'][$mm];
 }
-//echo $strr;
-$Groupinfo[] = $vk->getGroupsById($strr);
+//echo $GroupIdsStr;
+$Groupinfo[] = $vk->getGroupsById($GroupIdsStr);
 
 // целое число запросов к группам 
 
