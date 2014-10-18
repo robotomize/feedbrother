@@ -18,12 +18,12 @@ mysql_query("SET NAMES UTF8");
 mysql_select_db("frfeed") or die(mysql_error()); 
 
 
-// Предполагается, что сессия уже запущена, если нет - уберите комментарий
+
  session_start();
  
 /**
  * @class VkApi
- * @author Maslakov Alexander <jmas.ukraine@gmail.com>
+ * @author Maslakov Alexander <jmas.ukraine@gmail.com> класс для работы с VK написал вот этот чувачек
  */
 
 class VkApi
@@ -96,27 +96,17 @@ class VkApi
             
                 }
 
-            } else  throw new Exception('VK API error.');
-                //var_dump($responce);exit;
+            } else  throw new Exception('VK API error.');             
             
         }
-
-
-
-
-
-      //  else header('Location: ' . "http://192.168.1.141/");
        
         if (empty($token)) {
 
             $url = "https://oauth.vk.com/authorize?client_id="
                    . $this->appId . "&redirect_uri=http://192.168.1.141/index.php&display=page&response_type=code&scope=video,offline,groups,friends,photos,notify";
  
-            header('Location: ' . $url);
-            // ищем юзера с нашим id
-
-
-         //   exit;
+            header('Location: ' . $url); 
+      
         }
        
         $this->_accessToken = $token;
@@ -325,18 +315,16 @@ class FriendFeed
 
     }
 
-}
-   
+}   
  
-// Пример использования
+
 $vk = new VkApi(array(
     'apiKey' => 'E8tyn9sgbwaM2MG9ZCSq',
     'appId' => '4581515',
-    //'login' => '<LOGIN>',
-   // 'password' => '<PASSWORD>',
     'authRedirectUrl' => 'http://192.168.1.141/index.php',
 ));
   
+ // строка для отправки запроса в виде строки с gids групп для groups.get 
 $GroupIdsStr = "";
 $FriendFeedarray = [];
 if(isset($_GET['id']))
@@ -359,13 +347,6 @@ $CountDivGroups = floor(count($Groupinfo['0'])/24);
 $CounterModGroups = count($Groupinfo['0']) % 24;
 $CounterWallget = 0;
 $CounterWallget24 = 24;
-
-
-
-
-//echo $CounterModGroups;
-
-//echo $ccc;
 
 while($ccc<$CountDivGroups)
 {
@@ -469,17 +450,7 @@ if($CounterModGroups != 0)
 }
 
 var_dump($FriendFeedarray);
-   // var_dump($viewMyFeed['0']);
-     
-     // echo $cc;
-          
-          
-         //echo $viewUsrWallcache['0']['1']['text'];
-      // var_dump($viewMyFeed);
-   //var_dump($viewUsrWallcache); 
-          
-
-      //var_dump($viewMyFeed);
+// конец времени работы скрипта для вывода ленты
      $end_time = microtime();
     $end_array = explode(" ",$end_time);
     $end_time = $end_array[1] + $end_array[0];
@@ -490,7 +461,7 @@ var_dump($FriendFeedarray);
 else
 {
     $listFriends[] = $vk->getFriends();
-
+// конец вывода времени работы скрипта для первой страницы
      $end_time = microtime();
     $end_array = explode(" ",$end_time);
     $end_time = $end_array[1] + $end_array[0];
@@ -510,59 +481,20 @@ for ($i=1; $i <count($viewMyGroups['0']) ; $i++)
         $gidGroup = $viewMyGroups['0'][$i]['gid'];
        if(empty(mysql_fetch_assoc(mysql_query("SELECT id FROM Cachegroups WHERE id_user='$myid' and id_group='$gidGroup'"))))
         {
-       // echo $viewMyGroups['0'][$i]['name']."\n";
-      //echo $i;
-      //break;
-        //echo $i;
-        //echo $viewMyGroups['0']['1']['gid'];
-        $gidGroup = $viewMyGroups['0'][$i]['gid'];
-        //echo $gidGroup;
-        $nameGroup = strip_tags(str_replace("'","",$viewMyGroups['0'][$i]['name']));
-        //echo $nameGroup;
-        $descriptionGroup = strip_tags(str_replace("'","",$viewMyGroups['0'][$i]['description']));
-       // echo $descriptionGroup;
+         $gidGroup = $viewMyGroups['0'][$i]['gid'];       
+        $nameGroup = strip_tags(str_replace("'","",$viewMyGroups['0'][$i]['name']));       
+        $descriptionGroup = strip_tags(str_replace("'","",$viewMyGroups['0'][$i]['description']));      
         $screen_nameGroup = $viewMyGroups['0'][$i]['screen_name'];
         $activityGroup = $viewMyGroups['0'][$i]['is_closed'];
         $members_countGroup = $viewMyGroups['0'][$i]['members_count'];
+
 // ошибка, добавляются группы повторно или по несколько штук, проблема не решена
-//break;
-        mysql_query("INSERT INTO Cachegroups VALUES (null, '$_SESSION[id]', '$nameGroup', '$descriptionGroup', '$screen_nameGroup', '$activityGroup', '$members_countGroup','$gidGroup')") or die(mysql_error());
-        //break;
+        mysql_query("INSERT INTO Cachegroups VALUES (null, '$_SESSION[id]', '$nameGroup', '$descriptionGroup', '$screen_nameGroup', '$activityGroup', '$members_countGroup','$gidGroup')") or die(mysql_error());       
         }
 
     }
 }
 
 
-
-/*
-echo '<pre>';
- echo $_GET['uid'];
- echo '</pre>';
-//echo "hui";
-*/
-
-
- //echo '<pre>';
- //var_dump($arr);
-//echo '</pre>';
-//echo count($arr['0']);
-
-
-//echo '<pre>';
-//var_dump($vk->getFriends($_GET['owner_id']));
-//echo '</pre>';
-
-//$fige = $vk->getFriends($_GET['owner_id'];
-//var_dump($fige);
-//foreach ($arr as $keys) 
-//{
- //  echo $keys['nickname']."\n"; 
-//}
-
-
-/*echo '<pre>';
-var_dump($vk->getGroups("253214704"));
-echo '</pre>';*/
 
 ?>
