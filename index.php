@@ -296,33 +296,36 @@ class VkApi
     }
 
 }
-
-public function timeAgo($timestamp, $granularity=2, $format='Y-m-d H:i:s')
-{ 
-    $difference = time() - $timestamp; 
-    if($difference < 0) return '0 с назад'; 
-    elseif($difference < 864000)
-        { 
-            $periods = array('нд' => 604800,'дн' => 86400,'ч' => 3600,'м' => 60,'с' => 1); 
-            $output = ''; 
-            foreach($periods as $key => $value)
-                { if($difference >= $value)
-                    { $time = round($difference / $value); 
-                        $difference %= $value; $output .= ($output ? ' ' : '').$time.' '; 
-                        $output .= (($time > 1 && $key == 'дней') ? $key.'секунд' : $key); 
-                        $granularity--; 
-                    } if($granularity == 0) break; 
-                    } 
-                    return ($output ? $output : '0 с').' назад'; 
-                } 
-                else return date($format, $timestamp); 
-}
-
-public function TimeFeedSort($arrayTimestamp)
+class FriendFeed
 {
 
+    public function timeAgo($timestamp, $granularity=2, $format='Y-m-d H:i:s')
+    { 
+        $difference = time() - $timestamp; 
+        if($difference < 0) return '0 с назад'; 
+        elseif($difference < 864000)
+            { 
+                $periods = array('нд' => 604800,'дн' => 86400,'ч' => 3600,'м' => 60,'с' => 1); 
+                $output = ''; 
+                foreach($periods as $key => $value)
+                    { if($difference >= $value)
+                        { $time = round($difference / $value); 
+                            $difference %= $value; $output .= ($output ? ' ' : '').$time.' '; 
+                            $output .= (($time > 1 && $key == 'дней') ? $key.'секунд' : $key); 
+                            $granularity--; 
+                        } if($granularity == 0) break; 
+                    } 
+                    return ($output ? $output : '0 с').' назад'; 
+            } 
+                else return date($format, $timestamp); 
+    }
+
+    public function TimeFeedSort($arrayTimestamp)
+    {
+
+    }
+
 }
-   
    
  
 // Пример использования
@@ -335,6 +338,7 @@ $vk = new VkApi(array(
 ));
   
 $GroupIdsStr = "";
+$FriendFeedarray = [];
 if(isset($_GET['id']))
 {
 $GroupIds[] = $vk->getGroupsforWall($_GET['id']);
@@ -382,7 +386,7 @@ while($ccc<$CountDivGroups)
     for($cc=1; $cc<count($viewMyFeed['0']); $cc++)
     {
         
-        for($jj = 1; $jj<4; $jj++)
+        for($jj = 1; $jj<5; $jj++)
         {    
               // echo "<img src=".$viewMyFeed['0'][$cc]['groups']['0']['photo'].">&nbsp".$viewMyFeed['0'][$cc]['groups']['0']['name']."\n<br><br>"; 
                //echo $viewMyFeed['0'][$cc][$jj]['from_id']."\n<br>";
@@ -391,13 +395,17 @@ while($ccc<$CountDivGroups)
 
                     if("-".$Groupinfo['0'][$vv]['gid'] == $viewMyFeed['0'][$cc][$jj]['from_id']) 
                     {
-                        echo "<img src=".$Groupinfo['0'][$vv]['photo']."> ".$Groupinfo['0'][$vv]['name']."\n<br>";
+                       // echo "<img src=".$Groupinfo['0'][$vv]['photo']."> ".$Groupinfo['0'][$vv]['name']."\n<br>";
+                        $Groupphoto = $Groupinfo['0'][$vv]['photo'];
+                        $Groupname = $Groupinfo['0'][$vv]['name'];                                           
                         break;
                     }
                }
-               echo $viewMyFeed['0'][$cc][$jj]['text']."\n<br>";
-               echo "<img src=".$viewMyFeed['0'][$cc][$jj]['attachments']['0']['photo']['src_big'].">\n<br>";
-               echo "\n<br><br><br>";
+              // echo $viewMyFeed['0'][$cc][$jj]['text']."\n<br>";
+              // echo "<img src=".$viewMyFeed['0'][$cc][$jj]['attachments']['0']['photo']['src_big'].">\n<br>";
+              // echo $viewMyFeed['0'][$cc][$jj]['date']."\n<br>";
+              // echo "\n<br><br><br>";
+               $FriendFeedarray[] = array("groupname" => $Groupname, "groupphoto" => $Groupphoto, "text" => $viewMyFeed['0'][$cc][$jj]['text'], "photo" => $viewMyFeed['0'][$cc][$jj]['attachments']['0']['photo']['src_big'], "date" => $viewMyFeed['0'][$cc][$jj]['date']);
         } 
     
 
@@ -411,8 +419,12 @@ while($ccc<$CountDivGroups)
 
 if($CounterModGroups != 0)
 {
+    $CounterWallget = 0;
+    $CounterWallget24 = 24;
     unset($viewMyFeed);
+
     $CounterMod = $ccc*24;
+    $CounterModGroups = $CounterMod + $CounterModGroups;
 
     $codeStr = 'var a=API.groups.get({"user_id":"'.$_GET['id'].'"}); var b=a; var d='.$CounterMod.'; var v='.$CounterModGroups.';
         var c = [];
@@ -428,7 +440,7 @@ if($CounterModGroups != 0)
     for($cc=1; $cc<count($viewMyFeed['0']); $cc++)
     {
         
-        for($jj = 1; $jj<4; $jj++)
+        for($jj = 1; $jj<5; $jj++)
         {    
               // echo "<img src=".$viewMyFeed['0'][$cc]['groups']['0']['photo'].">&nbsp".$viewMyFeed['0'][$cc]['groups']['0']['name']."\n<br><br>"; 
                //echo $viewMyFeed['0'][$cc][$jj]['from_id']."\n<br>";
@@ -437,13 +449,18 @@ if($CounterModGroups != 0)
 
                     if("-".$Groupinfo['0'][$vv]['gid'] == $viewMyFeed['0'][$cc][$jj]['from_id']) 
                     {
-                        echo "<img src=".$Groupinfo['0'][$vv]['photo']."> ".$Groupinfo['0'][$vv]['name']."\n<br>";
+                    //    echo "<img src=".$Groupinfo['0'][$vv]['photo']."> ".$Groupinfo['0'][$vv]['name']."\n<br>";
+                        $Groupphoto = $Groupinfo['0'][$vv]['photo'];
+                        $Groupname = $Groupinfo['0'][$vv]['name']; 
                         break;
                     }
                }
-               echo $viewMyFeed['0'][$cc][$jj]['text']."\n<br>";
-               echo "<img src=".$viewMyFeed['0'][$cc][$jj]['attachments']['0']['photo']['src_big'].">\n<br>";
-               echo "\n<br><br><br>";
+            //   echo $viewMyFeed['0'][$cc][$jj]['text']."\n<br>";
+
+             //  echo "<img src=".$viewMyFeed['0'][$cc][$jj]['attachments']['0']['photo']['src_big'].">\n<br>";
+             //  echo $viewMyFeed['0'][$cc][$jj]['date']."\n<br>";
+             //  echo "\n<br><br><br>";
+               $FriendFeedarray[] = array("groupname" => $Groupname, "groupphoto" => $Groupphoto, "text" => $viewMyFeed['0'][$cc][$jj]['text'], "photo" => $viewMyFeed['0'][$cc][$jj]['attachments']['0']['photo']['src_big'], "date" => $viewMyFeed['0'][$cc][$jj]['date']);
         } 
     
 
@@ -451,7 +468,7 @@ if($CounterModGroups != 0)
 
 }
 
-
+var_dump($FriendFeedarray);
    // var_dump($viewMyFeed['0']);
      
      // echo $cc;
