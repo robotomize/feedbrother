@@ -320,6 +320,17 @@ class FriendFeed
          array_multisort($TimeDatearray,SORT_DESC,$FriendFeedarray);
          return $FriendFeedarray;
     }
+    // функция нужна для подкачки большего количества элементов ленты, мы будем пересчитывать смещение и строить куски ленты вручную
+    public function Feedoffset($current, $now = 4)
+    {
+
+
+    }
+
+    public function FeedArraySlayer($array)
+    {
+        return array_slice($array, 0, 100);
+    }
 
 }   
 
@@ -361,7 +372,7 @@ while($ccc<$CountDivGroups)
         var c = [];
         while (d < v)
         {
-         c.push(API.wall.get({"owner_id":-b[d],"count":"4"}));
+         c.push(API.wall.get({"owner_id":-b[d],"count":"3"}));
          d = d+1; 
         };
         return c;';       
@@ -373,7 +384,7 @@ while($ccc<$CountDivGroups)
     for($cc=1; $cc<count($viewMyFeed['0']); $cc++)
     {
         
-        for($jj = 1; $jj<5; $jj++)
+        for($jj = 1; $jj<4; $jj++)
         {    
               // echo "<img src=".$viewMyFeed['0'][$cc]['groups']['0']['photo'].">&nbsp".$viewMyFeed['0'][$cc]['groups']['0']['name']."\n<br><br>"; 
                //echo $viewMyFeed['0'][$cc][$jj]['from_id']."\n<br>";
@@ -417,7 +428,7 @@ if($CounterModGroups != 0)
         var c = [];
         while (d < v)
         {
-         c.push(API.wall.get({"owner_id":-b[d],"count":"4"}));
+         c.push(API.wall.get({"owner_id":-b[d],"count":"3"}));
          d = d+1; 
         };
         return c;';       
@@ -427,7 +438,7 @@ if($CounterModGroups != 0)
     for($cc=1; $cc<count($viewMyFeed['0']); $cc++)
     {
         
-        for($jj = 1; $jj<5; $jj++)
+        for($jj = 1; $jj<4; $jj++)
         {    
               // echo "<img src=".$viewMyFeed['0'][$cc]['groups']['0']['photo'].">&nbsp".$viewMyFeed['0'][$cc]['groups']['0']['name']."\n<br><br>"; 
                //echo $viewMyFeed['0'][$cc][$jj]['from_id']."\n<br>";
@@ -457,8 +468,9 @@ if($CounterModGroups != 0)
 // наш главный класс в котором пока есть методы только для сортировки и работы с датами
 $FF = new FriendFeed();
 $FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
+$FriendFeedarray = $FF->FeedArraySlayer($FriendFeedarray);
 
-var_dump($FriendFeedarray);
+
 
 // конец времени работы скрипта для вывода ленты
      $end_time = microtime();
@@ -466,7 +478,7 @@ var_dump($FriendFeedarray);
     $end_time = $end_array[1] + $end_array[0];
     $time = $end_time - $start_time;
     printf("Страница сгенерирована за %f секунд",$time)."<br>";
-    
+    var_dump($FriendFeedarray);
 }
 else
 {
