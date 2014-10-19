@@ -286,6 +286,7 @@ class VkApi
     }
 
 }
+//  класс с методами для формирования конечного вида ленты
 class FriendFeed
 {
 
@@ -310,13 +311,18 @@ class FriendFeed
                 else return date($format, $timestamp); 
     }
 
-    public function TimeFeedSort($arrayTimestamp)
+    public function TimeFeedSort($FriendFeedarray)
     {
-
+        for ($iii=0; $iii < count($FriendFeedarray); $iii++) 
+            { 
+                $TimeDatearray[] = $FriendFeedarray[$iii]['date'];
+            }
+         array_multisort($TimeDatearray,SORT_DESC,$FriendFeedarray);
+         return $FriendFeedarray;
     }
 
 }   
- 
+
 
 $vk = new VkApi(array(
     'apiKey' => 'E8tyn9sgbwaM2MG9ZCSq',
@@ -448,8 +454,12 @@ if($CounterModGroups != 0)
     }
 
 }
+// наш главный класс в котором пока есть методы только для сортировки и работы с датами
+$FF = new FriendFeed();
+$FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
 
 var_dump($FriendFeedarray);
+
 // конец времени работы скрипта для вывода ленты
      $end_time = microtime();
     $end_array = explode(" ",$end_time);
