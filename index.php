@@ -55,26 +55,7 @@ body {
 
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="hidden">
-                        <a href="#page-top"></a>
-                    </li>
-                    <li>
-                        <a class="page-scroll" href="#services">Services</a>
-                    </li>
-                    <li class="active">
-                        <a href="#portfolio">Portfolio</a>
-                    </li>
-                    <li>
-                        <a class="page-scroll" href="#about">About</a>
-                    </li>
-                    <li>
-                        <a class="page-scroll" href="#team">Team</a>
-                    </li>
-                    <li>
-                        <a class="page-scroll" href="#contact">Contact</a>
-                    </li>
-                </ul>
+                
             </div>
             <!-- /.navbar-collapse -->
         </div>
@@ -447,12 +428,8 @@ if(isset($_GET['id']))
                     <h4>Друзьяшки</h4>
                     
                      <?php
-                          $end_time = microtime();
-                            $end_array = explode(" ",$end_time);
-                            $end_time = $end_array[1] + $end_array[0];
-                            $time = $end_time - $start_time;
-                            printf("Страница сгенерирована за %f секунд",$time)."<br>";
-                     for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) echo "<pre><img src='".$listFriends[$i][$j]['photo_medium']."'><br><a href='http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']."'>".$listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']." ".$listFriends[$i][$j]['uid']."</a></pre>";
+                         
+                     for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) echo "<pre><img src='".$listFriends[$i][$j]['photo_medium']."'><br><a href='http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']."'>".$listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']."</a></pre>";
 
                      ?>                    
                
@@ -599,8 +576,18 @@ $FriendFeedarray = $FF->FeedArraySlayer($FriendFeedarray);
 
 
    <div class="col-md-8">
-
+    <h4>
+        Новостная лента пользователя <?php  echo $_GET['id']  ?>
+    </h4>
+<br>
         <?php
+        /*
+         $end_time = microtime();
+                            $end_array = explode(" ",$end_time);
+                            $end_time = $end_array[1] + $end_array[0];
+                            $time = $end_time - $start_time;
+                            printf("Страница сгенерирована за %f секунд",$time)."<br>";
+                            */
             for ($iiii=0; $iiii < count($FriendFeedarray); $iiii++) 
                 { 
       
@@ -634,13 +621,14 @@ $FriendFeedarray = $FF->FeedArraySlayer($FriendFeedarray);
                 <a class="btn btn-primary" href="#">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
                 
                 </div>
-                 </div>  
+                 </div> 
+                  </div> 
                 <hr>       
 
 <?php
 }
 ?>
-            </div>
+           
 
 <?php
         
@@ -675,21 +663,11 @@ else
                             $end_time = $end_array[1] + $end_array[0];
                             $time = $end_time - $start_time;
                             printf("Страница сгенерирована за %f секунд",$time)."<br>";
-                     for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) echo "<pre><img src='".$listFriends[$i][$j]['photo_medium']."'><br><a href='http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']."'>".$listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']." ".$listFriends[$i][$j]['uid']."</a></pre>";
+                     for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) echo "<pre><img src='".$listFriends[$i][$j]['photo_medium']."'><br><a href='http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']."'>".$listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']."</a></pre>";
 
                      ?>
                       
-                   
-                    <!-- /.row -->
-                
-
-                <!-- Side Widget Well -->
-                <div class="well">
-                    <h4>Side Widget Well</h4>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore, perspiciatis adipisci accusamus laudantium odit aliquam repellat tempore quos aspernatur vero.</p>
-                </div>
-
-            </div>
+                            </div>
             <!-- Blog Entries Column -->
 
 <?php
