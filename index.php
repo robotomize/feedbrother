@@ -187,7 +187,7 @@ class VkApi
         if (empty($token)) {
 
             $url = "https://oauth.vk.com/authorize?client_id="
-                   . $this->appId . "&redirect_uri=http://192.168.1.141/vk.php&display=page&response_type=code&scope=video,offline,groups,friends,photos,notify";
+                   . $this->appId . "&redirect_uri=http://192.168.1.141/index.php&display=page&response_type=code&scope=video,offline,groups,friends,photos,notify";
  
             header('Location: ' . $url); 
       
@@ -422,7 +422,7 @@ class FriendFeed
 $vk = new VkApi(array(
     'apiKey' => 'E8tyn9sgbwaM2MG9ZCSq',
     'appId' => '4581515',
-    'authRedirectUrl' => 'http://192.168.1.141/vk.php',
+    'authRedirectUrl' => 'http://192.168.1.141/index.php',
 ));
   
  // строка для отправки запроса в виде строки с gids групп для groups.get 
@@ -430,6 +430,7 @@ $GroupIdsStr = "";
 $FriendFeedarray = [];
 if(isset($_GET['id']))
 {
+    $listFriends[] = $vk->getFriends();
 ?>
 
 <div class="container">
@@ -451,7 +452,7 @@ if(isset($_GET['id']))
                             $end_time = $end_array[1] + $end_array[0];
                             $time = $end_time - $start_time;
                             printf("Страница сгенерирована за %f секунд",$time)."<br>";
-                     for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) echo "<pre><img src='".$listFriends[$i][$j]['photo_medium']."'><br><a href='http://192.168.1.141/vk.php?id=".$listFriends[$i][$j]['uid']."'>".$listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']." ".$listFriends[$i][$j]['uid']."</a></pre>";
+                     for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) echo "<pre><img src='".$listFriends[$i][$j]['photo_medium']."'><br><a href='http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']."'>".$listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']." ".$listFriends[$i][$j]['uid']."</a></pre>";
 
                      ?>                    
                
@@ -593,36 +594,56 @@ $FriendFeedarray = $FF->FeedArraySlayer($FriendFeedarray);
     $end_array = explode(" ",$end_time);
     $end_time = $end_array[1] + $end_array[0];
     $time = $end_time - $start_time;
+
 ?>
 
 
    <div class="col-md-8">
 
+        <?php
+            for ($iiii=0; $iiii < count($FriendFeedarray); $iiii++) 
+                { 
+      
+                
+        ?>
+                <div class="container">
 
-                <!-- First Blog Post -->
-                <h2>
-                    <a href="#">Blog Post Title</a>
-                </h2>
-                <p class="lead">
-                    by <a href="index.php">Start B</a>
+                     <div class="row">
+                <div class="col-md-1">               
+                
+                  <img src=<?php echo $FriendFeedarray[$iiii]['groupphoto'];   ?>>
+                
+                 </div>
+                 <div class="col-md-11">
+                     <?php echo $FriendFeedarray[$iiii]['groupname'];   ?>
+                 <br>
+                 
+
+                
+                <p>
+                        <?php echo $FriendFeedarray[$iiii]['text'];   ?>
                 </p>
-                <p></p>
-                <p><span class="glyphicon glyphicon-time"></span> Posted on August 28, 2013 at 10:00 PM</p>
-                <hr>
+                <p>
+                    <img src=<?php echo $FriendFeedarray[$iiii]['photo'];   ?>>
+                 </p>   
+                <p><span class="glyphicon glyphicon-time"></span>  <?php echo $FriendFeedarray[$iiii]['date'];   ?></p>
+             
                
-                <hr>
+             
                 
                 <a class="btn btn-primary" href="#">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
-
-                <hr>
-
-                <!-- Second Blog Post -->
                 
+                </div>
+                 </div>  
+                <hr>       
 
+<?php
+}
+?>
             </div>
 
 <?php
-
+        
 
 
 
@@ -654,7 +675,7 @@ else
                             $end_time = $end_array[1] + $end_array[0];
                             $time = $end_time - $start_time;
                             printf("Страница сгенерирована за %f секунд",$time)."<br>";
-                     for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) echo "<pre><img src='".$listFriends[$i][$j]['photo_medium']."'><br><a href='http://192.168.1.141/vk.php?id=".$listFriends[$i][$j]['uid']."'>".$listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']." ".$listFriends[$i][$j]['uid']."</a></pre>";
+                     for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) echo "<pre><img src='".$listFriends[$i][$j]['photo_medium']."'><br><a href='http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']."'>".$listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']." ".$listFriends[$i][$j]['uid']."</a></pre>";
 
                      ?>
                       
