@@ -30,8 +30,57 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <style>
+body {
+    padding-top: 100px; /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+}
+</style>
 
 </head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top navbar-shrink">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand page-scroll" href="#page-top">FriendFeed</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#services">Services</a>
+                    </li>
+                    <li class="active">
+                        <a href="#portfolio">Portfolio</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#about">About</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#team">Team</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
 
 <?php
 
@@ -138,7 +187,7 @@ class VkApi
         if (empty($token)) {
 
             $url = "https://oauth.vk.com/authorize?client_id="
-                   . $this->appId . "&redirect_uri=http://192.168.1.141/index.php&display=page&response_type=code&scope=video,offline,groups,friends,photos,notify";
+                   . $this->appId . "&redirect_uri=http://192.168.1.141/vk.php&display=page&response_type=code&scope=video,offline,groups,friends,photos,notify";
  
             header('Location: ' . $url); 
       
@@ -373,7 +422,7 @@ class FriendFeed
 $vk = new VkApi(array(
     'apiKey' => 'E8tyn9sgbwaM2MG9ZCSq',
     'appId' => '4581515',
-    'authRedirectUrl' => 'http://192.168.1.141/index.php',
+    'authRedirectUrl' => 'http://192.168.1.141/vk.php',
 ));
   
  // строка для отправки запроса в виде строки с gids групп для groups.get 
@@ -381,6 +430,38 @@ $GroupIdsStr = "";
 $FriendFeedarray = [];
 if(isset($_GET['id']))
 {
+?>
+
+<div class="container">
+
+        <div class="row">
+
+                <!-- Blog Sidebar Widgets Column -->
+            <div class="col-md-4">
+
+            
+
+                <!-- Blog Categories Well -->
+               
+                    <h4>Друзьяшки</h4>
+                    
+                     <?php
+                          $end_time = microtime();
+                            $end_array = explode(" ",$end_time);
+                            $end_time = $end_array[1] + $end_array[0];
+                            $time = $end_time - $start_time;
+                            printf("Страница сгенерирована за %f секунд",$time)."<br>";
+                     for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) echo "<pre><img src='".$listFriends[$i][$j]['photo_medium']."'><br><a href='http://192.168.1.141/vk.php?id=".$listFriends[$i][$j]['uid']."'>".$listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']." ".$listFriends[$i][$j]['uid']."</a></pre>";
+
+                     ?>                    
+               
+
+            </div>
+            <!-- Blog Entries Column -->
+
+
+
+<?php
 $GroupIds[] = $vk->getGroupsforWall($_GET['id']);
 for($mm=0;$mm<count($GroupIds['0']);$mm++)
 {
@@ -512,20 +593,87 @@ $FriendFeedarray = $FF->FeedArraySlayer($FriendFeedarray);
     $end_array = explode(" ",$end_time);
     $end_time = $end_array[1] + $end_array[0];
     $time = $end_time - $start_time;
-    printf("Страница сгенерирована за %f секунд",$time)."<br>";
-    var_dump($FriendFeedarray);
+?>
+
+
+   <div class="col-md-8">
+
+
+                <!-- First Blog Post -->
+                <h2>
+                    <a href="#">Blog Post Title</a>
+                </h2>
+                <p class="lead">
+                    by <a href="index.php">Start B</a>
+                </p>
+                <p></p>
+                <p><span class="glyphicon glyphicon-time"></span> Posted on August 28, 2013 at 10:00 PM</p>
+                <hr>
+               
+                <hr>
+                
+                <a class="btn btn-primary" href="#">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
+
+                <hr>
+
+                <!-- Second Blog Post -->
+                
+
+            </div>
+
+<?php
+
+
+
+
+  //  printf("Страница сгенерирована за %f секунд",$time)."<br>";
+   // var_dump($FriendFeedarray);
 }
 else
 {
     $listFriends[] = $vk->getFriends();
 // конец вывода времени работы скрипта для первой страницы
-     $end_time = microtime();
-    $end_array = explode(" ",$end_time);
-    $end_time = $end_array[1] + $end_array[0];
-    $time = $end_time - $start_time;
-    printf("Страница сгенерирована за %f секунд",$time)."<br>";
 
-for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) echo "<pre><img src='".$listFriends[$i][$j]['photo_medium']."'><br><a href='http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']."'>".$listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']." ".$listFriends[$i][$j]['uid']."</a></pre>";
+?>
+<div class="container">
+
+        <div class="row">
+
+                <!-- Blog Sidebar Widgets Column -->
+            <div class="col-md-4">
+
+            
+
+                <!-- Blog Categories Well -->
+               
+                    <h4>Друзьяшки</h4>
+                    
+                     <?php
+                          $end_time = microtime();
+                            $end_array = explode(" ",$end_time);
+                            $end_time = $end_array[1] + $end_array[0];
+                            $time = $end_time - $start_time;
+                            printf("Страница сгенерирована за %f секунд",$time)."<br>";
+                     for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) echo "<pre><img src='".$listFriends[$i][$j]['photo_medium']."'><br><a href='http://192.168.1.141/vk.php?id=".$listFriends[$i][$j]['uid']."'>".$listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']." ".$listFriends[$i][$j]['uid']."</a></pre>";
+
+                     ?>
+                      
+                   
+                    <!-- /.row -->
+                
+
+                <!-- Side Widget Well -->
+                <div class="well">
+                    <h4>Side Widget Well</h4>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore, perspiciatis adipisci accusamus laudantium odit aliquam repellat tempore quos aspernatur vero.</p>
+                </div>
+
+            </div>
+            <!-- Blog Entries Column -->
+
+<?php
+
+
 
 
 
@@ -555,3 +703,25 @@ for ($i=1; $i <count($viewMyGroups['0']) ; $i++)
 
 
 ?>
+    <!-- /.container -->
+   <!-- jQuery Version 1.11.0 -->
+    <script src="js/jquery-1.11.0.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+    <script src="js/classie.js"></script>
+    <script src="js/cbpAnimatedHeader.js"></script>
+
+    <!-- Contact Form JavaScript -->
+    <script src="js/jqBootstrapValidation.js"></script>
+    <script src="js/contact_me.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="js/agency.js"></script>
+
+</body>
+
+</html>
