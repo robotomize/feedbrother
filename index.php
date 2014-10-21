@@ -30,9 +30,16 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+
     <style>
+
 body {
     padding-top: 100px; /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+}
+td
+{
+    margin-left: 20px;
+   
 }
 </style>
 
@@ -434,7 +441,7 @@ if(isset($_GET['id']))
 
                 <!-- Blog Categories Well -->
                
-                    <h6>Друзьяшки</h6>
+                    <h5>Ленты друзей</h5>
                     <table class="table table-hover row">
 
                      <?php
@@ -586,9 +593,9 @@ $FriendFeedarray = $FF->FeedArraySlayer($FriendFeedarray);
 
 
    <div class="col-md-7">
-    <h6>
+    <h5>
         Новостная лента пользователя <?php  echo $_GET['id']  ?>
-    </h6>
+    </h5>
 
 <table class="table table-bordered row-fluid">
 
@@ -617,8 +624,8 @@ $FriendFeedarray = $FF->FeedArraySlayer($FriendFeedarray);
                {
                 ?>
                     <br>
-                  
-                        <?php echo $FriendFeedarray[$iiii]['text'];   ?>
+                    <div class="cutstring" data-display="none" data-max-length="200" data-show-text="Показать полностью.." data-hide-text="Свернуть..">                  
+                        <?php echo $FriendFeedarray[$iiii]['text'];   ?></div>
                         <br>
                     <?php
                     
@@ -642,7 +649,7 @@ $FriendFeedarray = $FF->FeedArraySlayer($FriendFeedarray);
                
              
                 
-                <br><a class="btn btn-primary" href="#">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
+                <br><a href="#">Открыть группу вконтакте <span class="glyphicon glyphicon-chevron-right"></span></a>
                   
                  
                   
@@ -659,9 +666,9 @@ $FriendFeedarray = $FF->FeedArraySlayer($FriendFeedarray);
 </div>
 
  <div class="col-md-2">
-    <h6>
+    <h5>
         Статистика
-    </h6>
+    </h5>
     <table class="table table-bordered row-fluid">
         <tr>
             <td>
@@ -972,7 +979,12 @@ for ($i=1; $i <count($viewMyGroups['0']) ; $i++)
 
     <!-- Custom Theme JavaScript -->
     <script src="js/agency.js"></script>
-
+      <script src="js/cutstring.js"></script>
+        <script>
+$(function() {
+    $('.cutstring').cutstring();
+});
+</script>
 </body>
 
 </html>
