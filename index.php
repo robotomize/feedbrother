@@ -40,7 +40,7 @@ body {
 <body>
 
     <!-- Navigation -->
-    <nav class="navbar navbar-default navbar-fixed-top navbar-shrink">
+   <nav class="navbar navbar-default navbar-fixed-top navbar-shrink">
         <div class="container">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header page-scroll">
@@ -50,16 +50,22 @@ body {
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand page-scroll" href="#page-top">FriendFeed</a>
+                <a class="navbar-brand" href="#page-top">   <font class="menutexttop">FriendFeed</a></font>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                
+                <ul class="nav navbar-nav navbar-right">
+                  <li>
+                   <font class="menutextright">О проекте</font>
+                  </li>
+
+                </ul>
             </div>
             <!-- /.navbar-collapse -->
         </div>
         <!-- /.container-fluid -->
+<hr>
     </nav>
 
 
@@ -422,20 +428,21 @@ if(isset($_GET['id']))
         <div class="row">
 
                 <!-- Blog Sidebar Widgets Column -->
-            <div class="col-md-4">
+            <div class="col-md-3">
 
             
 
                 <!-- Blog Categories Well -->
                
-                    <h4>Друзьяшки</h4>
-                    
+                    <h6>Друзьяшки</h6>
+                    <table class="table table-hover row">
+
                      <?php
                          
-                     for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) echo "<pre><img src='".$listFriends[$i][$j]['photo_medium']."'><br><a href='http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']."'>".$listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']."</a></pre>";
+                     for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) echo "<tr><td><img src='".$listFriends[$i][$j]['photo_medium']."'></td><td><a href='http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']."'>".$listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']."</a></td></tr>";
 
                      ?>                    
-               
+                    </table>
 
             </div>
             <!-- Blog Entries Column -->
@@ -469,7 +476,7 @@ while($ccc<$CountDivGroups)
         var c = [];
         while (d < v)
         {
-         c.push(API.wall.get({"owner_id":-b[d],"count":"3"}));
+         c.push(API.wall.get({"owner_id":-b[d],"count":"4"}));
          d = d+1; 
         };
         return c;';       
@@ -481,7 +488,7 @@ while($ccc<$CountDivGroups)
     for($cc=1; $cc<count($viewMyFeed['0']); $cc++)
     {
         
-        for($jj = 1; $jj<4; $jj++)
+        for($jj = 1; $jj<5; $jj++)
         {    
               // echo "<img src=".$viewMyFeed['0'][$cc]['groups']['0']['photo'].">&nbsp".$viewMyFeed['0'][$cc]['groups']['0']['name']."\n<br><br>"; 
                //echo $viewMyFeed['0'][$cc][$jj]['from_id']."\n<br>";
@@ -525,7 +532,7 @@ if($CounterModGroups != 0)
         var c = [];
         while (d < v)
         {
-         c.push(API.wall.get({"owner_id":-b[d],"count":"3"}));
+         c.push(API.wall.get({"owner_id":-b[d],"count":"4"}));
          d = d+1; 
         };
         return c;';       
@@ -535,7 +542,7 @@ if($CounterModGroups != 0)
     for($cc=1; $cc<count($viewMyFeed['0']); $cc++)
     {
         
-        for($jj = 1; $jj<4; $jj++)
+        for($jj = 1; $jj<5; $jj++)
         {    
               // echo "<img src=".$viewMyFeed['0'][$cc]['groups']['0']['photo'].">&nbsp".$viewMyFeed['0'][$cc]['groups']['0']['name']."\n<br><br>"; 
                //echo $viewMyFeed['0'][$cc][$jj]['from_id']."\n<br>";
@@ -578,11 +585,13 @@ $FriendFeedarray = $FF->FeedArraySlayer($FriendFeedarray);
 ?>
 
 
-   <div class="col-md-8">
-    <h4>
+   <div class="col-md-7">
+    <h6>
         Новостная лента пользователя <?php  echo $_GET['id']  ?>
-    </h4>
-<br>
+    </h6>
+
+<table class="table table-bordered row-fluid">
+
         <?php
         /*
          $end_time = microtime();
@@ -596,43 +605,75 @@ $FriendFeedarray = $FF->FeedArraySlayer($FriendFeedarray);
       
                 
         ?>
-                <div class="container">
-
-                     <div class="row">
-                <div class="col-md-1">               
+        <tr>
+            <td >
                 
-                  <img src=<?php echo $FriendFeedarray[$iiii]['groupphoto'];   ?>>
+                  <img src=<?php echo $FriendFeedarray[$iiii]['groupphoto'];   ?>>&nbsp; &nbsp;
                 
-                 </div>
-                 <div class="col-md-11">
                      <?php echo $FriendFeedarray[$iiii]['groupname'];   ?>
                  <br>
-                 
-
-                
-                <p>
+               <?php  
+                if(!empty($FriendFeedarray[$iiii]['text']))
+               {
+                ?>
+                    <br>
+                  
                         <?php echo $FriendFeedarray[$iiii]['text'];   ?>
-                </p>
-                <p>
-                    <img src=<?php echo $FriendFeedarray[$iiii]['photo'];   ?>>
-                 </p>   
-                <p><span class="glyphicon glyphicon-time"></span>  <?php echo $FriendFeedarray[$iiii]['date'];   ?></p>
-             
+                        <br>
+                    <?php
+                    
+                    }
+                    ?>    
+               <?php 
+               if(!empty($FriendFeedarray[$iiii]['photo']))
+               {
+
+              ?>
+                <br>
+               
+                    <img src=<?php echo $FriendFeedarray[$iiii]['photo'];   ?>> <br>
+               
+                <br>
+
+                <?php } 
+                ?>
+                <font class="timetextago"><?php echo $FF->timeAgo($FriendFeedarray[$iiii]['date']);   ?></font>
+                <br>
                
              
                 
-                <a class="btn btn-primary" href="#">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
-                
-                </div>
-                 </div> 
-                  </div> 
-                <hr>       
+                <br><a class="btn btn-primary" href="#">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
+                  
+                 
+                  
+               </td>
+               </tr>  
+
+
+     
 
 <?php
 }
 ?>
-           
+     </table>          
+</div>
 
+ <div class="col-md-2">
+    <h6>
+        Статистика
+    </h6>
+    <table class="table table-bordered row-fluid">
+        <tr>
+            <td>
+                инфа
+            </td>
+         </tr>   
+    </table>
+ </div>
+
+
+</div>
+</div>
 <?php
         
 
@@ -869,7 +910,7 @@ $FriendFeedarray = $FF->FeedArraySlayer($FriendFeedarray);
                             $time = $end_time - $start_time;
                             printf("Страница сгенерирована за %f секунд",$time)."<br>";
                             */
-          
+
 ?>
            
 
@@ -923,7 +964,7 @@ for ($i=1; $i <count($viewMyGroups['0']) ; $i++)
     <!-- Plugin JavaScript -->
     <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
     <script src="js/classie.js"></script>
-    <script src="js/cbpAnimatedHeader.js"></script>
+   
 
     <!-- Contact Form JavaScript -->
     <script src="js/jqBootstrapValidation.js"></script>
