@@ -314,6 +314,15 @@ class VkApi
  
         return $this->_responce($request);
     }
+       public function Friendsonline($owner_id)
+    {
+        $request = $this->get('friends.getOnline', array(
+            'user_id' => $owner_id,            
+            
+        ));
+ 
+        return $this->_responce($request);
+    }
 
 
       public function getFeed($owner_id)
@@ -427,6 +436,239 @@ $GroupIdsStr = "";
 $FriendFeedarray = [];
 
 $CurrentUsrarray = mysql_fetch_assoc(mysql_query("SELECT * from users WHERE id_vk='$_SESSION[id]'"));
+/*
+switch ($_GET['groups']) {
+    case "яблоко":
+        echo "i это яблоко";
+        break;
+    case "шоколадка":
+        echo "i это шоколадка";
+        break;
+    case "пирог":
+        echo "i это пирог";
+        break;
+}
+*/
+if(!empty($_GET['groups']))
+{
+
+$GroupIds[] = $vk->getGroupsforWall($_GET['groups']);
+for($mm=0;$mm<count($GroupIds['0']);$mm++)
+{
+    if($GroupIdsStr == "") $GroupIdsStr = $GroupIds['0'][$mm];
+    else $GroupIdsStr = $GroupIdsStr.",".$GroupIds['0'][$mm];
+}
+//echo $GroupIdsStr;
+$Groupinfo[] = $vk->getGroupsById($GroupIdsStr);
+
+// целое число запросов к группам 
+
+$CountDivGroups = floor(count($Groupinfo['0'])/24);
+
+// остаток от деления на 24, максимальное число запросов в группам
+
+$CounterModGroups = count($Groupinfo['0']) % 24;
+$CounterWallget = 0;
+$CounterWallget24 = 24;
+
+while($ccc<$CountDivGroups)
+{
+
+    $codeStr = 'var a=API.groups.get({"user_id":"'.$_GET['groups'].'"}); var b=a; var d='.$CounterWallget.'; var v='.$CounterWallget24.';
+        var c = [];
+        while (d < v)
+        {
+         c.push(API.wall.get({"owner_id":-b[d],"count":"4"}));
+         d = d+1; 
+        };
+        return c;';       
+
+    $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
+
+    
+//var_dump($Groupinfo['0']);
+    for($cc=1; $cc<count($viewMyFeed['0']); $cc++)
+    {
+        
+        for($jj = 1; $jj<5; $jj++)
+        {    
+              // echo "<img src=".$viewMyFeed['0'][$cc]['groups']['0']['photo'].">&nbsp".$viewMyFeed['0'][$cc]['groups']['0']['name']."\n<br><br>"; 
+               //echo $viewMyFeed['0'][$cc][$jj]['from_id']."\n<br>";
+               for($vv=0; $vv<count($Groupinfo['0']);$vv++)
+               {
+
+                    if("-".$Groupinfo['0'][$vv]['gid'] == $viewMyFeed['0'][$cc][$jj]['from_id']) 
+                    {
+                       // echo "<img src=".$Groupinfo['0'][$vv]['photo']."> ".$Groupinfo['0'][$vv]['name']."\n<br>";
+                        $Groupphoto = $Groupinfo['0'][$vv]['photo'];
+                        $Groupname = $Groupinfo['0'][$vv]['name'];                                           
+                        break;
+                    }
+               }
+              // echo $viewMyFeed['0'][$cc][$jj]['text']."\n<br>";
+              // echo "<img src=".$viewMyFeed['0'][$cc][$jj]['attachments']['0']['photo']['src_big'].">\n<br>";
+              // echo $viewMyFeed['0'][$cc][$jj]['date']."\n<br>";
+              // echo "\n<br><br><br>";
+               $FriendFeedarray[] = array("groupname" => $Groupname, "groupphoto" => $Groupphoto, "text" => $viewMyFeed['0'][$cc][$jj]['text'], "photo" => $viewMyFeed['0'][$cc][$jj]['attachments']['0']['photo']['src_big'], "date" => $viewMyFeed['0'][$cc][$jj]['date']);
+        } 
+    
+
+    }
+    unset($viewMyFeed);
+
+    $CounterWallget = $CounterWallget + 24;
+    $CounterWallget24 = $CounterWallget24 + 24;
+    $ccc++;
+}
+
+if($CounterModGroups != 0)
+{
+    $CounterWallget = 0;
+    $CounterWallget24 = 24;
+    unset($viewMyFeed);
+
+    $CounterMod = $ccc*24;
+    $CounterModGroups = $CounterMod + $CounterModGroups;
+
+    $codeStr = 'var a=API.groups.get({"user_id":"'.$_GET['groups'].'"}); var b=a; var d='.$CounterMod.'; var v='.$CounterModGroups.';
+        var c = [];
+        while (d < v)
+        {
+         c.push(API.wall.get({"owner_id":-b[d],"count":"4"}));
+         d = d+1; 
+        };
+        return c;';       
+
+    $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
+    //var_dump($viewMyFeed);
+    for($cc=1; $cc<count($viewMyFeed['0']); $cc++)
+    {
+        
+        for($jj = 1; $jj<5; $jj++)
+        {    
+              // echo "<img src=".$viewMyFeed['0'][$cc]['groups']['0']['photo'].">&nbsp".$viewMyFeed['0'][$cc]['groups']['0']['name']."\n<br><br>"; 
+               //echo $viewMyFeed['0'][$cc][$jj]['from_id']."\n<br>";
+               for($vv=0; $vv<count($Groupinfo['0']);$vv++)
+               {
+
+                    if("-".$Groupinfo['0'][$vv]['gid'] == $viewMyFeed['0'][$cc][$jj]['from_id']) 
+                    {
+                    //    echo "<img src=".$Groupinfo['0'][$vv]['photo']."> ".$Groupinfo['0'][$vv]['name']."\n<br>";
+                        $Groupphoto = $Groupinfo['0'][$vv]['photo'];
+                        $Groupname = $Groupinfo['0'][$vv]['name']; 
+                        break;
+                    }
+               }
+            //   echo $viewMyFeed['0'][$cc][$jj]['text']."\n<br>";
+
+             //  echo "<img src=".$viewMyFeed['0'][$cc][$jj]['attachments']['0']['photo']['src_big'].">\n<br>";
+             //  echo $viewMyFeed['0'][$cc][$jj]['date']."\n<br>";
+             //  echo "\n<br><br><br>";
+               $FriendFeedarray[] = array("groupname" => $Groupname, "groupphoto" => $Groupphoto, "text" => $viewMyFeed['0'][$cc][$jj]['text'], "photo" => $viewMyFeed['0'][$cc][$jj]['attachments']['0']['photo']['src_big'], "date" => $viewMyFeed['0'][$cc][$jj]['date']);
+        } 
+    
+
+    }
+
+}
+// наш главный класс в котором пока есть методы только для сортировки и работы с датами
+$FF = new FriendFeed();
+$FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
+//var_dump($FriendFeedarray);
+    /*
+     $start_time = microtime();
+    $start_array = explode(" ",$start_time);
+    $start_time = $start_array[1] + $start_array[0];
+     $online[] = $vk->Friendsonline($CurrentUsrarray['id_vk']);  
+      $end_time = microtime();
+                            $end_array = explode(" ",$end_time);
+                            $end_time = $end_array[1] + $end_array[0];
+                            $time = $end_time - $start_time;
+                         //   printf("Страница сгенерирована за %f секунд",$time)."<br>";
+
+    echo count($online['0']);
+
+    */
+   // echo $_GET['groups']
+
+
+
+        /*
+         $end_time = microtime();
+                            $end_array = explode(" ",$end_time);
+                            $end_time = $end_array[1] + $end_array[0];
+                            $time = $end_time - $start_time;
+                            printf("Страница сгенерирована за %f секунд",$time)."<br>";
+                            */
+            for ($iiii=0; $iiii < count($FriendFeedarray); $iiii++) 
+                { 
+      
+                
+        ?>
+        <table class="table table-bordered row-fluid leftprofile">
+        <tr>
+            <td >
+                
+                  <img src=<?php echo $FriendFeedarray[$iiii]['groupphoto'];   ?>>&nbsp; &nbsp;
+                
+                     <?php echo $FriendFeedarray[$iiii]['groupname'];   ?>
+                 <br>
+               <?php  
+                if(!empty($FriendFeedarray[$iiii]['text']))
+               {
+                ?>
+                    <br>
+                    <div class="cutstring" data-display="none" data-max-length="200" data-show-text="Показать полностью.." data-hide-text="Свернуть..">                  
+                        <?php echo $FriendFeedarray[$iiii]['text'];   ?></div>
+                        <br>
+                    <?php
+                    
+                    }
+                    ?>    
+               <?php 
+               if(!empty($FriendFeedarray[$iiii]['photo']))
+               {
+
+              ?>
+                <br>
+               
+                    <img src=<?php echo $FriendFeedarray[$iiii]['photo'];   ?>> <br>
+               
+                <br>
+
+                <?php } 
+                ?>
+                <font class="timetextago"><?php echo $FF->timeAgo($FriendFeedarray[$iiii]['date']);   ?></font>
+                <br>
+               
+             
+                
+                <br><a href="#">Открыть группу вконтакте <span class="glyphicon glyphicon-chevron-right"></span></a>
+                  
+                 
+                  
+               </td>
+               </tr>  
+  </table> 
+
+     
+
+<?php
+}
+
+
+
+
+
+
+
+
+
+
+
+
+    exit;
+}
 
 if(isset($_GET['id']))
 {
@@ -602,7 +844,9 @@ $FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
     </h5><br>
 
 
-
+        <div ic-src="http://192.168.1.141/index.php?groups=6139701" ic-poll="15s">
+                 There are currently 42 users online.
+</div>
         <?php
         /*
          $end_time = microtime();
@@ -677,7 +921,7 @@ $FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
     <table class="table table-bordered row-fluid">
         <tr>
             <td>
-                инфа
+       
             </td>
          </tr>   
     </table>
@@ -985,6 +1229,7 @@ for ($i=1; $i <count($viewMyGroups['0']) ; $i++)
     <!-- Custom Theme JavaScript -->
     <script src="js/agency.js"></script>
       <script src="js/cutstring.js"></script>
+      <script src="https://s3.amazonaws.com/intercoolerjs.org/release/intercooler-0.0.1.min.js"></script>
         <script>
 $(function() {
     $('.cutstring').cutstring();
