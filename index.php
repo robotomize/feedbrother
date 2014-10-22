@@ -9,10 +9,10 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Agency - Start Bootstrap Theme</title>
+    <title>FriendFeed просматривай ленты друзей</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap.css" rel="stylesheet">
 
     <!-- Custom CSS -->
     <link href="css/agency.css" rel="stylesheet">
@@ -36,11 +36,16 @@
 body {
     padding-top: 100px; /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
 }
-td
-{
-    margin-left: 20px;
-   
-}
+
+  .leftprofile
+      {
+       background-color: #f9f9f9;
+  -webkit-font-smoothing: antialiased;
+  -moz-font-smoothing: antialiased;
+  -ms-font-smoothing: antialiased;
+  -o-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+      }
 </style>
 
 </head>
@@ -57,15 +62,13 @@ td
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#page-top">   <font class="menutexttop">FriendFeed</a></font>
+                <a class="navbar-brand" href="#page-top">   <font class="menutexttop">FriendFeed</a></font> 
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
-                  <li>
-                   <font class="menutextright">О проекте</font>
-                  </li>
+                 
 
                 </ul>
             </div>
@@ -371,7 +374,7 @@ class FriendFeed
     public function timeAgo($timestamp, $granularity=2, $format='Y-m-d H:i:s')
     { 
         $difference = time() - $timestamp; 
-        if($difference < 0) return '0 с назад'; 
+        if($difference < 0) return 'now'; 
         elseif($difference < 864000)
             { 
                 $periods = array('нд' => 604800,'дн' => 86400,'ч' => 3600,'м' => 60,'с' => 1); 
@@ -442,7 +445,8 @@ if(isset($_GET['id']))
                 <!-- Blog Categories Well -->
                
                     <h5>Ленты друзей</h5>
-                    <table class="table table-hover row">
+                    <br>
+                    <table class="table table-hover row ">
 
                      <?php
                          
@@ -579,7 +583,7 @@ if($CounterModGroups != 0)
 // наш главный класс в котором пока есть методы только для сортировки и работы с датами
 $FF = new FriendFeed();
 $FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
-$FriendFeedarray = $FF->FeedArraySlayer($FriendFeedarray);
+//$FriendFeedarray = $FF->FeedArraySlayer($FriendFeedarray);
 
 
 
@@ -595,9 +599,9 @@ $FriendFeedarray = $FF->FeedArraySlayer($FriendFeedarray);
    <div class="col-md-7">
     <h5>
         Новостная лента пользователя <?php  echo $_GET['id']  ?>
-    </h5>
+    </h5><br>
 
-<table class="table table-bordered row-fluid">
+
 
         <?php
         /*
@@ -612,6 +616,7 @@ $FriendFeedarray = $FF->FeedArraySlayer($FriendFeedarray);
       
                 
         ?>
+        <table class="table table-bordered row-fluid leftprofile">
         <tr>
             <td >
                 
@@ -655,19 +660,19 @@ $FriendFeedarray = $FF->FeedArraySlayer($FriendFeedarray);
                   
                </td>
                </tr>  
-
+  </table> 
 
      
 
 <?php
 }
 ?>
-     </table>          
+            
 </div>
 
  <div class="col-md-2">
     <h5>
-        Статистика
+        Группы пользователя
     </h5>
     <table class="table table-bordered row-fluid">
         <tr>
