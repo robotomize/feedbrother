@@ -464,16 +464,18 @@ if(!empty($_GET['news']))
 
   
   $FriendFeedarray = $memcache_obj->get('onloadFeed');
-  if(isset($FriendFeedarray))
+  if(!empty($FriendFeedarray))
   {
-        $memcache_obj->set('our_var', $FriendFeedarray, false, 1200);
 
-?>
-
-<?php
+    //echo "ok";
+   // var_dump($FriendFeedarray);
+   // exit;
+        
+        
+//echo count($FriendFeedarray);
 
  for ($iiii=0; $iiii < count($FriendFeedarray); $iiii++) 
-                { 
+    { 
       
                 
         ?>
@@ -496,8 +498,7 @@ if(!empty($_GET['news']))
                     <?php
                     
                     }
-                    ?>    
-               <?php 
+                   
                if(!empty($FriendFeedarray[$iiii]['photo']))
                {
 
@@ -526,12 +527,15 @@ if(!empty($_GET['news']))
      
 
 <?php
+echo $iiii;
 }
+
+$memcache_obj->set('our_var', $FriendFeedarray, false, 1200);
   }
   else
   {
     $FriendFeedarray = $memcache_obj->get('our_var');
-
+var_dump($FriendFeedarray);
         for ($iiii=0; $iiii < count($FriendFeedarray); $iiii++) 
                 { 
       
