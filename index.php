@@ -686,7 +686,7 @@ while($ccc<$CountDivGroups)
         var c = [];
         while (d < v)
         {
-         c.push(API.wall.get({"owner_id":-b[d],"count":"4"}));
+         c.push(API.wall.get({"owner_id":-b[d],"count":"2"}));
          d = d+1; 
         };
         return c;';       
@@ -696,7 +696,7 @@ while($ccc<$CountDivGroups)
     for($cc=1; $cc<count($viewMyFeed['0']); $cc++)
     {
         
-        for($jj = 1; $jj<5; $jj++)
+        for($jj = 1; $jj<3; $jj++)
         { 
                for($vv=0; $vv<count($Groupinfo['0']);$vv++)
                {
@@ -735,7 +735,7 @@ if($CounterModGroups != 0)
         var c = [];
         while (d < v)
         {
-         c.push(API.wall.get({"owner_id":-b[d],"count":"4"}));
+         c.push(API.wall.get({"owner_id":-b[d],"count":"2"}));
          d = d+1; 
         };
         return c;';       
@@ -745,7 +745,7 @@ if($CounterModGroups != 0)
     for($cc=1; $cc<count($viewMyFeed['0']); $cc++)
     {
         
-        for($jj = 1; $jj<5; $jj++)
+        for($jj = 1; $jj<3; $jj++)
         {   
                for($vv=0; $vv<count($Groupinfo['0']);$vv++)
                {
@@ -1025,7 +1025,7 @@ $FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
 
 <?php
 }
- $memcache_obj->set('our_var', $FriendFeedarray, false, 1200);
+ $memcache_obj->set('our_var', $FriendFeedarray, false, 7200);
  //$memcache_obj->set('our_var1', $FriendFeedarray, false, 600);
 /*
 $url = 'http://192.168.1.141/index.php?news=6139701';
