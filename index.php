@@ -80,6 +80,13 @@ body {
 
 
 <?php
+// здесь пока будет блок вспомогательных функций, потом в отдельный файл вынесу
+
+function FeedDiffarray($a, $b) {
+    if ($a === $b) { return 0; }
+    return ($a > $b)? 1:-1;
+}
+
 
 set_time_limit(3600);
 //замер времени выполнения кода 
@@ -434,35 +441,10 @@ class FriendFeed
     {
         return array_slice($array, 0, 100);
     }
-
-    public function Newsdiffarray($newarray,$oldarray)
-    {
-        for ($i=0; $i < count($newarray); $i++) 
-        { 
-           for ($j=0; $j < count($oldarray); $j++) 
-           { 
-                if($newarray[$i]["gid"] == $oldarray[$j]["gid"])
-                {
-                    if($newarray[$i]["date"] == $oldarray[$j]["date"])
-                    {
-
-                    }
-                    else
-                    {
-
-                    }
-                }
-           }
-        }
-     
-     //  return array_diff($newarray, $oldarray); 
-    }
+ 
 
 }   
-function my_compare_func($a, $b) {
-    if ($a === $b) { return 0; }
-    return ($a > $b)? 1:-1;
-}
+
 
 $vk = new VkApi(array(
     'apiKey' => 'E8tyn9sgbwaM2MG9ZCSq',
@@ -593,7 +575,7 @@ $oldFeedarray = [];
 $FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
 $oldFeedarray = $memcache_obj->get('our_var');
 //$FriendFeedarray = $FF->Newsdiffarray($FriendFeedarray,$oldFeedarray);
-$FriendFeedarray = array_udiff($FriendFeedarray, $oldFeedarray, "my_compare_func");
+$FriendFeedarray = array_udiff($FriendFeedarray, $oldFeedarray, "FeedDiffarray");
 var_dump($FriendFeedarray);
 
 
