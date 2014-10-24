@@ -576,6 +576,7 @@ $FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
 $oldFeedarray = $memcache_obj->get('our_var');
 //$FriendFeedarray = $FF->Newsdiffarray($FriendFeedarray,$oldFeedarray);
 $FriendFeedarray = array_udiff($FriendFeedarray, $oldFeedarray, "FeedDiffarray");
+$memcache_obj->set('our_var', $FriendFeedarray, false, 1200);
 var_dump($FriendFeedarray);
 
 
@@ -948,7 +949,7 @@ $FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
 
 //$FriendFeedarray = $FF->FeedArraySlayer($FriendFeedarray);
 
- $memcache_obj->set('our_var', $FriendFeedarray, false, 3600);
+ $memcache_obj->set('our_var', $FriendFeedarray, false, 1200);
 
 // конец времени работы скрипта для вывода ленты
      $end_time = microtime();
