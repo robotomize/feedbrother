@@ -769,7 +769,7 @@ if($CounterModGroups != 0)
 }
 // наш главный класс в котором пока есть методы только для сортировки и работы с датами
 $FF = new FriendFeed();
-$oldFeedarray = [];
+//$oldFeedarray = [];
 $FriendFeednewarr = $FF->TimeFeedSort($FriendFeedarray);
 //$FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
 $oldFeedarray = $memcache_obj->get('our_var');
@@ -953,7 +953,7 @@ $FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
         Новостная лента пользователя <?php  echo $_GET['id']  ?>
     </h5><br>
 
-    <center> <button class="btn" onclick="Intercooler.refresh($('#manual-update'));">Показать новые записи <div ic-src="http://192.168.1.141/index.php?groups=6139701" ic-poll="15s"></div></button></center><br>
+    <center> <button class="btn" onclick="Intercooler.refresh($('#manual-update'));">Показать <div ic-src="http://192.168.1.141/index.php?groups=6139701" ic-poll="15s"></div> новые записи </button></center><br>
  
       <!--   -->
 
