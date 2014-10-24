@@ -572,12 +572,15 @@ if($CounterModGroups != 0)
 // наш главный класс в котором пока есть методы только для сортировки и работы с датами
 $FF = new FriendFeed();
 $oldFeedarray = [];
-$FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
+$FriendFeednewarr = $FF->TimeFeedSort($FriendFeedarray);
 $oldFeedarray = $memcache_obj->get('our_var');
 //$FriendFeedarray = $FF->Newsdiffarray($FriendFeedarray,$oldFeedarray);
-$FriendFeedarray = array_udiff($FriendFeedarray, $oldFeedarray, "FeedDiffarray");
-$memcache_obj->set('our_var', $FriendFeedarray, false, 1200);
+$FriendFeedarray = array_udiff($FriendFeednewarr, $oldFeedarray, "FeedDiffarray");
 var_dump($FriendFeedarray);
+//$FriendFeedarray[] = $oldFeedarray;
+//var_dump($FriendFeedarray);
+$memcache_obj->set('our_var', $FriendFeednewarr, false, 1200);
+
 
 
 
