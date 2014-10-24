@@ -461,128 +461,12 @@ $CurrentUsrarray = mysql_fetch_assoc(mysql_query("SELECT * from users WHERE id_v
 
 if(!empty($_GET['news']))
 {
-    // если передаем этот параметр, то мы пытаемся получить нвоые записи
 
-$GroupIds[] = $vk->getGroupsforWall($_GET['news']);
-for($mm=0;$mm<count($GroupIds['0']);$mm++)
-{
-    if($GroupIdsStr == "") $GroupIdsStr = $GroupIds['0'][$mm];
-    else $GroupIdsStr = $GroupIdsStr.",".$GroupIds['0'][$mm];
-}
-//echo $GroupIdsStr;
-$Groupinfo[] = $vk->getGroupsById($GroupIdsStr);
-
-// целое число запросов к группам 
-
-$CountDivGroups = floor(count($Groupinfo['0'])/24);
-
-// остаток от деления на 24, максимальное число запросов в группам
-
-$CounterModGroups = count($Groupinfo['0']) % 24;
-$CounterWallget = 0;
-$CounterWallget24 = 24;
-
-while($ccc<$CountDivGroups)
-{
-
-    $codeStr = 'var a=API.groups.get({"user_id":"'.$_GET['news'].'"}); var b=a; var d='.$CounterWallget.'; var v='.$CounterWallget24.';
-        var c = [];
-        while (d < v)
-        {
-         c.push(API.wall.get({"owner_id":-b[d],"count":"4"}));
-         d = d+1; 
-        };
-        return c;';       
-
-    $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
-
-    for($cc=1; $cc<count($viewMyFeed['0']); $cc++)
-    {
-        
-        for($jj = 1; $jj<5; $jj++)
-        { 
-               for($vv=0; $vv<count($Groupinfo['0']);$vv++)
-               {
-
-                    if("-".$Groupinfo['0'][$vv]['gid'] == $viewMyFeed['0'][$cc][$jj]['from_id']) 
-                    {        
-                     $gidd = $Groupinfo['0'][$vv]['gid'];              
-                        $Groupphoto = $Groupinfo['0'][$vv]['photo'];
-                        $Groupname = $Groupinfo['0'][$vv]['name'];                                           
-                        break;
-                    }
-               }
-             
-               $FriendFeedarray[] = array("groupname" => $Groupname, "groupphoto" => $Groupphoto, "text" => $viewMyFeed['0'][$cc][$jj]['text'], "photo" => $viewMyFeed['0'][$cc][$jj]['attachments']['0']['photo']['src_big'], "date" => $viewMyFeed['0'][$cc][$jj]['date'],"gid" => $gidd);
-        } 
-    
-
-    }
-    unset($viewMyFeed);
-
-    $CounterWallget = $CounterWallget + 24;
-    $CounterWallget24 = $CounterWallget24 + 24;
-    $ccc++;
-}
-
-if($CounterModGroups != 0)
-{
-    $CounterWallget = 0;
-    $CounterWallget24 = 24;
-    unset($viewMyFeed);
-
-    $CounterMod = $ccc*24;
-    $CounterModGroups = $CounterMod + $CounterModGroups;
-
-    $codeStr = 'var a=API.groups.get({"user_id":"'.$_GET['news'].'"}); var b=a; var d='.$CounterMod.'; var v='.$CounterModGroups.';
-        var c = [];
-        while (d < v)
-        {
-         c.push(API.wall.get({"owner_id":-b[d],"count":"4"}));
-         d = d+1; 
-        };
-        return c;';       
-
-    $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
-    //var_dump($viewMyFeed);
-    for($cc=1; $cc<count($viewMyFeed['0']); $cc++)
-    {
-        
-        for($jj = 1; $jj<5; $jj++)
-        {   
-               for($vv=0; $vv<count($Groupinfo['0']);$vv++)
-               {
-
-                    if("-".$Groupinfo['0'][$vv]['gid'] == $viewMyFeed['0'][$cc][$jj]['from_id']) 
-                    {      
-                        $gidd = $Groupinfo['0'][$vv]['gid'];             
-                        $Groupphoto = $Groupinfo['0'][$vv]['photo'];
-                        $Groupname = $Groupinfo['0'][$vv]['name']; 
-                        break;
-                    }
-               }
-            
-               $FriendFeedarray[] = array("groupname" => $Groupname, "groupphoto" => $Groupphoto, "text" => $viewMyFeed['0'][$cc][$jj]['text'], "photo" => $viewMyFeed['0'][$cc][$jj]['attachments']['0']['photo']['src_big'], "date" => $viewMyFeed['0'][$cc][$jj]['date'],"gid" => $gidd);
-        } 
-    
-
-    }
-
-}
-// наш главный класс в котором пока есть методы только для сортировки и работы с датами
-$FF = new FriendFeed();
-//$oldFeedarray = [];
-//$FriendFeednewarr = $FF->TimeFeedSort($FriendFeedarray);
-$FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
-//$oldFeedarray = $memcache_obj->get('our_var');
-//$FriendFeedarray = $FF->Newsdiffarray($FriendFeedarray,$oldFeedarray);
-
-//$FriendFeedarray = array_udiff($FriendFeednewarr, $oldFeedarray, "FeedDiffarray");
-
-//var_dump($FriendFeedarray);
-//$FriendFeedarray[] = $oldFeedarray;
-//var_dump($FriendFeedarray);
-$memcache_obj->set('our_var', $FriendFeedarray, false, 1200);
+  
+  $FriendFeedarray = $memcache_obj->get('onloadFeed');
+  if(isset($FriendFeedarray))
+  {
+        $memcache_obj->set('our_var', $FriendFeedarray, false, 1200);
 
 ?>
 
@@ -642,9 +526,90 @@ $memcache_obj->set('our_var', $FriendFeedarray, false, 1200);
      
 
 <?php
-
-
 }
+  }
+  else
+  {
+    $FriendFeedarray = $memcache_obj->get('our_var');
+
+        for ($iiii=0; $iiii < count($FriendFeedarray); $iiii++) 
+                { 
+      
+                
+        ?>
+        <table class="table table-bordered row-fluid leftprofile">
+        <tr>
+            <td >
+                
+                  <img src=<?php echo $FriendFeedarray[$iiii]['groupphoto'];   ?>>&nbsp; &nbsp;
+                
+                     <?php echo $FriendFeedarray[$iiii]['groupname'];   ?>
+                 <br>
+               <?php  
+                if(!empty($FriendFeedarray[$iiii]['text']))
+               {
+                ?>
+                    <br>
+                    <div class="cutstring" data-display="none" data-max-length="200" data-show-text="Показать полностью.." data-hide-text="Свернуть..">                  
+                        <?php echo $FriendFeedarray[$iiii]['text'];   ?></div>
+                        <br>
+                    <?php
+                    
+                    }
+                    ?>    
+               <?php 
+               if(!empty($FriendFeedarray[$iiii]['photo']))
+               {
+
+              ?>
+                <br>
+               
+                    <img src=<?php echo $FriendFeedarray[$iiii]['photo'];   ?>> <br>
+               
+                <br>
+
+                <?php } 
+                ?>
+                <font class="timetextago"><?php echo $FF->timeAgo($FriendFeedarray[$iiii]['date']);   ?></font>
+                <br>
+               
+             
+                
+                <br><a href="#">Открыть группу вконтакте <span class="glyphicon glyphicon-chevron-right"></span></a>
+                  
+                 
+                  
+               </td>
+               </tr>  
+  </table> 
+
+     
+
+<?php
+}
+
+
+  }
+// наш главный класс в котором пока есть методы только для сортировки и работы с датами
+//$FF = new FriendFeed();
+//$oldFeedarray = [];
+//$FriendFeednewarr = $FF->TimeFeedSort($FriendFeedarray);
+
+
+// последняя версия лежит тут
+//$FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
+
+
+//$oldFeedarray = $memcache_obj->get('our_var');
+//$FriendFeedarray = $FF->Newsdiffarray($FriendFeedarray,$oldFeedarray);
+
+//$FriendFeedarray = array_udiff($FriendFeednewarr, $oldFeedarray, "FeedDiffarray");
+
+//var_dump($FriendFeedarray);
+//$FriendFeedarray[] = $oldFeedarray;
+//var_dump($FriendFeedarray);
+
+
 
 
 
@@ -776,6 +741,10 @@ $oldFeedarray = $memcache_obj->get('our_var');
 
 $FriendFeedarray = array_udiff($FriendFeednewarr, $oldFeedarray, "FeedDiffarray");
 echo count($FriendFeedarray);
+
+$memcache_obj->set('onloadFeed', $FriendFeednewarr, false, 600);
+//$memcache_obj->set('our_var');
+
 //var_dump($FriendFeedarray);
 //$FriendFeedarray[] = $oldFeedarray;
 //var_dump($FriendFeedarray);
@@ -949,7 +918,7 @@ $FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
 
    <div class="col-md-7">
     <h5>
-        Новостная лента пользователя <?php  echo $_GET['id']  ?>
+        Новостная лента пользователя <?php  echo $_GET['id'];  ?>
     </h5><br>
 
   <center> <button class="btn" onclick="Intercooler.refresh($('#manual-update'));">Показать <font ic-src="http://192.168.1.141/index.php?groups=6139701" ic-poll="10s"></font> новых записей </button></center><br>
