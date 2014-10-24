@@ -582,9 +582,8 @@ $FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
 //var_dump($FriendFeedarray);
 //$FriendFeedarray[] = $oldFeedarray;
 //var_dump($FriendFeedarray);
-//$memcache_obj->set('our_var', $FriendFeednewarr, false, 1200);
-if($FriendFeedarray['0'] != "")
-{
+$memcache_obj->set('our_var', $FriendFeedarray, false, 1200);
+
 ?>
 
 <?php
@@ -643,7 +642,7 @@ if($FriendFeedarray['0'] != "")
      
 
 <?php
-}
+
 
 }
 
@@ -953,8 +952,8 @@ $FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
         Новостная лента пользователя <?php  echo $_GET['id']  ?>
     </h5><br>
 
-    <center> <button class="btn" onclick="Intercooler.refresh($('#manual-update'));">Показать <div ic-src="http://192.168.1.141/index.php?groups=6139701" ic-poll="15s"></div> новые записи </button></center><br>
- 
+  <center> <button class="btn" onclick="Intercooler.refresh($('#manual-update'));">Показать <font ic-src="http://192.168.1.141/index.php?groups=6139701" ic-poll="10s"></font> новых записей </button></center><br>
+
       <!--   -->
 
 
