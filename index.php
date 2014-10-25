@@ -979,14 +979,7 @@ $urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['id'];
 
 
         <?php
-        /*
-         $end_time = microtime();
-                            $end_array = explode(" ",$end_time);
-                            $end_time = $end_array[1] + $end_array[0];
-                            $time = $end_time - $start_time;
-                            printf("Страница сгенерирована за %f секунд",$time)."<br>";
-                            */
-//var_dump($FriendFeedarray);
+       
             for ($iiii=0; $iiii < count($FriendFeedarray); $iiii++) 
                 { 
       
@@ -1057,31 +1050,10 @@ $urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['id'];
 
  $memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 7200);
  //$memcache_obj->set('our_var1', $FriendFeedarray, false, 600);
-/*
-$url = 'http://192.168.1.141/index.php?news=6139701';
-$params = array(
-    'oldarr' => $FriendFeedarray, // в http://localhost/post.php это будет $_POST['param1'] == '123'
-     
-);
-$result = file_get_contents($url, false, stream_context_create(array(
-    'http' => array(
-        'method'  => 'POST',
-        'header'  => 'Content-type: application/x-www-form-urlencoded',
-        'content' => http_build_query($params)
-    )
-)));
-//echo "hui";
 
-echo $result;
-*/
 
 ?>
-     
-       
-       <!--<center> <button class="btn" onclick="Intercooler.refresh($('#manual-update'));">Отобразить более ранние записи</button></center><br>
-         <br>
-        <div id="manual-update" ic-src="http://192.168.1.141/index.php?news=6139701"></div>
-       -->
+  
 </div>
 
 
@@ -1089,7 +1061,7 @@ echo $result;
 
  <div class="col-md-2">
     <h5>
-        Группы пользователя
+        Профиль
     </h5>
     <table class="table table-bordered row-fluid">
         <tr>
@@ -1121,10 +1093,6 @@ echo $result;
 <?php
         
 
-
-
-  //  printf("Страница сгенерирована за %f секунд",$time)."<br>";
-   // var_dump($FriendFeedarray);
 }
 else
 {
