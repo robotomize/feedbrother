@@ -462,21 +462,20 @@ $CurrentUsrarray = mysql_fetch_assoc(mysql_query("SELECT * from users WHERE id_v
 if(!empty($_GET['news']))
 {
 
-  
+  $FF = new FriendFeed();
   $FriendFeedarray = $memcache_obj->get('onloadFeed');
   if(!empty($FriendFeedarray))
   {
 
-    //echo "ok";
-   // var_dump($FriendFeedarray);
+   // echo "ok";
+   //var_dump($FriendFeedarray);
    // exit;
         
         
 //echo count($FriendFeedarray);
 
  for ($iiii=0; $iiii < count($FriendFeedarray); $iiii++) 
-    { 
-      
+    {       
                 
         ?>
         <table class="table table-bordered row-fluid leftprofile">
@@ -509,7 +508,8 @@ if(!empty($_GET['news']))
                
                 <br>
 
-                <?php } 
+                <?php
+                 } 
                 ?>
                 <font class="timetextago"><?php echo $FF->timeAgo($FriendFeedarray[$iiii]['date']);   ?></font>
                 <br>
@@ -522,12 +522,12 @@ if(!empty($_GET['news']))
                   
                </td>
                </tr>  
-  </table> 
+                 </table> 
 
      
 
 <?php
-echo $iiii;
+//echo $iiii;
 }
 
 $memcache_obj->set('our_var', $FriendFeedarray, false, 1200);
@@ -540,60 +540,55 @@ var_dump($FriendFeedarray);
                 { 
       
                 
-        ?>
-        <table class="table table-bordered row-fluid leftprofile">
-        <tr>
-            <td >
+                            ?>
+                        <table class="table table-bordered row-fluid leftprofile">
+                             <tr>
+                                <td >
                 
-                  <img src=<?php echo $FriendFeedarray[$iiii]['groupphoto'];   ?>>&nbsp; &nbsp;
+                                  <img src=<?php echo $FriendFeedarray[$iiii]['groupphoto'];   ?>>&nbsp; &nbsp;
                 
-                     <?php echo $FriendFeedarray[$iiii]['groupname'];   ?>
-                 <br>
-               <?php  
-                if(!empty($FriendFeedarray[$iiii]['text']))
-               {
-                ?>
-                    <br>
-                    <div class="cutstring" data-display="none" data-max-length="200" data-show-text="Показать полностью.." data-hide-text="Свернуть..">                  
-                        <?php echo $FriendFeedarray[$iiii]['text'];   ?></div>
-                        <br>
-                    <?php
+                                      <?php echo $FriendFeedarray[$iiii]['groupname'];   ?>
+                                       <br>
+                                             <?php  
+                                             if(!empty($FriendFeedarray[$iiii]['text']))
+                                                 {
+                                                  ?>
+                                                  <br>
+                                          <div class="cutstring" data-display="none" data-max-length="200" data-show-text="Показать полностью.." data-hide-text="Свернуть..">                  
+                                           <?php echo $FriendFeedarray[$iiii]['text'];   ?></div>
+                                              <br>
+                                            <?php
                     
+                                             }
+                                                     ?>    
+                                            <?php 
+                                         if(!empty($FriendFeedarray[$iiii]['photo']))
+                                              {
+
+                                                 ?>
+                                               <br>
+               
+                                             <img src=<?php echo $FriendFeedarray[$iiii]['photo'];   ?>> <br>
+               
+                                                <br>
+
+                                             <?php 
+                                                    } 
+                                            ?>
+                                             <font class="timetextago"><?php echo $FF->timeAgo($FriendFeedarray[$iiii]['date']);   ?></font>
+                                             <br>         
+                             
+                                        <br><a href="#">Открыть группу вконтакте <span class="glyphicon glyphicon-chevron-right"></span></a>            
+                                  
+                                             </td>
+                                                 </tr>  
+                                                      </table>                                                    
+
+                                                <?php
+                                                    }
+
+
                     }
-                    ?>    
-               <?php 
-               if(!empty($FriendFeedarray[$iiii]['photo']))
-               {
-
-              ?>
-                <br>
-               
-                    <img src=<?php echo $FriendFeedarray[$iiii]['photo'];   ?>> <br>
-               
-                <br>
-
-                <?php } 
-                ?>
-                <font class="timetextago"><?php echo $FF->timeAgo($FriendFeedarray[$iiii]['date']);   ?></font>
-                <br>
-               
-             
-                
-                <br><a href="#">Открыть группу вконтакте <span class="glyphicon glyphicon-chevron-right"></span></a>
-                  
-                 
-                  
-               </td>
-               </tr>  
-  </table> 
-
-     
-
-<?php
-}
-
-
-  }
 // наш главный класс в котором пока есть методы только для сортировки и работы с датами
 //$FF = new FriendFeed();
 //$oldFeedarray = [];
