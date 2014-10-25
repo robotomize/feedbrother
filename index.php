@@ -469,10 +469,12 @@ if(!empty($_GET['news']))
 {
 
 
+session_start();
 
 
   $FF = new FriendFeed();
-  $FriendFeedarray = $memcache_obj->get('onloadFeed');
+  $FriendFeedarray = $memcache_obj->get($_SESSION['id'].$_SESSION['id']);
+  session_write_close();
   if(!empty($FriendFeedarray))
   {
 
@@ -549,12 +551,14 @@ if(!empty($_GET['news']))
 <?php
 //echo $iiii;
 }
+session_start();
 
-$memcache_obj->set('our_var', $FriendFeedarray, false, 1200);
+$memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 1200);
   }
   else
   {
-    $FriendFeedarray = $memcache_obj->get('our_var');
+    $FriendFeedarray = $memcache_obj->get($_SESSION['id']);
+    session_write_close();
 //var_dump($FriendFeedarray);
         for ($iiii=0; $iiii < count($FriendFeedarray); $iiii++) 
                 { 
@@ -772,13 +776,16 @@ $FF = new FriendFeed();
 //$oldFeedarray = [];
 $FriendFeednewarr = $FF->TimeFeedSort($FriendFeedarray);
 //$FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
-$oldFeedarray = $memcache_obj->get('our_var');
+$oldFeedarray = $memcache_obj->get($_SESSION['id']);
 //$FriendFeedarray = $FF->Newsdiffarray($FriendFeedarray,$oldFeedarray);
 
 $FriendFeedarray = array_udiff($FriendFeednewarr, $oldFeedarray, "FeedDiffarray");
 echo count($FriendFeedarray);
 
-$memcache_obj->set('onloadFeed', $FriendFeednewarr, false, 600);
+session_start();
+
+$memcache_obj->set($_SESSION['id'].$_SESSION['id'], $FriendFeednewarr, false, 600);
+session_write_close();
 //$memcache_obj->set('our_var');
 
 //var_dump($FriendFeedarray);
@@ -1046,7 +1053,9 @@ $urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['id'];
 
 <?php
 }
- $memcache_obj->set('our_var', $FriendFeedarray, false, 7200);
+// генерация кеш  по id
+
+ $memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 7200);
  //$memcache_obj->set('our_var1', $FriendFeedarray, false, 600);
 /*
 $url = 'http://192.168.1.141/index.php?news=6139701';
