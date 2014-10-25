@@ -976,13 +976,8 @@ $FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
 
 //$FriendFeedarray = $FF->FeedArraySlayer($FriendFeedarray);
 
-
-
-// конец времени работы скрипта для вывода ленты
-     $end_time = microtime();
-    $end_array = explode(" ",$end_time);
-    $end_time = $end_array[1] + $end_array[0];
-    $time = $end_time - $start_time;
+$urlFeedupdate = "http://192.168.1.141/index.php?news=".$_GET['id'];
+$urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['id'];
 
 ?>
 
@@ -992,13 +987,13 @@ $FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
         Новостная лента пользователя <?php  echo $_GET['id'];  ?>
     </h5><br>
 
-  <center> <button class="btn" onclick="Intercooler.refresh($('#manual-update'));">Показать <font ic-src="http://192.168.1.141/index.php?groups=6139701" ic-poll="15s"></font> новых записей </button></center><br>
+  <center> <button class="btn" onclick="Intercooler.refresh($('#manual-update'));">Показать <font ic-src=<?php echo $urlFeedCountUpdate; ?> ic-poll="15s"></font> новых записей </button></center><br>
 
       <!--   -->
 
 
 
-      <div id="manual-update" ic-src="http://192.168.1.141/index.php?news=6139701"> 
+      <div id="manual-update" ic-src=<?php echo $urlFeedupdate; ?>> 
                  
 
 
