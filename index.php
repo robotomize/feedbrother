@@ -67,32 +67,7 @@ body {
         }
 </style>
 
-  <!-- /.container -->
-   <!-- jQuery Version 1.11.0 -->
-    <script src="js/jquery-1.11.0.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
-
-    <!-- Plugin JavaScript -->
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
-    <script src="js/classie.js"></script>
-   
-
-    <!-- Contact Form JavaScript -->
-    <script src="js/jqBootstrapValidation.js"></script>
-    <script src="js/contact_me.js"></script>
-
-    <!-- Custom Theme JavaScript -->
-    <script src="js/agency.js"></script>
-      <script src="js/cutstring.js"></script>
-      <script src="https://s3.amazonaws.com/intercoolerjs.org/release/intercooler-0.0.1.min.js"></script>
-       
-    <script>
-$(function() {
-    $('.cutstring').cutstring();
-});
-</script>
+ 
 
 </head>
 <body>
@@ -643,21 +618,20 @@ $memcache_obj->set('our_var', $FriendFeedarray, false, 1200);
                                                     }
 
 
-                    }
-
-                  
+                    }                
 
 
 ?>
-
+ <script>
+$(function() {
+    $('.cutstring').cutstring();
+});
+</script>
 
 <?php
 //session_write_close();
 exit;
 }
-
-
-
 
 session_start();
 
@@ -1415,7 +1389,22 @@ for ($i=1; $i <count($viewMyGroups['0']) ; $i++)
 session_write_close();
 
 ?>
- 
+  <!-- /.container -->
+   <!-- jQuery Version 1.11.0 -->
+    <script src="js/jquery-1.11.0.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <script src="js/agency.js"></script>
+      <script src="js/cutstring.js"></script>
+      <script src="https://s3.amazonaws.com/intercoolerjs.org/release/intercooler-0.0.1.min.js"></script>
+       
+    <script>
+$(function() {
+    $('.cutstring').cutstring();
+});
+</script>
 </body>
 
 </html>
