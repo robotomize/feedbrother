@@ -1,3 +1,16 @@
+<?php
+//ini_set('session.save_handler', 'memcache');
+//ini_set('session.save_path', 'tcp://localhost:11211');
+//ini_set('session.gc_maxlifetime', '0');
+
+ 
+ $start_time = microtime();
+    $start_array = explode(" ",$start_time);
+    $start_time = $start_array[1] + $start_array[0];
+
+
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -48,6 +61,33 @@ body {
       }
 </style>
 
+  <!-- /.container -->
+   <!-- jQuery Version 1.11.0 -->
+    <script src="js/jquery-1.11.0.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+    <script src="js/classie.js"></script>
+   
+
+    <!-- Contact Form JavaScript -->
+    <script src="js/jqBootstrapValidation.js"></script>
+    <script src="js/contact_me.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="js/agency.js"></script>
+      <script src="js/cutstring.js"></script>
+      <script src="https://s3.amazonaws.com/intercoolerjs.org/release/intercooler-0.0.1.min.js"></script>
+       
+    <script>
+$(function() {
+    $('.cutstring').cutstring();
+});
+</script>
+
 </head>
 <body>
 
@@ -90,9 +130,7 @@ function FeedDiffarray($a, $b) {
 
 set_time_limit(3600);
 //замер времени выполнения кода 
- $start_time = microtime();
-    $start_array = explode(" ",$start_time);
-    $start_time = $start_array[1] + $start_array[0];
+
 
 // пока не используется PDO, используется обычный драйвер, отлвоа ошибок ничего нет
 $host = "localhost";   
@@ -110,8 +148,23 @@ mysql_select_db("frfeed") or die(mysql_error());
  
     //Соединяемся с нашим сервером
     $memcache_obj->connect('127.0.0.1', 11211) or die("could not connect");
+ 
+ $end_time = microtime();
+                        
 
- session_start();
+//if(empty($_GET['news']))
+//{
+
+  //  if(empty($_GET['groups']))
+   // {
+        
+            $end_array = explode(" ",$end_time);
+                            $end_time = $end_array[1] + $end_array[0];
+                            $time = $end_time - $start_time;
+                            printf("Страница сгенерирована за %f секунд",$time)."<br>";
+    //}
+ 
+//} 
  
 /**
  * @class VkApi
@@ -446,21 +499,14 @@ class FriendFeed
 }   
 
 
-$vk = new VkApi(array(
-    'apiKey' => 'E8tyn9sgbwaM2MG9ZCSq',
-    'appId' => '4581515',
-    'authRedirectUrl' => 'http://192.168.1.141/index.php',
-));
-  
- // строка для отправки запроса в виде строки с gids групп для groups.get 
-$GroupIdsStr = "";
-$FriendFeedarray = [];
-
-$CurrentUsrarray = mysql_fetch_assoc(mysql_query("SELECT * from users WHERE id_vk='$_SESSION[id]'"));
-
 
 if(!empty($_GET['news']))
 {
+
+ $start_time = microtime();
+    $start_array = explode(" ",$start_time);
+    $start_time = $start_array[1] + $start_array[0];
+
 
   $FF = new FriendFeed();
   $FriendFeedarray = $memcache_obj->get('onloadFeed');
@@ -535,7 +581,7 @@ $memcache_obj->set('our_var', $FriendFeedarray, false, 1200);
   else
   {
     $FriendFeedarray = $memcache_obj->get('our_var');
-var_dump($FriendFeedarray);
+//var_dump($FriendFeedarray);
         for ($iiii=0; $iiii < count($FriendFeedarray); $iiii++) 
                 { 
       
@@ -589,35 +635,42 @@ var_dump($FriendFeedarray);
 
 
                     }
-// наш главный класс в котором пока есть методы только для сортировки и работы с датами
-//$FF = new FriendFeed();
-//$oldFeedarray = [];
-//$FriendFeednewarr = $FF->TimeFeedSort($FriendFeedarray);
+
+                    $end_array = explode(" ",$end_time);
+                            $end_time = $end_array[1] + $end_array[0];
+                            $time = $end_time - $start_time;
+                            printf("Страница сгенерирована за %f секунд",$time)."<br>";
 
 
-// последняя версия лежит тут
-//$FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
+?>
+ <script>
+$(function() {
+    $('.cutstring').cutstring();
+});
+</script>
 
-
-//$oldFeedarray = $memcache_obj->get('our_var');
-//$FriendFeedarray = $FF->Newsdiffarray($FriendFeedarray,$oldFeedarray);
-
-//$FriendFeedarray = array_udiff($FriendFeednewarr, $oldFeedarray, "FeedDiffarray");
-
-//var_dump($FriendFeedarray);
-//$FriendFeedarray[] = $oldFeedarray;
-//var_dump($FriendFeedarray);
-
-
-
-
-
-
-
-
+<?php
+//session_write_close();
 exit;
 }
 
+
+
+
+session_start();
+
+
+$vk = new VkApi(array(
+    'apiKey' => 'E8tyn9sgbwaM2MG9ZCSq',
+    'appId' => '4581515',
+    'authRedirectUrl' => 'http://192.168.1.141/index.php',
+));
+  session_write_close();
+ // строка для отправки запроса в виде строки с gids групп для groups.get 
+$GroupIdsStr = "";
+$FriendFeedarray = [];
+
+$CurrentUsrarray = mysql_fetch_assoc(mysql_query("SELECT * from users WHERE id_vk='$_SESSION[id]'"));
 
 
 
@@ -650,7 +703,7 @@ while($ccc<$CountDivGroups)
         var c = [];
         while (d < v)
         {
-         c.push(API.wall.get({"owner_id":-b[d],"count":"2"}));
+         c.push(API.wall.get({"owner_id":-b[d],"count":"4"}));
          d = d+1; 
         };
         return c;';       
@@ -660,7 +713,7 @@ while($ccc<$CountDivGroups)
     for($cc=1; $cc<count($viewMyFeed['0']); $cc++)
     {
         
-        for($jj = 1; $jj<3; $jj++)
+        for($jj = 1; $jj<5; $jj++)
         { 
                for($vv=0; $vv<count($Groupinfo['0']);$vv++)
                {
@@ -699,7 +752,7 @@ if($CounterModGroups != 0)
         var c = [];
         while (d < v)
         {
-         c.push(API.wall.get({"owner_id":-b[d],"count":"2"}));
+         c.push(API.wall.get({"owner_id":-b[d],"count":"4"}));
          d = d+1; 
         };
         return c;';       
@@ -709,7 +762,7 @@ if($CounterModGroups != 0)
     for($cc=1; $cc<count($viewMyFeed['0']); $cc++)
     {
         
-        for($jj = 1; $jj<3; $jj++)
+        for($jj = 1; $jj<5; $jj++)
         {   
                for($vv=0; $vv<count($Groupinfo['0']);$vv++)
                {
@@ -920,7 +973,7 @@ $FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
         Новостная лента пользователя <?php  echo $_GET['id'];  ?>
     </h5><br>
 
-  <center> <button class="btn" onclick="Intercooler.refresh($('#manual-update'));">Показать <font ic-src="http://192.168.1.141/index.php?groups=6139701" ic-poll="10s"></font> новых записей </button></center><br>
+  <center> <button class="btn" onclick="Intercooler.refresh($('#manual-update'));">Показать <font ic-src="http://192.168.1.141/index.php?groups=6139701" ic-poll="15s"></font> новых записей </button></center><br>
 
       <!--   -->
 
@@ -1333,34 +1386,10 @@ for ($i=1; $i <count($viewMyGroups['0']) ; $i++)
     }
 }
 
-
+session_write_close();
 
 ?>
-    <!-- /.container -->
-   <!-- jQuery Version 1.11.0 -->
-    <script src="js/jquery-1.11.0.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
-
-    <!-- Plugin JavaScript -->
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
-    <script src="js/classie.js"></script>
-   
-
-    <!-- Contact Form JavaScript -->
-    <script src="js/jqBootstrapValidation.js"></script>
-    <script src="js/contact_me.js"></script>
-
-    <!-- Custom Theme JavaScript -->
-    <script src="js/agency.js"></script>
-      <script src="js/cutstring.js"></script>
-      <script src="https://s3.amazonaws.com/intercoolerjs.org/release/intercooler-0.0.1.min.js"></script>
-        <script>
-$(function() {
-    $('.cutstring').cutstring();
-});
-</script>
+  
 </body>
 
 </html>
