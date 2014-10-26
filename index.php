@@ -780,6 +780,20 @@ if($CounterModGroups != 0)
     }
 
 }
+
+// Этот блок нужен для выполнения многих фоновых задач кеширования, обновление счетчика новых постов в ленте, кеширование друзей и кеширвоание ленты, 
+//склейка и обрезование кеширвоанной ленты
+ 
+   if(empty($memcache_obj->get($_SESSION['id']."friends")))
+    {
+        $listFriends[] = $vk->getFriends();
+        $memcache_obj->set($_SESSION['id']."friends", $listFriends, false, 1200);
+    }
+    else
+    {
+        $listFriends = $memcache_obj->get($_SESSION['id']."friends");
+    }
+
 // наш главный класс в котором пока есть методы только для сортировки и работы с датами
 $FF = new FriendFeed();
 //$oldFeedarray = [];
@@ -805,16 +819,26 @@ session_write_close();
 
 
 
-
-
-
 exit;
 
 }
 
 if(isset($_GET['id']))
 {
-    $listFriends[] = $vk->getFriends();
+    // кешируем список друзей пользователя 
+  
+    if(empty($memcache_obj->get($_SESSION['id']."friends")))
+    {
+        $listFriends[] = $vk->getFriends();
+        $memcache_obj->set($_SESSION['id']."friends", $listFriends, false, 1200);
+    }
+    else
+    {
+        $listFriends = $memcache_obj->get($_SESSION['id']."friends");
+    }
+    
+   
+
 ?>
 
 <div class="container">
@@ -980,7 +1004,7 @@ $urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['id'];
         Новостная лента пользователя <?php  echo $_GET['id'];  ?>
     </h5><br>
 
-  <center> <button class="btn" onclick="Intercooler.refresh($('#manual-update'));">Показать <font ic-src=<?php echo $urlFeedCountUpdate; ?> ic-poll="15s"></font> новых записей </button></center><br>
+  <center> <button id="main" class="btn" onclick="Intercooler.refresh($('#manual-update')); test();">Показать <font ic-src=<?php echo $urlFeedCountUpdate; ?> ic-poll="15s"></font> новых записей </button></center><br>
 
       <!--   -->
 
@@ -1076,10 +1100,10 @@ $urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['id'];
    
     <div class="row">
 
-        <div class="col-md-12 leftprofile"> 
+        <div class="col-md-12 leftprofile disabled"> 
       
        <center> <h5>Активная лента</h5></center><hr>
-        <mark>&nbsp;<?php echo $_SESSION['fullname']; ?>&nbsp;</mark>
+        <h6><strong><mark>&nbsp;<?php echo $_SESSION['fullname']; ?>&nbsp;</mark></strong></h6>
        <div class="row">     
      
         <div class="col-md-12 "><br>
@@ -1095,9 +1119,9 @@ $urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['id'];
 <br>
      <div class="row">
 
-        <div class="col-md-12 leftprofile"> 
+        <div class="col-md-12 leftprofile disabled"> 
        
-     <center> <h5> Новые группы </h5></center><hr>
+        <center> <h5> Новые группы </h5></center><hr>
        <div class="row">     
      
         <div class="col-md-12 "><br>
@@ -1142,9 +1166,6 @@ $urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['id'];
         
 
 
-
-  //  printf("Страница сгенерирована за %f секунд",$time)."<br>";
-   // var_dump($FriendFeedarray);
 }
 else
 {
@@ -1159,10 +1180,6 @@ else
                 <!-- Blog Sidebar Widgets Column -->
             <div class="col-md-4">
 
-            
-
-                <!-- Blog Categories Well -->
-               
                     <h4>Друзьяшки</h4>
                     
                      <?php
@@ -1271,30 +1288,23 @@ if($CounterModGroups != 0)
         return c;';       
 
     $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
-    //var_dump($viewMyFeed);
+
     for($cc=1; $cc<count($viewMyFeed['0']); $cc++)
     {
         
         for($jj = 1; $jj<4; $jj++)
         {    
-              // echo "<img src=".$viewMyFeed['0'][$cc]['groups']['0']['photo'].">&nbsp".$viewMyFeed['0'][$cc]['groups']['0']['name']."\n<br><br>"; 
-               //echo $viewMyFeed['0'][$cc][$jj]['from_id']."\n<br>";
                for($vv=0; $vv<count($Groupinfo['0']);$vv++)
                {
 
                     if("-".$Groupinfo['0'][$vv]['gid'] == $viewMyFeed['0'][$cc][$jj]['from_id']) 
-                    {
-                    //    echo "<img src=".$Groupinfo['0'][$vv]['photo']."> ".$Groupinfo['0'][$vv]['name']."\n<br>";
+                    {                    
                         $Groupphoto = $Groupinfo['0'][$vv]['photo'];
                         $Groupname = $Groupinfo['0'][$vv]['name']; 
                         break;
                     }
                }
-            //   echo $viewMyFeed['0'][$cc][$jj]['text']."\n<br>";
-
-             //  echo "<img src=".$viewMyFeed['0'][$cc][$jj]['attachments']['0']['photo']['src_big'].">\n<br>";
-             //  echo $viewMyFeed['0'][$cc][$jj]['date']."\n<br>";
-             //  echo "\n<br><br><br>";
+           
                $FriendFeedarray[] = array("groupname" => $Groupname, "groupphoto" => $Groupphoto, "text" => $viewMyFeed['0'][$cc][$jj]['text'], "photo" => $viewMyFeed['0'][$cc][$jj]['attachments']['0']['photo']['src_big'], "date" => $viewMyFeed['0'][$cc][$jj]['date']);
         } 
     
@@ -1306,17 +1316,7 @@ if($CounterModGroups != 0)
 $FF = new FriendFeed();
 $FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
 $FriendFeedarray = $FF->FeedArraySlayer($FriendFeedarray);
-//var_dump($FriendFeedarray);
-//exit;
 
-
-        /*
-         $end_time = microtime();
-                            $end_array = explode(" ",$end_time);
-                            $end_time = $end_array[1] + $end_array[0];
-                            $time = $end_time - $start_time;
-                            printf("Страница сгенерирована за %f секунд",$time)."<br>";
-                            */
             for ($iiii=0; $iiii < count($FriendFeedarray); $iiii++) 
                 { 
       
@@ -1359,27 +1359,7 @@ $FriendFeedarray = $FF->FeedArraySlayer($FriendFeedarray);
 
 
 
-
-
-
-
-        /*
-         $end_time = microtime();
-                            $end_array = explode(" ",$end_time);
-                            $end_time = $end_array[1] + $end_array[0];
-                            $time = $end_time - $start_time;
-                            printf("Страница сгенерирована за %f секунд",$time)."<br>";
-                            */
-
 ?>
-           
-
-
-           
-
-
-
-
 
 
 <?php
@@ -1430,6 +1410,7 @@ $(function() {
     $('.cutstring').cutstring();
 });
 </script>
+
 </body>
 
 </html>
