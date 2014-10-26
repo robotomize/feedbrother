@@ -854,14 +854,16 @@ if(isset($_GET['id']))
                
                     <h5>Ленты друзей</h5>
                     <br>
-                    <table class="table table-hover row ">
+                    <div class="row">
+                    <div class="col-md-12 ">
 
                      <?php
                          
-                     for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) echo "<tr><td><a href='http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']."'>".$listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']."</a><br><br><img src='".$listFriends[$i][$j]['photo_medium']."'></td></tr>";
+                     for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) echo "<tr><td><a href='http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']."'>".$listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']."</a><br><br><img src='".$listFriends[$i][$j]['photo_medium']."' width='60px' heigth='40px'></td></tr>";
 
                      ?>                    
-                    </table>
+                    </div>
+                </div>
 
             </div>
             <!-- Blog Entries Column -->
@@ -1001,7 +1003,7 @@ $urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['id'];
 
    <div class="col-md-7">
     <h5>
-        Новостная лента пользователя <?php  echo $_GET['id'];  ?>
+        Новостная лента 
     </h5><br>
 
   <center> <button id="main" class="btn" onclick="Intercooler.refresh($('#manual-update')); test();">Показать <font ic-src=<?php echo $urlFeedCountUpdate; ?> ic-poll="15s"></font> новых записей </button></center><br>
@@ -1101,39 +1103,62 @@ $urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['id'];
     <div class="row">
 
         <div class="col-md-12 leftprofile disabled"> 
-      
-       <center> <h5>Активная лента</h5></center><hr>
-        <h6><strong><mark>&nbsp;<?php echo $_SESSION['fullname']; ?>&nbsp;</mark></strong></h6>
-       <div class="row">     
-     
-        <div class="col-md-12 "><br>
-            <img src=<?php echo $_SESSION['img']; ?>> &nbsp; &nbsp; 
-             
-            <br>
-            <br>
-        </div>
+       <?php 
+      $friendid = [];
+      $frlist[] = $memcache_obj->get($_SESSION['id']."friends");
+      //var_dump($frlist);
+    //  echo $_GET['id']."\n";
+    //  echo $_SESSION['id'];
+     // echo $_SESSION['fullname'];
+       if($_GET['id'] == $_SESSION['id'])
+            {
+                $friendid['0']['last_name'] = "";
+                $friendid['0']['first_name'] = $_SESSION['fullname'];
+                $friendid['0']['photo_medium'] = $_SESSION['img'];
+               // var_dump($friendid);
+               // break;
+            }
+            else
+            {
 
-        </div>
-        </div>
-    </div>
-<br>
-     <div class="row">
+                 for ($fr=0; $fr < count($frlist['0']['0']); $fr++) 
+                    { 
+                        if($_GET['id'] == $frlist['0']['0'][$fr]['uid'])
+                        {
+                         $friendid[] = $frlist['0']['0'][$fr];
+                            break;
+                        }
 
-        <div class="col-md-12 leftprofile disabled"> 
+                     }
+            }
+
+       ?>
+
+      &nbsp;&nbsp;<h5>Активная лента</h5><hr>
+
+
+
+
        
-        <center> <h5> Новые группы </h5></center><hr>
        <div class="row">     
-     
-        <div class="col-md-12 "><br>
-            
-            <br>
-            <br>
-        </div>
+              <div class="media">
+                <a class="pull-left" href="#">
+                  
+                <img class="media-object" src=<?php echo $friendid['0']['photo_medium']; ?> width="60px" heigth="40px">
+                </a>
+                <div class="media-body">
+                  <h6><strong><mark>&nbsp;<?php echo $friendid['0']['first_name']." ".$friendid['0']['last_name']; ?>&nbsp;</mark></strong></h6>
+                   
+                </div>
+
+            </div>
 
         </div>
-        </div>
-    </div>
-
+     <br><br>
+    
+    
+          
+</div>
 
     </div>
 
@@ -1143,6 +1168,7 @@ $urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['id'];
 
 
  </div>
+
 
 
  <hr>
