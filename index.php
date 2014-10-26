@@ -553,7 +553,7 @@ session_start();
 }
 session_start();
 
-$memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 1200);
+$memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 86400);
   }
   else
   {
@@ -784,7 +784,7 @@ echo count($FriendFeedarray);
 
 session_start();
 
-$memcache_obj->set($_SESSION['id'].$_SESSION['id'], $FriendFeednewarr, false, 600);
+$memcache_obj->set($_SESSION['id'].$_SESSION['id'], $FriendFeednewarr, false, 86400);
 session_write_close();
 //$memcache_obj->set('our_var');
 
@@ -1051,7 +1051,7 @@ $urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['id'];
 }
 // генерация кеш  по id
 
- $memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 7200);
+ $memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 86400);
 
  //$_SESSION['id'] = $owner_id;
    //             $_SESSION['fullname'] = $fullName;
