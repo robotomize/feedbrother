@@ -46,7 +46,16 @@ body {
 
   .leftprofile
       {
-       background-color: #F7F7F7;
+       background-color: #F5F5F5;
+         -webkit-font-smoothing: inherit;
+             -moz-font-smoothing: inherit;
+             -ms-font-smoothing: inherit;
+             -o-font-smoothing: inherit;
+             font-smoothing: inherit;
+      }
+      .leftprofile1
+      {
+       background-color: #FAFAFA;
          -webkit-font-smoothing: inherit;
              -moz-font-smoothing: inherit;
              -ms-font-smoothing: inherit;
@@ -489,7 +498,7 @@ session_start();
     {       
                 
         ?>
-        <table class="table table-bordered row-fluid leftprofile">
+        <table class="table table-bordered row-fluid leftprofile1">
         <tr>
             <td >
                 
@@ -565,7 +574,7 @@ $memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 86400);
       
                 
                             ?>
-                        <table class="table table-bordered row-fluid leftprofile">
+                        <table class="table table-bordered row-fluid leftprofile1">
                              <tr>
                                 <td >
                 
@@ -813,7 +822,7 @@ if(isset($_GET['id']))
         <div class="row">
 
                 <!-- Blog Sidebar Widgets Column -->
-            <div class="col-md-3">
+            <div class="col-md-2">
 
             
 
@@ -825,7 +834,7 @@ if(isset($_GET['id']))
 
                      <?php
                          
-                     for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) echo "<tr><td><img src='".$listFriends[$i][$j]['photo_medium']."'></td><td><a href='http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']."'>".$listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']."</a></td></tr>";
+                     for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) echo "<tr><td><a href='http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']."'>".$listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']."</a><br><br><img src='".$listFriends[$i][$j]['photo_medium']."'></td></tr>";
 
                      ?>                    
                     </table>
@@ -988,7 +997,7 @@ $urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['id'];
       
                 
         ?>
-        <table class="table table-bordered row-fluid leftprofile">
+        <table class="table table-bordered row-fluid leftprofile1">
         <tr>
             <td >
                 
@@ -1063,22 +1072,45 @@ $urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['id'];
 
 </div>
 
- <div class="col-md-2">
-    <h5>
-       Профиль
-    </h5>
+ <div class="col-md-3">
+   
     <div class="row">
-        <div class="col-md-12 leftprofile">  <center><img src=<?php echo $_SESSION['img']; ?>> &nbsp; &nbsp; </center>
+
+        <div class="col-md-12 leftprofile"> 
+      
+       <center> <h5>Активная лента</h5></center><hr>
+        <mark>&nbsp;<?php echo $_SESSION['fullname']; ?>&nbsp;</mark>
        <div class="row">     
      
         <div class="col-md-12 "><br>
-            <center>    <?php echo $_SESSION['fullname']; ?> </center>
-            
+            <img src=<?php echo $_SESSION['img']; ?>> &nbsp; &nbsp; 
+             
+            <br>
+            <br>
         </div>
 
         </div>
         </div>
     </div>
+<br>
+     <div class="row">
+
+        <div class="col-md-12 leftprofile"> 
+       
+     <center> <h5> Новые группы </h5></center><hr>
+       <div class="row">     
+     
+        <div class="col-md-12 "><br>
+            
+            <br>
+            <br>
+        </div>
+
+        </div>
+        </div>
+    </div>
+
+
     </div>
 
 
