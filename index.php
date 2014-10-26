@@ -1,8 +1,4 @@
 <?php
-//ini_set('session.save_handler', 'memcache');
-//ini_set('session.save_path', 'tcp://localhost:11211');
-//ini_set('session.gc_maxlifetime', '0');
-
 
 ?>
 <!DOCTYPE html>
@@ -43,7 +39,18 @@
 body {
     padding-top: 100px; /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
 }
+    .friends
+    {
 
+    }
+    .friends:hover
+    {
+        background-color: #F2F2F2;
+    }
+    .ulliright
+    {
+        color: #000;
+    }
   .leftprofile
       {
        background-color: #F5F5F5;
@@ -97,8 +104,30 @@ body {
 
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right">
-                 
+                <ul class="navbar-right">
+                 <li class="ulliright">
+                         <?php 
+                         session_start();
+                         ?>
+                      <div class="media">
+                        <a class="pull-left" href="#">
+                  
+                            <img class="media-object" src=<?php echo $_SESSION['img']; ?> width="40px" heigth="20px">
+                            </a>
+                                <div class="media-body">
+                            <h6><strong>&nbsp;<?php echo $_SESSION['fullname']; ?>&nbsp;</strong></h6>
+                   
+                            </div>
+
+                        </div>
+
+                   <?php
+                    // echo $_SESSION['fullname'];
+                    session_write_close();
+                       
+                    ?>
+                
+                 </li>
 
                 </ul>
             </div>
@@ -477,7 +506,7 @@ class FriendFeed
 if(!empty($_GET['news']))
 {
 
-
+//echo "ok";
 session_start();
 
 
@@ -487,7 +516,7 @@ session_start();
   if(!empty($FriendFeedarray))
   {
 
-   // echo "ok";
+   // 
    //var_dump($FriendFeedarray);
    // exit;
         
@@ -816,7 +845,9 @@ session_write_close();
 //var_dump($FriendFeedarray);
 //$memcache_obj->set('our_var1', $FriendFeednewarr, false, 1200);
 
-
+?>
+ 
+<?php
 
 
 exit;
@@ -855,13 +886,17 @@ if(isset($_GET['id']))
                     <h5>Ленты друзей</h5>
                     <br>
                     <div class="row">
-                    <div class="col-md-12 ">
+                    <div class="col-md-12">
 
                      <?php
                          
-                     for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) echo "<tr><td><a href='http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']."'>".$listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']."</a><br><br><img src='".$listFriends[$i][$j]['photo_medium']."' width='60px' heigth='40px'></td></tr>";
+                     for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) 
+                        {
 
-                     ?>                    
+                        ?> <div class="friends"><a href=<?php echo "http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']; ?>> <?php echo $listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']; ?></a><br><img src=<?php echo $listFriends[$i][$j]['photo_medium']; ?>><hr></div>
+                        <?php
+                         } 
+                         ?>             
                     </div>
                 </div>
 
@@ -1006,7 +1041,7 @@ $urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['id'];
         Новостная лента 
     </h5><br>
 
-  <center> <button id="main" class="btn" onclick="Intercooler.refresh($('#manual-update')); test();">Показать <font ic-src=<?php echo $urlFeedCountUpdate; ?> ic-poll="15s"></font> новых записей </button></center><br>
+  <center> <button class="btn" onclick="Intercooler.refresh($('#manual-update'));">Показать <font ic-src=<?php echo $urlFeedCountUpdate; ?> ic-poll="15s"></font> новых записей </button></center><br>
 
       <!--   -->
 
@@ -1144,7 +1179,7 @@ $urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['id'];
               <div class="media">
                 <a class="pull-left" href="#">
                   
-                <img class="media-object" src=<?php echo $friendid['0']['photo_medium']; ?> width="60px" heigth="40px">
+                <img class="media-object" src=<?php echo $friendid['0']['photo_medium']; ?> width="80px" heigth="60px">
                 </a>
                 <div class="media-body">
                   <h6><strong><mark>&nbsp;<?php echo $friendid['0']['first_name']." ".$friendid['0']['last_name']; ?>&nbsp;</mark></strong></h6>
