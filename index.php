@@ -46,12 +46,12 @@ body {
 
   .leftprofile
       {
-       background-color: #f9f9f9;
-  -webkit-font-smoothing: antialiased;
-  -moz-font-smoothing: antialiased;
-  -ms-font-smoothing: antialiased;
-  -o-font-smoothing: antialiased;
-  font-smoothing: antialiased;
+       background-color: #F7F7F7;
+         -webkit-font-smoothing: inherit;
+             -moz-font-smoothing: inherit;
+             -ms-font-smoothing: inherit;
+             -o-font-smoothing: inherit;
+             font-smoothing: inherit;
       }
        .cutstring-toggle {
     color: #236D75;
@@ -690,7 +690,7 @@ while($ccc<$CountDivGroups)
 
     $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
 
-    for($cc=1; $cc<count($viewMyFeed['0']); $cc++)
+    for($cc=0; $cc<count($viewMyFeed['0']); $cc++)
     {
         
         for($jj = 1; $jj<5; $jj++)
@@ -743,7 +743,7 @@ if($CounterModGroups != 0)
 
     $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
     //var_dump($viewMyFeed);
-    for($cc=1; $cc<count($viewMyFeed['0']); $cc++)
+    for($cc=0; $cc<count($viewMyFeed['0']); $cc++)
     {
         
         for($jj = 1; $jj<5; $jj++)
@@ -869,7 +869,8 @@ while($ccc<$CountDivGroups)
 
     $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
 
-    for($cc=1; $cc<count($viewMyFeed['0']); $cc++)
+     // var_dump($viewMyFeed);
+    for($cc=0; $cc<count($viewMyFeed['0']); $cc++)
     {
         
         for($jj = 1; $jj<5; $jj++)
@@ -895,6 +896,7 @@ while($ccc<$CountDivGroups)
     
 
     }
+
     unset($viewMyFeed);
 
     $CounterWallget = $CounterWallget + 24;
@@ -921,8 +923,8 @@ if($CounterModGroups != 0)
         return c;';       
 
     $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
-
-    for($cc=1; $cc<count($viewMyFeed['0']); $cc++)
+    //  var_dump($viewMyFeed);
+    for($cc=0; $cc<count($viewMyFeed['0']); $cc++)
     {
         
         for($jj = 1; $jj<5; $jj++)
@@ -953,8 +955,9 @@ if($CounterModGroups != 0)
 //var_dump($viewMyFeed);
 // наш главный класс в котором пока есть методы только для сортировки и работы с датами
 $FF = new FriendFeed();
-$FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
 
+$FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
+//var_dump($FriendFeedarray);
 //$FriendFeedarray = $FF->FeedArraySlayer($FriendFeedarray);
 
 $urlFeedupdate = "http://192.168.1.141/index.php?news=".$_GET['id'];
@@ -1049,11 +1052,12 @@ $urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['id'];
 // генерация кеш  по id
 
  $memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 7200);
- //$memcache_obj->set('our_var1', $FriendFeedarray, false, 600);
 
-
+ //$_SESSION['id'] = $owner_id;
+   //             $_SESSION['fullname'] = $fullName;
+     //           $_SESSION['img'] = $profileimg;
 ?>
-  
+ 
 </div>
 
 
@@ -1061,15 +1065,27 @@ $urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['id'];
 
  <div class="col-md-2">
     <h5>
-        Профиль
+       Профиль
     </h5>
-    <table class="table table-bordered row-fluid">
-        <tr>
-            <td>
-       
-            </td>
-         </tr>   
-    </table>
+    <div class="row">
+        <div class="col-md-12 leftprofile">  <center><img src=<?php echo $_SESSION['img']; ?>> &nbsp; &nbsp; </center>
+       <div class="row">     
+     
+        <div class="col-md-12 "><br>
+            <center>    <?php echo $_SESSION['fullname']; ?> </center>
+            
+        </div>
+
+        </div>
+        </div>
+    </div>
+    </div>
+
+
+
+
+
+
  </div>
 
 
@@ -1093,6 +1109,10 @@ $urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['id'];
 <?php
         
 
+
+
+  //  printf("Страница сгенерирована за %f секунд",$time)."<br>";
+   // var_dump($FriendFeedarray);
 }
 else
 {
@@ -1175,23 +1195,19 @@ while($ccc<$CountDivGroups)
         
         for($jj = 1; $jj<4; $jj++)
         {    
-              // echo "<img src=".$viewMyFeed['0'][$cc]['groups']['0']['photo'].">&nbsp".$viewMyFeed['0'][$cc]['groups']['0']['name']."\n<br><br>"; 
-               //echo $viewMyFeed['0'][$cc][$jj]['from_id']."\n<br>";
+           
                for($vv=0; $vv<count($Groupinfo['0']);$vv++)
                {
 
                     if("-".$Groupinfo['0'][$vv]['gid'] == $viewMyFeed['0'][$cc][$jj]['from_id']) 
                     {
-                       // echo "<img src=".$Groupinfo['0'][$vv]['photo']."> ".$Groupinfo['0'][$vv]['name']."\n<br>";
+                     
                         $Groupphoto = $Groupinfo['0'][$vv]['photo'];
                         $Groupname = $Groupinfo['0'][$vv]['name'];                                           
                         break;
                     }
                }
-              // echo $viewMyFeed['0'][$cc][$jj]['text']."\n<br>";
-              // echo "<img src=".$viewMyFeed['0'][$cc][$jj]['attachments']['0']['photo']['src_big'].">\n<br>";
-              // echo $viewMyFeed['0'][$cc][$jj]['date']."\n<br>";
-              // echo "\n<br><br><br>";
+             
                $FriendFeedarray[] = array("groupname" => $Groupname, "groupphoto" => $Groupphoto, "text" => $viewMyFeed['0'][$cc][$jj]['text'], "photo" => $viewMyFeed['0'][$cc][$jj]['attachments']['0']['photo']['src_big'], "date" => $viewMyFeed['0'][$cc][$jj]['date']);
         } 
     
