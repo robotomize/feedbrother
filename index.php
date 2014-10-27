@@ -41,17 +41,17 @@ body {
 }
 .groupslink
 {
-   color: #B3B3B3; 
+   color: #919191; 
    text-decoration: underline;
 }
 
     .friends
     {
-
+        color: #000;
     }
     .friends:hover
     {
-        background-color: #F2F2F2;
+       
     }
     .ulliright
     {
@@ -128,6 +128,11 @@ body {
 
 <?php
 // здесь пока будет блок вспомогательных функций, потом в отдельный файл вынесу
+
+function link_it($s)
+{
+       return preg_replace('@(https?://([-\w\.]+[-\w])+(:\d+)?(/([\w/_\.#-]*(\?\S+)?[^\.\s])?)?)@', '<a href="$1" target="_blank">$1</a>', $s); 
+}
 
 function FeedDiffarray($a, $b) {
     if ($a === $b) { return 0; }
@@ -532,8 +537,8 @@ session_start();
                         {
                             ?>
                            
-                           <?php echo " "; ?> &nbsp; &nbsp; <div class="cutstring" data-display="none" data-max-length="200" data-show-text="Показать полностью.." data-hide-text="Свернуть..">                  
-                        &nbsp;<?php echo $FriendFeedarray[$iiii]['text']; ?></div>
+                           <div class="cutstring" data-display="none" data-max-length="200" data-show-text="Показать полностью.." data-hide-text="Свернуть..">                  
+                        &nbsp;<?php echo link_it($FriendFeedarray[$iiii]['text']); ?></div>
                         
                             <?php
                     
@@ -628,7 +633,7 @@ $memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 86400);
                             ?>
                            
                            <?php echo " "; ?> &nbsp; &nbsp; <div class="cutstring" data-display="none" data-max-length="200" data-show-text="Показать полностью.." data-hide-text="Свернуть..">                  
-                        &nbsp;<?php echo $FriendFeedarray[$iiii]['text']; ?></div>
+                        &nbsp;<?php echo link_it($FriendFeedarray[$iiii]['text']); ?></div>
                         
                             <?php
                     
@@ -923,7 +928,7 @@ if(isset($_GET['id']))
                      for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) 
                         {
 
-                        ?> <div class="friends"><a href=<?php echo "http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']; ?>> <?php echo $listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']; ?></a><br><img src=<?php echo $listFriends[$i][$j]['photo_medium']; ?>><hr></div>
+                        ?> <div class="friends"><a href=<?php echo "http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']; ?> class="friends"> <?php echo $listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']; ?></a><br><img src=<?php echo $listFriends[$i][$j]['photo_medium']; ?>><hr></div>
                         <?php
                          } 
                          ?>             
