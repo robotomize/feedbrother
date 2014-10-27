@@ -39,57 +39,7 @@
 body {
     padding-top: 100px; /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
 }
-.groupslink
-{
-   color: #919191; 
-   text-decoration: underline;
-}
 
-    .friends
-    {
-        color: #000;
-    }
-    .friends:hover
-    {
-       
-    }
-    .ulliright
-    {
-        color: #000;
-    }
-  .leftprofile
-      {
-       background-color: #EFEFEF;
-         -webkit-font-smoothing: inherit;
-             -moz-font-smoothing: inherit;
-             -ms-font-smoothing: inherit;
-             -o-font-smoothing: inherit;
-             font-smoothing: inherit;
-      }
-      .leftprofile1
-      {
-       background-color: #FAFAFA;
-         -webkit-font-smoothing: inherit;
-             -moz-font-smoothing: inherit;
-             -ms-font-smoothing: inherit;
-             -o-font-smoothing: inherit;
-             font-smoothing: inherit;
-      }
-       .cutstring-toggle {
-    color: #236D75;
-    
-    cursor: hand;
-    cursor: pointer;
-    margin-left: 7px;
-    padding-left: 5px;
-        }
-        .cutstring-toggle:hover {
-    color: #19555C;
-     margin-left: 7px;
-      padding-left: 5px;
-    cursor: hand;
-    cursor: pointer;
-        }
 </style>
 
  
@@ -678,27 +628,19 @@ $memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 86400);
                             </div>
                                 <div class="col-md-5 col-md-offset-4">
                         <a href="#"><font class="groupslink">Открыть группу  <?php echo iconv_substr($FriendFeedarray[$iiii]['groupname'], 0, 10, 'UTF-8')."...";  ?>&nbsp;<span class="glyphicon glyphicon-share-alt"> </span></font></a>
-                            </div>
-                            
-                               
-
-                        </div>
-                              
+                            </div>                        
+                         </div>                    
+                                  
                   
-                 
-                  
-               </td>
-               </tr>  
-                 </table>                                         
+                           </td>
+                           </tr>  
+                             </table>                                         
 
-                                                <?php
-                                                    }
-
+                         <?php
+                        }
 
                     }                
-
-
-?>
+                      ?>
  <script>
 $(function() {
     $('.cutstring').cutstring();
@@ -907,14 +849,59 @@ if(isset($_GET['id']))
 
 ?>
 
+
+ <?php 
+ // определение текущей активной ленты 
+      $friendid = [];
+      $frlist[] = $memcache_obj->get($_SESSION['id']."friends");    
+       if($_GET['id'] == $_SESSION['id'])
+            {
+                $friendid['0']['last_name'] = "";
+                $friendid['0']['first_name'] = $_SESSION['fullname'];
+                $friendid['0']['photo_medium'] = $_SESSION['img'];
+               // var_dump($friendid);
+               // break;
+            }
+            else
+            {
+
+                 for ($fr=0; $fr < count($frlist['0']['0']); $fr++) 
+                    { 
+                        if($_GET['id'] == $frlist['0']['0'][$fr]['uid'])
+                        {
+                         $friendid[] = $frlist['0']['0'][$fr];
+                            break;
+                        }
+
+                     }
+            }
+
+    ?>
+
 <div class="container">
 
         <div class="row">
 
                 <!-- Blog Sidebar Widgets Column -->
-            <div class="col-md-2">
+            <div class="col-md-2 leftprofile">
+                 <div class="row">
+                <div class="feedactiveprofile">
+                 &nbsp;&nbsp;<h5>Активная лента</h5>
+                
+                <div class="media">
+                <a class="pull-left" href="#">
+                  
+                <img class="media-object" src=<?php echo $friendid['0']['photo_medium']; ?> width="80px" heigth="60px">
+                </a>
+                <div class="media-body"><br>
+                 
+                   
+                    </div>
 
-            
+                    </div>
+                      <h6><strong>&nbsp;<?php echo $friendid['0']['first_name']." ".$friendid['0']['last_name']; ?>&nbsp;</strong></h6><hr>
+            </div>
+            </div>
 
                 <!-- Blog Categories Well -->
                
@@ -928,7 +915,7 @@ if(isset($_GET['id']))
                      for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) 
                         {
 
-                        ?> <div class="friends"><a href=<?php echo "http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']; ?> class="friends"> <?php echo $listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']; ?></a><br><img src=<?php echo $listFriends[$i][$j]['photo_medium']; ?>><hr></div>
+                        ?> <div class="row"><div class="friends"><a href=<?php echo "http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']; ?> class="friends"> <?php echo $listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']; ?></a><br><a href=<?php echo "http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']; ?>><img src=<?php echo $listFriends[$i][$j]['photo_medium']; ?>></a><hr></div></div>
                         <?php
                          } 
                          ?>             
@@ -953,7 +940,7 @@ if(empty($memcache_obj->get($_SESSION['id']."idpage")))
 
     // echo $_GET['id']."\n";
       //  echo $memcache_obj->get($_SESSION['id']."idpage");
-
+   unset($FriendFeedarray);
    if(empty($FriendFeedarray))
     {
     if(empty($FriendFeedarray1))
@@ -1090,7 +1077,7 @@ $memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 86400);
 
 $FF = new FriendFeed();
 //var_dump($FriendFeedarray);
-$FriendFeedarray = $FF->FeedArraySlayer($FriendFeedarray);
+//$FriendFeedarray = $FF->FeedArraySlayer($FriendFeedarray);
 $memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 86400);
 }
 else
@@ -1100,6 +1087,7 @@ else
        // echo "hui";
          // echo $_GET['id']."\n";
         //echo $memcache_obj->get($_SESSION['id']."idpage");
+        unset($FriendFeedarray);
             if(empty($FriendFeedarray))
              {
              if(empty($FriendFeedarray1))
@@ -1247,6 +1235,8 @@ else
     }
     else
     {
+       
+          unset($FriendFeedarray);
         //echo $_GET['id']."\n";
        // echo $memcache_obj->get($_SESSION['id']."idpage")."\n";
 
@@ -1377,6 +1367,7 @@ $memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 86400);
 }
 $urlFeedupdate = "http://192.168.1.141/index.php?news=".$_GET['id'];
 $urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['id'];
+$urlMyProfile = "http://192.168.1.141/index.php?id=".$_SESSION['id'];
 
 ?>
 
@@ -1532,7 +1523,7 @@ $urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['id'];
 
        ?>
 
-      &nbsp;&nbsp;<h5>Активная лента</h5>
+      &nbsp;&nbsp;<h5>Профиль</h5>
 
 
 
@@ -1540,18 +1531,19 @@ $urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['id'];
        
        <div class="row">     
               <div class="media">
-                <a class="pull-left" href="#">
+                <a class="pull-left" href=<?php echo $urlMyProfile; ?>>
                   
-                <img class="media-object" src=<?php echo $friendid['0']['photo_medium']; ?> width="80px" heigth="60px">
-                </a>
-                <div class="media-body"><br>
-                  <h6><strong>&nbsp;<?php echo $friendid['0']['first_name']." ".$friendid['0']['last_name']; ?>&nbsp;</strong></h6>
+              <img class="media-object" src=<?php echo $_SESSION['img']; ?> width="80px" heigth="60px">
+               
+                <div class="media-body">
+                  <a href=<?php echo $urlMyProfile; ?> class="profilelink"><h6><strong>&nbsp;<?php echo $_SESSION['fullname']; ?>&nbsp;</strong></h6></a>
                    
                 </div>
 
             </div>
 
         </div>
+
      <br><br>
     
     
@@ -1566,7 +1558,8 @@ $urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['id'];
 
 
  </div>
-
+<br>
+  
 
 
  <hr>
