@@ -20,6 +20,7 @@
     <!-- Custom CSS -->
     <link href="css/agency.css" rel="stylesheet">
 
+
     <!-- Custom Fonts -->
     <link href="font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
@@ -58,7 +59,7 @@ body {
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="http://192.168.1.141/vk.php">  <font class="menutexttopglyph"> <span class="glyphicon glyphicon-th-list "></span></font><font class="menutexttop">&nbsp;FriendFeed</a></font> 
+                <a class="navbar-brand" href="http://192.168.1.141/index.php">  <font class="menutexttopglyph"> <span class="glyphicon glyphicon-th-list "></span></font><font class="menutexttop">&nbsp;FriendFeed</a></font> 
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -194,7 +195,7 @@ class VkApi
         if (empty($token)) {
 
             $url = "https://oauth.vk.com/authorize?client_id="
-                   . $this->appId . "&redirect_uri=http://192.168.1.141/vk.php&display=page&response_type=code&scope=video,offline,groups,friends,photos,notify";
+                   . $this->appId . "&redirect_uri=http://192.168.1.141/index.php&display=page&response_type=code&scope=video,offline,groups,friends,photos,notify";
  
             header('Location: ' . $url); 
       
@@ -466,11 +467,14 @@ session_start();
         
         
 //echo count($FriendFeedarray);
+?>
 
+<?php
  for ($iiii=0; $iiii < count($FriendFeedarray); $iiii++) 
     {       
          
         // код который подсвечивает новые сообщения в ленте пользователя
+
 
         if(!empty($NewmessageCount))
         {
@@ -514,7 +518,7 @@ session_start();
                                  
                                             ?>
                                     
-                                            <img src=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?>> <br> 
+                                            <img src=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?> width="98%"> <br> 
                                         <br>
                                             <?php
                                             }
@@ -595,7 +599,7 @@ session_start();
                                  
                                             ?>
                                     
-                                            <img src=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?>> <br> 
+                                            <img src=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?> width="98%"> <br> 
                                         <br>
                                             <?php
                                             }
@@ -831,7 +835,7 @@ session_start();
 $vk = new VkApi(array(
     'apiKey' => 'E8tyn9sgbwaM2MG9ZCSq',
     'appId' => '4581515',
-    'authRedirectUrl' => 'http://192.168.1.141/vk.php',
+    'authRedirectUrl' => 'http://192.168.1.141/index.php',
 ));
   session_write_close();
  // строка для отправки запроса в виде строки с gids групп для groups.get 
@@ -1121,7 +1125,7 @@ if(isset($_GET['id']))
                      for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) 
                         {
 
-                        ?> <div class="row"><div class="friends"><a href=<?php echo "http://192.168.1.141/vk.php?id=".$listFriends[$i][$j]['uid']; ?> class="friends"> <?php echo $listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']; ?></a><br><a href=<?php echo "http://192.168.1.141/vk.php?id=".$listFriends[$i][$j]['uid']; ?>><img src=<?php echo $listFriends[$i][$j]['photo_medium']; ?>></a><hr></div></div>
+                        ?> <div class="row"><div class="friends"><a href=<?php echo "http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']; ?> class="friends"> <?php echo $listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']; ?></a><br><a href=<?php echo "http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']; ?>><img src=<?php echo $listFriends[$i][$j]['photo_medium']; ?>></a><hr></div></div>
                         <?php
                          } 
                          ?>             
@@ -1580,9 +1584,9 @@ $memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 86400);
 
 }
 }
-$urlFeedupdate = "http://192.168.1.141/vk.php?news=".$_GET['id'];
-$urlFeedCountUpdate = "http://192.168.1.141/vk.php?groups=".$_GET['id'];
-$urlMyProfile = "http://192.168.1.141/vk.php?id=".$_SESSION['id'];
+$urlFeedupdate = "http://192.168.1.141/index.php?news=".$_GET['id'];
+$urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['id'];
+$urlMyProfile = "http://192.168.1.141/index.php?id=".$_SESSION['id'];
 
 ?>
 
@@ -1601,7 +1605,7 @@ $urlMyProfile = "http://192.168.1.141/vk.php?id=".$_SESSION['id'];
 
 
 
-      <div id="manual-update" ic-src=<?php echo $urlFeedupdate; ?>> 
+      <div id="manual-update" ic-indicator=".load-container load1" ic-src=<?php echo $urlFeedupdate; ?>> 
                  
 
 
@@ -1649,7 +1653,7 @@ $urlMyProfile = "http://192.168.1.141/vk.php?id=".$_SESSION['id'];
                  
                             ?>
                     
-                            <img src=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?>> <br> 
+                            <img src=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?> width="98%"> <br> 
                         <br>
                             <?php
                             }
@@ -1887,7 +1891,7 @@ else
                      for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) 
                         {
 
-                        ?> <div class="row"><div class="friends"><a href=<?php echo "http://192.168.1.141/vk.php?id=".$listFriends[$i][$j]['uid']; ?> class="friends"> <?php echo $listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']; ?></a><br><a href=<?php echo "http://192.168.1.141/vk.php?id=".$listFriends[$i][$j]['uid']; ?>><img src=<?php echo $listFriends[$i][$j]['photo_medium']; ?>></a><hr></div></div>
+                        ?> <div class="row"><div class="friends"><a href=<?php echo "http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']; ?> class="friends"> <?php echo $listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']; ?></a><br><a href=<?php echo "http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']; ?>><img src=<?php echo $listFriends[$i][$j]['photo_medium']; ?>></a><hr></div></div>
                         <?php
                          } 
                          ?>             
@@ -2343,9 +2347,9 @@ $memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 86400);
 
 }
 }
-$urlFeedupdate = "http://192.168.1.141/vk.php?news=".$_SESSION['id'];
-$urlFeedCountUpdate = "http://192.168.1.141/vk.php?groups=".$_SESSION['id'];
-$urlMyProfile = "http://192.168.1.141/vk.php?id=".$_SESSION['id'];
+$urlFeedupdate = "http://192.168.1.141/index.php?news=".$_SESSION['id'];
+$urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_SESSION['id'];
+$urlMyProfile = "http://192.168.1.141/index.php?id=".$_SESSION['id'];
 
 ?>
 
@@ -2409,10 +2413,10 @@ $urlMyProfile = "http://192.168.1.141/vk.php?id=".$_SESSION['id'];
                             <?php
                          for ($ii=0; $ii < count($FriendFeedarray[$iiii]['photo']); $ii++) 
                             { 
-                 
+                                
                             ?>
                     
-                            <img src=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?>> <br> 
+                            <img src=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?> width="98%"> <br> 
                         <br>
                             <?php
                             }
