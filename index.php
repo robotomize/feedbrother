@@ -455,6 +455,7 @@ session_start();
 
   $FF = new FriendFeed();
   $FriendFeedarray = $memcache_obj->get($_SESSION['id'].$_SESSION['id']);
+  $NewmessageCount = $memcache_obj->get($_SESSION['id']."countnewmessage");
   session_write_close();
   if(!empty($FriendFeedarray))
   {
@@ -468,7 +469,178 @@ session_start();
 
  for ($iiii=0; $iiii < count($FriendFeedarray); $iiii++) 
     {       
-                
+         
+        // код который подсвечивает новые сообщения в ленте пользователя
+
+        if(!empty($NewmessageCount))
+        {
+            if($iiii < $NewmessageCount)
+            {
+                ?>
+                                     <table class="table table-bordered row-fluid newfeed">
+                                        <tr>
+                                         <td >
+                                
+
+                                 <div class="media">
+                                <a class="pull-left" href=<?php echo "http://vk.com/".$FriendFeedarray[$iiii]['screen']; ?> target="_blank">
+                                  
+                                <img class="media-object" src= <?php echo $FriendFeedarray[$iiii]['groupphoto'];   ?>>
+                                </a>
+                                <div class="media-body">
+                                 &nbsp;<a href=<?php echo "http://vk.com/".$FriendFeedarray[$iiii]['screen']; ?> target="_blank"><strong> <?php echo $FriendFeedarray[$iiii]['groupname'];   ?></strong></a>
+                                   <?php  
+                                        if(!empty($FriendFeedarray[$iiii]['text']))
+                                        {
+                                            ?>
+                                           
+                                           <?php echo " "; ?> &nbsp; &nbsp; <div class="cutstring" data-display="none" data-max-length="200" data-show-text="Показать полностью.." data-hide-text="Свернуть..">                  
+                                       <?php echo " &nbsp;".$FriendFeedarray[$iiii]['text']; ?></div>
+                                        
+                                            <?php
+                                    
+                                        }
+                                   ?>
+
+                                        <?php
+                                         if(!empty($FriendFeedarray[$iiii]['photo']))
+                                        {
+
+                                         ?>
+                                            <br>
+                                            <?php
+                                         for ($ii=0; $ii < count($FriendFeedarray[$iiii]['photo']); $ii++) 
+                                            { 
+                                 
+                                            ?>
+                                    
+                                            <img src=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?>> <br> 
+                                        <br>
+                                            <?php
+                                            }
+                                             } 
+                                                ?>
+                                            
+                                    
+
+                                            
+
+                                        </div>
+                                        
+                               
+
+                                    </div>
+                                    <br>
+                                     <div class="row">
+
+                                <!-- Blog Sidebar Widgets Column -->
+
+                                 <div class="col-md-3">
+                                         &nbsp;&nbsp; <font class="timetextago"><?php echo $FF->timeAgo($FriendFeedarray[$iiii]['date']);   ?></font> 
+                                            </div>
+                                                <div class="col-md-5 col-md-offset-4">
+                                        <a href=<?php echo "http://vk.com/".$FriendFeedarray[$iiii]['screen']; ?> target="_blank"><font class="groupslink">Открыть группу  <?php echo iconv_substr($FriendFeedarray[$iiii]['groupname'], 0, 10, 'UTF-8')."...";  ?>&nbsp;<span class="glyphicon glyphicon-share-alt"> </span></font></a>
+                                            </div>
+                                            
+                                               
+
+                                        </div>
+                                              
+                                  
+                                 
+                                  
+                               </td>
+                               </tr>  
+                                 </table>  
+
+                 <?php                
+            }
+            else
+            {
+                ?>
+                                     <table class="table table-bordered row-fluid leftprofile1">
+                                        <tr>
+                                        <td >
+                                
+
+                                 <div class="media">
+                                <a class="pull-left" href=<?php echo "http://vk.com/".$FriendFeedarray[$iiii]['screen']; ?> target="_blank">
+                                  
+                                <img class="media-object" src= <?php echo $FriendFeedarray[$iiii]['groupphoto'];   ?>>
+                                </a>
+                                <div class="media-body">
+                                 &nbsp;<a href=<?php echo "http://vk.com/".$FriendFeedarray[$iiii]['screen']; ?> target="_blank"><strong> <?php echo $FriendFeedarray[$iiii]['groupname'];   ?></strong></a>
+                                   <?php  
+                                        if(!empty($FriendFeedarray[$iiii]['text']))
+                                        {
+                                            ?>
+                                           
+                                           <?php echo " "; ?> &nbsp; &nbsp; <div class="cutstring" data-display="none" data-max-length="200" data-show-text="Показать полностью.." data-hide-text="Свернуть..">                  
+                                       <?php echo " &nbsp;".$FriendFeedarray[$iiii]['text']; ?></div>
+                                        
+                                            <?php
+                                    
+                                        }
+                                   ?>
+
+                                        <?php
+                                         if(!empty($FriendFeedarray[$iiii]['photo']))
+                                        {
+
+                                         ?>
+                                            <br>
+                                            <?php
+                                         for ($ii=0; $ii < count($FriendFeedarray[$iiii]['photo']); $ii++) 
+                                            { 
+                                 
+                                            ?>
+                                    
+                                            <img src=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?>> <br> 
+                                        <br>
+                                            <?php
+                                            }
+                                             } 
+                                                ?>
+                                            
+                                    
+
+                                            
+
+                                        </div>
+                                        
+                               
+
+                                    </div>
+                                    <br>
+                                     <div class="row">
+
+                                <!-- Blog Sidebar Widgets Column -->
+
+                                 <div class="col-md-3">
+                                         &nbsp;&nbsp; <font class="timetextago"><?php echo $FF->timeAgo($FriendFeedarray[$iiii]['date']);   ?></font> 
+                                            </div>
+                                                <div class="col-md-5 col-md-offset-4">
+                                        <a href=<?php echo "http://vk.com/".$FriendFeedarray[$iiii]['screen']; ?> target="_blank"><font class="groupslink">Открыть группу  <?php echo iconv_substr($FriendFeedarray[$iiii]['groupname'], 0, 10, 'UTF-8')."...";  ?>&nbsp;<span class="glyphicon glyphicon-share-alt"> </span></font></a>
+                                            </div>
+                                            
+                                               
+
+                                        </div>
+                                              
+                                  
+                                 
+                                  
+                               </td>
+                               </tr>  
+                                 </table> 
+                                 <?php
+            }
+        }
+        else
+        {
+
+
+
         ?>
         <table class="table table-bordered row-fluid leftprofile1">
         <tr>
@@ -549,6 +721,7 @@ session_start();
      
 
 <?php
+}
 //echo $iiii;
 }
 session_start();
@@ -811,8 +984,9 @@ $oldFeedarray = $memcache_obj->get($_SESSION['id']);
 //$FriendFeedarray = $FF->Newsdiffarray($FriendFeedarray,$oldFeedarray);
 
 $FriendFeedarray = array_udiff($FriendFeednewarr, $oldFeedarray, "FeedDiffarray");
-echo count($FriendFeedarray);
 
+echo count($FriendFeedarray);
+$memcache_obj->set($_SESSION['id']."countnewmessage", count($FriendFeedarray), false, 300);
 session_start();
 
 $memcache_obj->set($_SESSION['id'].$_SESSION['id'], $FriendFeednewarr, false, 86400);
