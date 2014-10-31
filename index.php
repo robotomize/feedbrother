@@ -60,7 +60,7 @@ body {
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="http://192.168.1.141/index.php">  <font class="menutexttopglyph"> <span class="glyphicon glyphicon-th-list "></span></font><font class="menutexttop">&nbsp;FriendFeed</a></font> 
+                <a class="navbar-brand" href="http://192.168.1.141/vk.php">  <font class="menutexttopglyph"> <span class="glyphicon glyphicon-th-list "></span></font><font class="menutexttop">&nbsp;FriendFeed</a></font> 
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -76,6 +76,30 @@ body {
         <!-- /.container-fluid -->
 <hr>
     </nav>
+    <div id="mars" style="display:none"></div>
+
+    <script>
+    var opts = {
+  lines: 17, // The number of lines to draw
+  length: 27, // The length of each line
+  width: 10, // The line thickness
+  radius: 60, // The radius of the inner circle
+  corners: 1, // Corner roundness (0..1)
+  rotate: 56, // The rotation offset
+  direction: 1, // 1: clockwise, -1: counterclockwise
+  color: '#000', // #rgb or #rrggbb or array of colors
+  speed: 2, // Rounds per second
+  trail: 60, // Afterglow percentage
+  shadow: false, // Whether to render a shadow
+  hwaccel: false, // Whether to use hardware acceleration
+  className: 'spinner', // The CSS class to assign to the spinner
+  zIndex: 2e9, // The z-index (defaults to 2000000000)
+  top: '50%', // Top position relative to parent
+  left: '50%' // Left position relative to parent
+};
+var target = document.getElementById('mars');
+var spinner = new Spinner(opts).spin(target);
+    </script>
 
 
 <?php
@@ -99,7 +123,7 @@ function FeedArraySlayer($array)
 function checkdatearr($datear)
 {
     $diff = time() - $datear;
-    if($diff > 259200)
+    if($diff > 432000)
     {
         return 0;
     }
@@ -212,7 +236,7 @@ class VkApi
         if (empty($token)) {
 
             $url = "https://oauth.vk.com/authorize?client_id="
-                   . $this->appId . "&redirect_uri=http://192.168.1.141/index.php&display=page&response_type=code&scope=video,offline,groups,friends,photos,notify";
+                   . $this->appId . "&redirect_uri=http://192.168.1.141/vk.php&display=page&response_type=code&scope=video,offline,groups,friends,photos,notify";
  
             header('Location: ' . $url); 
       
@@ -529,12 +553,14 @@ session_start();
                                             <?php
                                          for ($ii=0; $ii < count($FriendFeedarray[$iiii]['photo']); $ii++) 
                                             { 
-                                 
+                                                 if($FriendFeedarray[$iiii]['photo'][$ii] != "")
+                                            {
                                             ?>
                                     
                                             <img src=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?> width="98%"> <br> 
                                         <br>
                                             <?php
+                                        }
                                             }
                                              } 
                                                 ?>
@@ -610,12 +636,14 @@ session_start();
                                             <?php
                                          for ($ii=0; $ii < count($FriendFeedarray[$iiii]['photo']); $ii++) 
                                             { 
-                                 
+                                                 if($FriendFeedarray[$iiii]['photo'][$ii] != "")
+                                            {
                                             ?>
                                     
                                             <img src=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?> width="98%"> <br> 
                                         <br>
                                             <?php
+                                        }
                                             }
                                              } 
                                                 ?>
@@ -849,7 +877,7 @@ session_start();
 $vk = new VkApi(array(
     'apiKey' => 'E8tyn9sgbwaM2MG9ZCSq',
     'appId' => '4581515',
-    'authRedirectUrl' => 'http://192.168.1.141/index.php',
+    'authRedirectUrl' => 'http://192.168.1.141/vk.php',
 ));
   session_write_close();
  // строка для отправки запроса в виде строки с gids групп для groups.get 
@@ -1065,155 +1093,180 @@ exit;
 
 }
 
+if(isset($_GET['oldcache']))
+{
+                                                $offset = $memcache_obj->get($_SESSION['id']."offset");
+                                   // $FriendFeedarray = $memcache_obj->get($_SESSION['id'].$_SESSION['id']);
+                                    //$FriendFeedarray1 = $memcache_obj->get($_SESSION['id']);
+                                            $myid = $memcache_obj->get($_SESSION['id']."idpage");
+                                                echo $myid."\n";
+                                   // if(empty($FriendFeedarray)) $FriendFeedarray = $FriendFeedarray1;
+                                 //  echo "bitch".$offset."bitch";
+                                   //echo "nyid".$myid."fucks";
+
+
+
+                                                ////////////////////////////////////////////////////////////////
+                                            // где то тут ошибка, странно та, но типа так                                            
+                                            ///////////////////////////////////////////////////////////////////////
+                                                                $GroupIds[] = $vk->getGroupsforWall($myid);
+
+                                                                  //echo "Group IDS ".count($GroupIds)."\n";
+                                                                for($mm=0;$mm<count($GroupIds['0']);$mm++)
+                                                                {
+                                                             if($GroupIdsStr == "") $GroupIdsStr = $GroupIds['0'][$mm];
+                                                                    else $GroupIdsStr = $GroupIdsStr.",".$GroupIds['0'][$mm];
+                                                                }
+                                                    //echo $GroupIdsStr;
+                                                            $Groupinfo[] = $vk->getGroupsById($GroupIdsStr);
+                                                          
+                                                    // целое число запросов к группам 
+
+                                                    $CountDivGroups = floor(count($Groupinfo['0'])/24);
+
+                                                    // остаток от деления на 24, максимальное число запросов в группам
+
+                                                    $CounterModGroups = count($Groupinfo['0']) % 24;
+                                                    $CounterWallget = 0;
+                                                    $CounterWallget24 = 24;
+
+                                                    while($ccc<$CountDivGroups)
+                                                    {
+
+                                                        $codeStr = 'var a=API.groups.get({"user_id":"'.$myid.'"}); var b=a; var d='.$CounterWallget.'; var v='.$CounterWallget24.';
+                                                            var c = [];
+                                                            while (d < v)
+                                                            {
+                                                             c.push(API.wall.get({"owner_id":-b[d],"count":"4","offset":"'.$offset.'"}));
+                                                             d = d+1; 
+                                                            };
+                                                            return c;';       
+
+                                                        $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
+
+                                                        //var_dump($viewMyFeed);
+                                                         // var_dump($viewMyFeed);
+                                                        for($cc=0; $cc<count($viewMyFeed['0']); $cc++)
+                                                        {
+                                                            
+                                                            for($jj = 1; $jj<5; $jj++)
+                                                            {    
+                                                                   for($vv=0; $vv<count($Groupinfo['0']);$vv++)
+                                                                   {
+
+                                                                        if("-".$Groupinfo['0'][$vv]['gid'] == $viewMyFeed['0'][$cc][$jj]['from_id']) 
+                                                                        {
+                                                                            $gidscreen = $Groupinfo['0'][$vv]['screen_name'];
+                                                                            $gidd = $Groupinfo['0'][$vv]['gid'];
+                                                                            $Groupphoto = $Groupinfo['0'][$vv]['photo'];
+                                                                            $Groupname = $Groupinfo['0'][$vv]['name'];                                           
+                                                                            break;
+                                                                        }
+                                                                   }
+                                                                    for ($vv=0; $vv < count($viewMyFeed['0'][$cc][$jj]['attachments']); $vv++) 
+                                                                    { 
+                                                                        $Feedphotoarray[] = $viewMyFeed['0'][$cc][$jj]['attachments'][$vv]['photo']['src_big'];
+                                                                    }
+                                                                     if(checkdatearr($viewMyFeed['0'][$cc][$jj]['date']) == 1)
+                                                                   {
+                                                                        $FriendFeedarray[] = array("groupname" => $Groupname, "groupphoto" => $Groupphoto, "text" => $viewMyFeed['0'][$cc][$jj]['text'], "photo" => $Feedphotoarray, "date" => $viewMyFeed['0'][$cc][$jj]['date'],"gid" => $gidd, "screen" => $gidscreen); 
+                                                                    }
+                                                                //   $FriendFeedarray[] = array("groupname" => $Groupname, "groupphoto" => $Groupphoto, "text" => $viewMyFeed['0'][$cc][$jj]['text'], "photo" => $Feedphotoarray, "date" => $viewMyFeed['0'][$cc][$jj]['date'],"gid" => $gidd, "screen" => $gidscreen);
+                                                              unset($Feedphotoarray);  
+                                                            //  echo $viewMyFeed['0'][$cc][$jj]['date']."\n";   
+                                                            } 
+                                                        
+
+                                                        }
+                                                       // echo "viewmyfeed1 ".count($viewMyFeed)."\n";
+                                                        unset($viewMyFeed);
+
+                                                        $CounterWallget = $CounterWallget + 24;
+                                                        $CounterWallget24 = $CounterWallget24 + 24;
+                                                        $ccc++;
+                                                    }
+
+                                                    if($CounterModGroups != 0)
+                                                    {
+                                                        $CounterWallget = 0;
+                                                        $CounterWallget24 = 24;
+                                                        unset($viewMyFeed);
+
+                                                        $CounterMod = $ccc*24;
+                                                        $CounterModGroups = $CounterMod + $CounterModGroups;
+
+                                                        $codeStr = 'var a=API.groups.get({"user_id":"'.$myid.'"}); var b=a; var d='.$CounterMod.'; var v='.$CounterModGroups.';
+                                                            var c = [];
+                                                            while (d < v)
+                                                            {
+                                                             c.push(API.wall.get({"owner_id":-b[d],"count":"4","offset":"'.$offset.'"}));
+                                                             d = d+1; 
+                                                            };
+                                                            return c;';       
+
+                                                        $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
+                                                        //  var_dump($viewMyFeed);
+                                                        for($cc=0; $cc<count($viewMyFeed['0']); $cc++)
+                                                        {
+                                                            
+                                                            for($jj = 1; $jj<5; $jj++)
+                                                            {    
+                                                                   for($vv=0; $vv<count($Groupinfo['0']);$vv++)
+                                                                   {
+
+                                                                        if("-".$Groupinfo['0'][$vv]['gid'] == $viewMyFeed['0'][$cc][$jj]['from_id']) 
+                                                                        {
+                                                                            $gidscreen = $Groupinfo['0'][$vv]['screen_name'];
+                                                                            $gidd = $Groupinfo['0'][$vv]['gid'];
+                                                                            $Groupphoto = $Groupinfo['0'][$vv]['photo'];
+                                                                            $Groupname = $Groupinfo['0'][$vv]['name']; 
+                                                                            break;
+                                                                        }
+                                                                   }
+                                                                    for ($vv=0; $vv < count($viewMyFeed['0'][$cc][$jj]['attachments']); $vv++) 
+                                                                    { 
+                                                                        $Feedphotoarray[] = $viewMyFeed['0'][$cc][$jj]['attachments'][$vv]['photo']['src_big'];
+                                                                    }
+                                                                     if(checkdatearr($viewMyFeed['0'][$cc][$jj]['date']) == 1)
+                                                                    {
+                                                                        $FriendFeedarray[] = array("groupname" => $Groupname, "groupphoto" => $Groupphoto, "text" => $viewMyFeed['0'][$cc][$jj]['text'], "photo" => $Feedphotoarray, "date" => $viewMyFeed['0'][$cc][$jj]['date'],"gid" => $gidd, "screen" => $gidscreen); 
+                                                                    }
+                                                                //   $FriendFeedarray[] = array("groupname" => $Groupname, "groupphoto" => $Groupphoto, "text" => $viewMyFeed['0'][$cc][$jj]['text'], "photo" => $Feedphotoarray, "date" => $viewMyFeed['0'][$cc][$jj]['date'],"gid" => $gidd,"screen" => $gidscreen);
+                                                                   unset($Feedphotoarray);
+                                                                    // echo $viewMyFeed['0'][$cc][$jj]['date']."\n";  
+                                                            } 
+                                                   
+
+                                                    //var_dump($FriendFeedarray);
+                                                  //  $memcache_obj->set($_SESSION['id']., $FriendFeedarray, false, 86400);
+                                                    //$memcache_obj->set($_SESSION['id'].$_SESSION['id'], $FriendFeedarray, false, 86400);
+                                                        }
+                                                    } 
+                                                     $FF = new FriendFeed();
+                                                   //  var_dump($FriendFeedarray);
+                                                    $FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray); 
+
+                                                   // var_dump($FriendFeedarray)."\n"; 
+                                                       $memcache_obj->set($_SESSION['id']."oldentriescache", $FriendFeedarray, false, 86400);
+                                              exit;            
+                                          
+
+}
+
 if(isset($_GET['old']))
 {   
 
    // echo $memcache_obj->get($_SESSION['id']."offset");
     //exit;
-    $offset = $memcache_obj->get($_SESSION['id']."offset");
-   // $FriendFeedarray = $memcache_obj->get($_SESSION['id'].$_SESSION['id']);
-    //$FriendFeedarray1 = $memcache_obj->get($_SESSION['id']);
-    $myid = $memcache_obj->get($_SESSION['id']."idpage");
-
-    if(empty($FriendFeedarray)) $FriendFeedarray = $FriendFeedarray1;
-   
-
-
-                                $GroupIds[] = $vk->getGroupsforWall($myid);
-                                for($mm=0;$mm<count($GroupIds['0']);$mm++)
-                                {
-                             if($GroupIdsStr == "") $GroupIdsStr = $GroupIds['0'][$mm];
-                                    else $GroupIdsStr = $GroupIdsStr.",".$GroupIds['0'][$mm];
-                                }
-                    //echo $GroupIdsStr;
-                            $Groupinfo[] = $vk->getGroupsById($GroupIdsStr);
-
-                    // целое число запросов к группам 
-
-                    $CountDivGroups = floor(count($Groupinfo['0'])/24);
-
-                    // остаток от деления на 24, максимальное число запросов в группам
-
-                    $CounterModGroups = count($Groupinfo['0']) % 24;
-                    $CounterWallget = 0;
-                    $CounterWallget24 = 24;
-
-                    while($ccc<$CountDivGroups)
-                    {
-
-                        $codeStr = 'var a=API.groups.get({"user_id":"'.$myid.'"}); var b=a; var d='.$CounterWallget.'; var v='.$CounterWallget24.';
-                            var c = [];
-                            while (d < v)
-                            {
-                             c.push(API.wall.get({"owner_id":-b[d],"count":"4","offset":"'.$offset.'"}));
-                             d = d+1; 
-                            };
-                            return c;';       
-
-                        $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
-                        //var_dump($viewMyFeed);
-                         // var_dump($viewMyFeed);
-                        for($cc=0; $cc<count($viewMyFeed['0']); $cc++)
-                        {
-                            
-                            for($jj = 1; $jj<5; $jj++)
-                            {    
-                                   for($vv=0; $vv<count($Groupinfo['0']);$vv++)
-                                   {
-
-                                        if("-".$Groupinfo['0'][$vv]['gid'] == $viewMyFeed['0'][$cc][$jj]['from_id']) 
-                                        {
-                                            $gidscreen = $Groupinfo['0'][$vv]['screen_name'];
-                                            $gidd = $Groupinfo['0'][$vv]['gid'];
-                                            $Groupphoto = $Groupinfo['0'][$vv]['photo'];
-                                            $Groupname = $Groupinfo['0'][$vv]['name'];                                           
-                                            break;
-                                        }
-                                   }
-                                    for ($vv=0; $vv < count($viewMyFeed['0'][$cc][$jj]['attachments']); $vv++) 
-                                    { 
-                                        $Feedphotoarray[] = $viewMyFeed['0'][$cc][$jj]['attachments'][$vv]['photo']['src_big'];
-                                    }
-                                     if(checkdatearr($viewMyFeed['0'][$cc][$jj]['date']) == 1)
-                                    {
-                                        $FriendFeedarray[] = array("groupname" => $Groupname, "groupphoto" => $Groupphoto, "text" => $viewMyFeed['0'][$cc][$jj]['text'], "photo" => $Feedphotoarray, "date" => $viewMyFeed['0'][$cc][$jj]['date'],"gid" => $gidd, "screen" => $gidscreen); 
-                                    }
-                                //   $FriendFeedarray[] = array("groupname" => $Groupname, "groupphoto" => $Groupphoto, "text" => $viewMyFeed['0'][$cc][$jj]['text'], "photo" => $Feedphotoarray, "date" => $viewMyFeed['0'][$cc][$jj]['date'],"gid" => $gidd, "screen" => $gidscreen);
-                              unset($Feedphotoarray);     
-                            } 
-                        
-
-                        }
-
-                        unset($viewMyFeed);
-
-                        $CounterWallget = $CounterWallget + 24;
-                        $CounterWallget24 = $CounterWallget24 + 24;
-                        $ccc++;
-                    }
-
-                    if($CounterModGroups != 0)
-                    {
-                        $CounterWallget = 0;
-                        $CounterWallget24 = 24;
-                        unset($viewMyFeed);
-
-                        $CounterMod = $ccc*24;
-                        $CounterModGroups = $CounterMod + $CounterModGroups;
-
-                        $codeStr = 'var a=API.groups.get({"user_id":"'.$myid.'"}); var b=a; var d='.$CounterMod.'; var v='.$CounterModGroups.';
-                            var c = [];
-                            while (d < v)
-                            {
-                             c.push(API.wall.get({"owner_id":-b[d],"count":"4","offset":"'.$offset.'"}));
-                             d = d+1; 
-                            };
-                            return c;';       
-
-                        $viewMyFeed[] = $vk->getExecuteFeedFriends($codeStr);
-                        //  var_dump($viewMyFeed);
-                        for($cc=0; $cc<count($viewMyFeed['0']); $cc++)
-                        {
-                            
-                            for($jj = 1; $jj<5; $jj++)
-                            {    
-                                   for($vv=0; $vv<count($Groupinfo['0']);$vv++)
-                                   {
-
-                                        if("-".$Groupinfo['0'][$vv]['gid'] == $viewMyFeed['0'][$cc][$jj]['from_id']) 
-                                        {
-                                            $gidscreen = $Groupinfo['0'][$vv]['screen_name'];
-                                            $gidd = $Groupinfo['0'][$vv]['gid'];
-                                            $Groupphoto = $Groupinfo['0'][$vv]['photo'];
-                                            $Groupname = $Groupinfo['0'][$vv]['name']; 
-                                            break;
-                                        }
-                                   }
-                                    for ($vv=0; $vv < count($viewMyFeed['0'][$cc][$jj]['attachments']); $vv++) 
-                                    { 
-                                        $Feedphotoarray[] = $viewMyFeed['0'][$cc][$jj]['attachments'][$vv]['photo']['src_big'];
-                                    }
-                                     if(checkdatearr($viewMyFeed['0'][$cc][$jj]['date']) == 1)
-                                    {
-                                        $FriendFeedarray[] = array("groupname" => $Groupname, "groupphoto" => $Groupphoto, "text" => $viewMyFeed['0'][$cc][$jj]['text'], "photo" => $Feedphotoarray, "date" => $viewMyFeed['0'][$cc][$jj]['date'],"gid" => $gidd, "screen" => $gidscreen); 
-                                    }
-                                //   $FriendFeedarray[] = array("groupname" => $Groupname, "groupphoto" => $Groupphoto, "text" => $viewMyFeed['0'][$cc][$jj]['text'], "photo" => $Feedphotoarray, "date" => $viewMyFeed['0'][$cc][$jj]['date'],"gid" => $gidd,"screen" => $gidscreen);
-                                   unset($Feedphotoarray);
-                            } 
-                    $FF = new FriendFeed();
-                    $FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray); 
-                    //var_dump($FriendFeedarray);
-                    $memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 86400);
-                    //$memcache_obj->set($_SESSION['id'].$_SESSION['id'], $FriendFeedarray, false, 86400);
-                        }
-                    }  
-                       // $memcache_obj->set($_SESSION['id']."friends", $_GET['offset']+5, false, 1200);
-                        
-          ?>    
-
-
-                     <?php
-                   
+    while(true)
+    {
+         $FriendFeedarray = $memcache_obj->get($_SESSION['id']."oldentriescache");  
+         if(!empty($FriendFeedarray)) break;
+         else sleep(2);
+    }
+      $FF = new FriendFeed();
+                  
+                 
                         for ($iiii=0; $iiii < count($FriendFeedarray); $iiii++) 
                             { 
                   
@@ -1253,12 +1306,14 @@ if(isset($_GET['old']))
                                         <?php
                                      for ($ii=0; $ii < count($FriendFeedarray[$iiii]['photo']); $ii++) 
                                         { 
-                             
+                                            if($FriendFeedarray[$iiii]['photo'][$ii] != "")
+                                            {
                                         ?>
                                 
                                         <img src=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?> width="98%"> <br> 
                                     <br>
                                         <?php
+                                            }
                                         }
                                          } 
                                             ?>
@@ -1295,15 +1350,24 @@ if(isset($_GET['old']))
                  
 
             <?php
-             $offset = $offset+4;                         
-             $memcache_obj->set($_SESSION['id']."offset", $offset, false, 1200);
-             $urlFeedupdateold = "http://192.168.1.141/index.php?old=".$myid;
+            
             }
+             $offset = $offset+4;                         
+             $memcache_obj->set($_SESSION['id']."offset", $offset, false, 86400);
+             $memcache_obj->set($_SESSION['id']."idpage", $myid, false, 86400);
+             $urlFeedupdateold = "http://192.168.1.141/vk.php?old=".$myid;
 ?>
-  <div ic-src=<?php echo $urlFeedupdateold; ?> ic-trigger-on="scrolled-into-view">
+
+  <div ic-src=<?php echo $urlFeedupdateold; ?> ic-trigger-on="scrolled-into-view" ic-indicator="#mars">
    
   </div>
+   <script>
+$(function() {
+    $('.cutstring').cutstring();
+});
+</script>
   <?php
+
 exit;
 }
 
@@ -1393,7 +1457,7 @@ if(isset($_GET['id']))
                      for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) 
                         {
 
-                        ?> <div class="row"><div class="friends"><a href=<?php echo "http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']; ?> class="friendsfont"> <?php echo $listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']; ?></a><br><a href=<?php echo "http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']; ?>><img src=<?php echo $listFriends[$i][$j]['photo_medium']; ?>></a><br></div></div>
+                        ?> <div class="row"><div class="friends"><a href=<?php echo "http://192.168.1.141/vk.php?id=".$listFriends[$i][$j]['uid']; ?> class="friendsfont"> <?php echo $listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']; ?></a><br><a href=<?php echo "http://192.168.1.141/vk.php?id=".$listFriends[$i][$j]['uid']; ?>><img src=<?php echo $listFriends[$i][$j]['photo_medium']; ?>></a><br></div></div>
                         <?php
                          } 
                          ?>             
@@ -1876,9 +1940,9 @@ $memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 86400);
 
 }
 }
-$urlFeedupdate = "http://192.168.1.141/index.php?news=".$_GET['id'];
-$urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['id'];
-$urlMyProfile = "http://192.168.1.141/index.php?id=".$_SESSION['id'];
+$urlFeedupdate = "http://192.168.1.141/vk.php?news=".$_GET['id'];
+$urlFeedCountUpdate = "http://192.168.1.141/vk.php?groups=".$_GET['id'];
+$urlMyProfile = "http://192.168.1.141/vk.php?id=".$_SESSION['id'];
 
 ?>
 
@@ -1942,12 +2006,14 @@ $urlMyProfile = "http://192.168.1.141/index.php?id=".$_SESSION['id'];
                             <?php
                          for ($ii=0; $ii < count($FriendFeedarray[$iiii]['photo']); $ii++) 
                             { 
-                 
+                                 if($FriendFeedarray[$iiii]['photo'][$ii] != "")
+                                            {
                             ?>
                     
                             <img src=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?> width="98%"> <br> 
                         <br>
                             <?php
+                        }
                             }
                              } 
                                 ?>
@@ -1986,7 +2052,8 @@ $urlMyProfile = "http://192.168.1.141/index.php?id=".$_SESSION['id'];
 <?php
 }
 $memcache_obj->set($_SESSION['id']."offset", 4, false, 1200);
-$urlFeedupdateold = "http://192.168.1.141/index.php?old=".$_GET['id'];
+$urlFeedupdateold = "http://192.168.1.141/vk.php?old=".$_GET['id'];
+$urlFeedupdateoldcache = "http://192.168.1.141/vk.php?oldcache=".$_GET['id'];
 
 ?>
 
@@ -1994,8 +2061,8 @@ $urlFeedupdateold = "http://192.168.1.141/index.php?old=".$_GET['id'];
 
 </div>
  
-
-  <div ic-src=<?php echo $urlFeedupdateold; ?> ic-trigger-on="scrolled-into-view">
+ <font ic-src=<?php echo $urlFeedupdateoldcache; ?> ic-poll="10s">Более старые записи</font>
+  <div ic-src=<?php echo $urlFeedupdateold; ?> ic-trigger-on="scrolled-into-view" ic-indicator="mars">
    
   </div>
 
@@ -2188,7 +2255,7 @@ else
                      for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) 
                         {
 
-                        ?> <div class="row"><div class="friends"><a href=<?php echo "http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']; ?> class="friends"> <?php echo $listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']; ?></a><br><a href=<?php echo "http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']; ?>><img src=<?php echo $listFriends[$i][$j]['photo_medium']; ?>></a><hr></div></div>
+                        ?> <div class="row"><div class="friends"><a href=<?php echo "http://192.168.1.141/vk.php?id=".$listFriends[$i][$j]['uid']; ?> class="friends"> <?php echo $listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']; ?></a><br><a href=<?php echo "http://192.168.1.141/vk.php?id=".$listFriends[$i][$j]['uid']; ?>><img src=<?php echo $listFriends[$i][$j]['photo_medium']; ?>></a><hr></div></div>
                         <?php
                          } 
                          ?>             
@@ -2644,9 +2711,9 @@ $memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 86400);
 
 }
 }
-$urlFeedupdate = "http://192.168.1.141/index.php?news=".$_SESSION['id'];
-$urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_SESSION['id'];
-$urlMyProfile = "http://192.168.1.141/index.php?id=".$_SESSION['id'];
+$urlFeedupdate = "http://192.168.1.141/vk.php?news=".$_SESSION['id'];
+$urlFeedCountUpdate = "http://192.168.1.141/vk.php?groups=".$_SESSION['id'];
+$urlMyProfile = "http://192.168.1.141/vk.php?id=".$_SESSION['id'];
 
 ?>
 
@@ -2710,12 +2777,14 @@ $urlMyProfile = "http://192.168.1.141/index.php?id=".$_SESSION['id'];
                             <?php
                          for ($ii=0; $ii < count($FriendFeedarray[$iiii]['photo']); $ii++) 
                             { 
-                                
+                                 if($FriendFeedarray[$iiii]['photo'][$ii] != "")
+                                            {
                             ?>
                     
                             <img src=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?> width="98%"> <br> 
                         <br>
                             <?php
+                        }
                             }
                              } 
                                 ?>
@@ -2878,7 +2947,8 @@ session_write_close();
 
     <script src="js/agency.js"></script>
       <script src="js/cutstring.js"></script>
-     <script src="https://s3.amazonaws.com/intercoolerjs.org/release/intercooler-0.4.1.min.js">
+     <script src="https://s3.amazonaws.com/intercoolerjs.org/release/intercooler-0.4.1.min.js"></script>
+     <script src="js/spin.js"> </script>
        
     <script>
 $(function() {
