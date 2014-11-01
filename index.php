@@ -60,7 +60,7 @@ body {
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="http://192.168.1.141/vk.php">  <font class="menutexttopglyph"> <span class="glyphicon glyphicon-th-list "></span></font><font class="menutexttop">&nbsp;FriendFeed</a></font> 
+                <a class="navbar-brand" href="http://192.168.1.141/index.php">  <font class="menutexttopglyph"> <span class="glyphicon glyphicon-th-list "></span></font><font class="menutexttop">&nbsp;FriendFeed</a></font> 
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -236,7 +236,7 @@ class VkApi
         if (empty($token)) {
 
             $url = "https://oauth.vk.com/authorize?client_id="
-                   . $this->appId . "&redirect_uri=http://192.168.1.141/vk.php&display=page&response_type=code&scope=video,offline,groups,friends,photos,notify";
+                   . $this->appId . "&redirect_uri=http://192.168.1.141/index.php&display=page&response_type=code&scope=video,offline,groups,friends,photos,notify";
  
             header('Location: ' . $url); 
       
@@ -877,7 +877,7 @@ session_start();
 $vk = new VkApi(array(
     'apiKey' => '',
     'appId' => '',
-    'authRedirectUrl' => 'http://192.168.1.141/vk.php',
+    'authRedirectUrl' => 'http://192.168.1.141/index.php',
 ));
   session_write_close();
  // строка для отправки запроса в виде строки с gids групп для groups.get 
@@ -1099,16 +1099,14 @@ if(isset($_GET['oldcache']))
                                    // $FriendFeedarray = $memcache_obj->get($_SESSION['id'].$_SESSION['id']);
                                     //$FriendFeedarray1 = $memcache_obj->get($_SESSION['id']);
                                             $myid = $memcache_obj->get($_SESSION['id']."idpage");
-                                                echo $myid."\n";
+                                               // echo $myid."\n";
+                                               // exit;
                                    // if(empty($FriendFeedarray)) $FriendFeedarray = $FriendFeedarray1;
                                  //  echo "bitch".$offset."bitch";
                                    //echo "nyid".$myid."fucks";
+                                            // дебагерские переменные
+                                         //   $memcache_obj->set($_SESSION['id']."debid",$myid,false,7200);
 
-
-
-                                                ////////////////////////////////////////////////////////////////
-                                            // где то тут ошибка, странно та, но типа так                                            
-                                            ///////////////////////////////////////////////////////////////////////
                                                                 $GroupIds[] = $vk->getGroupsforWall($myid);
 
                                                                   //echo "Group IDS ".count($GroupIds)."\n";
@@ -1119,7 +1117,8 @@ if(isset($_GET['oldcache']))
                                                                 }
                                                     //echo $GroupIdsStr;
                                                             $Groupinfo[] = $vk->getGroupsById($GroupIdsStr);
-                                                          
+                                                         // дебагерская переменаня
+                                                         // $memcache_obj->set($_SESSION['id']."debgroup",$Groupinfo,false,7200);
                                                     // целое число запросов к группам 
 
                                                     $CountDivGroups = floor(count($Groupinfo['0'])/24);
@@ -1262,8 +1261,9 @@ if(isset($_GET['old']))
     {
          $FriendFeedarray = $memcache_obj->get($_SESSION['id']."oldentriescache");  
          if(!empty($FriendFeedarray)) break;
-         else sleep(2);
     }
+     //$myid = $memcache_obj->get($_SESSION['id']."idpage");
+      // echo $myid."\n";
       $FF = new FriendFeed();
                   
                  
@@ -1316,11 +1316,8 @@ if(isset($_GET['old']))
                                             }
                                         }
                                          } 
-                                            ?>
-                                        
-                                
-
-                                        
+                                            ?>                                    
+                                                                      
 
                                     </div>
                                     
@@ -1352,10 +1349,12 @@ if(isset($_GET['old']))
             <?php
             
             }
+             $myid = $memcache_obj->get($_SESSION['id']."idpage");
+             $offset = $memcache_obj->get($_SESSION['id']."offset");
              $offset = $offset+4;                         
              $memcache_obj->set($_SESSION['id']."offset", $offset, false, 86400);
              $memcache_obj->set($_SESSION['id']."idpage", $myid, false, 86400);
-             $urlFeedupdateold = "http://192.168.1.141/vk.php?old=".$myid;
+             $urlFeedupdateold = "http://192.168.1.141/index.php?old=".$myid;
 ?>
 
   <div ic-src=<?php echo $urlFeedupdateold; ?> ic-trigger-on="scrolled-into-view" ic-indicator="#mars">
@@ -1457,7 +1456,7 @@ if(isset($_GET['id']))
                      for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) 
                         {
 
-                        ?> <div class="row"><div class="friends"><a href=<?php echo "http://192.168.1.141/vk.php?id=".$listFriends[$i][$j]['uid']; ?> class="friendsfont"> <?php echo $listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']; ?></a><br><a href=<?php echo "http://192.168.1.141/vk.php?id=".$listFriends[$i][$j]['uid']; ?>><img src=<?php echo $listFriends[$i][$j]['photo_medium']; ?>></a><br></div></div>
+                        ?> <div class="row"><div class="friends"><a href=<?php echo "http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']; ?> class="friendsfont"> <?php echo $listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']; ?></a><br><a href=<?php echo "http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']; ?>><img src=<?php echo $listFriends[$i][$j]['photo_medium']; ?>></a><br></div></div>
                         <?php
                          } 
                          ?>             
@@ -1940,9 +1939,9 @@ $memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 86400);
 
 }
 }
-$urlFeedupdate = "http://192.168.1.141/vk.php?news=".$_GET['id'];
-$urlFeedCountUpdate = "http://192.168.1.141/vk.php?groups=".$_GET['id'];
-$urlMyProfile = "http://192.168.1.141/vk.php?id=".$_SESSION['id'];
+$urlFeedupdate = "http://192.168.1.141/index.php?news=".$_GET['id'];
+$urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['id'];
+$urlMyProfile = "http://192.168.1.141/index.php?id=".$_SESSION['id'];
 
 ?>
 
@@ -2052,8 +2051,8 @@ $urlMyProfile = "http://192.168.1.141/vk.php?id=".$_SESSION['id'];
 <?php
 }
 $memcache_obj->set($_SESSION['id']."offset", 4, false, 1200);
-$urlFeedupdateold = "http://192.168.1.141/vk.php?old=".$_GET['id'];
-$urlFeedupdateoldcache = "http://192.168.1.141/vk.php?oldcache=".$_GET['id'];
+$urlFeedupdateold = "http://192.168.1.141/index.php?old=".$_GET['id'];
+$urlFeedupdateoldcache = "http://192.168.1.141/index.php?oldcache=".$_GET['id'];
 
 ?>
 
@@ -2255,7 +2254,7 @@ else
                      for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) 
                         {
 
-                        ?> <div class="row"><div class="friends"><a href=<?php echo "http://192.168.1.141/vk.php?id=".$listFriends[$i][$j]['uid']; ?> class="friends"> <?php echo $listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']; ?></a><br><a href=<?php echo "http://192.168.1.141/vk.php?id=".$listFriends[$i][$j]['uid']; ?>><img src=<?php echo $listFriends[$i][$j]['photo_medium']; ?>></a><hr></div></div>
+                        ?> <div class="row"><div class="friends"><a href=<?php echo "http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']; ?> class="friends"> <?php echo $listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']; ?></a><br><a href=<?php echo "http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']; ?>><img src=<?php echo $listFriends[$i][$j]['photo_medium']; ?>></a><hr></div></div>
                         <?php
                          } 
                          ?>             
@@ -2711,9 +2710,9 @@ $memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 86400);
 
 }
 }
-$urlFeedupdate = "http://192.168.1.141/vk.php?news=".$_SESSION['id'];
-$urlFeedCountUpdate = "http://192.168.1.141/vk.php?groups=".$_SESSION['id'];
-$urlMyProfile = "http://192.168.1.141/vk.php?id=".$_SESSION['id'];
+$urlFeedupdate = "http://192.168.1.141/index.php?news=".$_SESSION['id'];
+$urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_SESSION['id'];
+$urlMyProfile = "http://192.168.1.141/index.php?id=".$_SESSION['id'];
 
 ?>
 
