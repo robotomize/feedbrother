@@ -69,6 +69,12 @@ session_write_close();
     <link href="css/agency.css" rel="stylesheet">
 
 
+     <link rel="stylesheet" type="text/css" href="source/jquery.fancybox.css?v=2.1.5" media="screen" />
+  <link rel="stylesheet" type="text/css" href="source/helpers/jquery.fancybox-buttons.css?v=1.0.5" />
+  <link rel="stylesheet" type="text/css" href="source/helpers/jquery.fancybox-thumbs.css?v=1.0.7" />
+
+
+
     <!-- Custom Fonts -->
     <link href="font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
@@ -76,6 +82,8 @@ session_write_close();
     <link href='http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet' type='text/css'>
    
+
+
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -111,6 +119,15 @@ body {
    
 
 }
+.fancybox
+{
+    max-width: 700px;
+            margin: 0 auto;
+}
+.fancybox-custom .fancybox-skin {
+            box-shadow: 0 0 50px #222;
+        }
+
 </style>
 
  
@@ -138,7 +155,7 @@ body {
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
                 <li>
-                 <center><a href=<?php echo $urlMyPage; ?>>   <img src=<?php echo $_SESSION['img']; ?> width="50px" heigth="50px"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</center>
+                 <center><a href=<?php echo $urlMyPage; ?>>   <img src=<?php echo $_SESSION['img']; ?> width="50px" heigth="50px"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</center>
                 </li>
                     <li  class="toppullrightlink">  
 
@@ -518,8 +535,7 @@ class FriendFeed
  
  
 
-}   
-
+} 
 
 
 if(!empty($_GET['news']))
@@ -2062,9 +2078,10 @@ $urlMyProfile = "http://192.168.1.141/index.php?id=".$_SESSION['id'];
                             { 
                                  if($FriendFeedarray[$iiii]['photo'][$ii] != "")
                                             {
-                            ?>
-                    
-                            <img src=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?> width="98%"> <br> 
+                            ?>               
+
+        <a class="fancybox-effects-a" href=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?> data-fancybox-group="gallery" title=""><img src=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?> width="90%" alt="" /></a>
+<br> 
                         <br>
                             <?php
                         }
@@ -3002,7 +3019,205 @@ session_write_close();
     <script src="js/agency.js"></script>
       <script src="js/cutstring.js"></script>
      <script src="https://s3.amazonaws.com/intercoolerjs.org/release/intercooler-0.4.1.min.js"></script>
-     
+
+
+
+    <!-- Add mousewheel plugin (this is optional) -->
+    <script type="text/javascript" src="lib/jquery.mousewheel-3.0.6.pack.js"></script>
+
+    <!-- Add fancyBox main JS and CSS files -->
+    <script type="text/javascript" src="source/jquery.fancybox.js?v=2.1.5"></script>
+   
+
+    <!-- Add Button helper (this is optional) -->
+  
+    <script type="text/javascript" src="source/helpers/jquery.fancybox-buttons.js?v=1.0.5"></script>
+
+    <!-- Add Thumbnail helper (this is optional) -->
+  
+    <script type="text/javascript" src="source/helpers/jquery.fancybox-thumbs.js?v=1.0.7"></script>
+
+    <!-- Add Media helper (this is optional) -->
+    <script type="text/javascript" src="source/helpers/jquery.fancybox-media.js?v=1.0.6"></script>
+
+    
+
+<script type="text/javascript">
+        $(document).ready(function() {
+           /*
+             *  Simple image gallery. Uses default settings
+             */
+
+            $('.fancybox').fancybox();
+
+            /*
+             *  Different effects
+             */
+
+            // Change title type, overlay closing speed
+            $(".fancybox-effects-a").fancybox({
+                helpers: {
+                    title : {
+                        type : 'outside'
+                    },
+                    overlay : {
+                        speedOut : 0
+                    }
+                }
+            });
+
+            // Disable opening and closing animations, change title type
+            $(".fancybox-effects-b").fancybox({
+                openEffect  : 'none',
+                closeEffect : 'none',
+
+                helpers : {
+                    title : {
+                        type : 'over'
+                    }
+                }
+            });
+
+            // Set custom style, close if clicked, change title type and overlay color
+            $(".fancybox-effects-c").fancybox({
+                wrapCSS    : 'fancybox-custom',
+                closeClick : true,
+
+                openEffect : 'none',
+
+                helpers : {
+                    title : {
+                        type : 'inside'
+                    },
+                    overlay : {
+                        css : {
+                            'background' : 'rgba(238,238,238,0.85)'
+                        }
+                    }
+                }
+            });
+
+            // Remove padding, set opening and closing animations, close if clicked and disable overlay
+            $(".fancybox-effects-d").fancybox({
+                padding: 0,
+
+                openEffect : 'elastic',
+                openSpeed  : 150,
+
+                closeEffect : 'elastic',
+                closeSpeed  : 150,
+
+                closeClick : true,
+
+                helpers : {
+                    overlay : null
+                }
+            });
+
+            /*
+             *  Button helper. Disable animations, hide close button, change title type and content
+             */
+
+            $('.fancybox-buttons').fancybox({
+                openEffect  : 'none',
+                closeEffect : 'none',
+
+                prevEffect : 'none',
+                nextEffect : 'none',
+
+                closeBtn  : false,
+
+                helpers : {
+                    title : {
+                        type : 'inside'
+                    },
+                    buttons : {}
+                },
+
+                afterLoad : function() {
+                    this.title = 'Image ' + (this.index + 1) + ' of ' + this.group.length + (this.title ? ' - ' + this.title : '');
+                }
+            });
+
+
+            /*
+             *  Thumbnail helper. Disable animations, hide close button, arrows and slide to next gallery item if clicked
+             */
+
+            $('.fancybox-thumbs').fancybox({
+                prevEffect : 'none',
+                nextEffect : 'none',
+
+                closeBtn  : false,
+                arrows    : false,
+                nextClick : true,
+
+                helpers : {
+                    thumbs : {
+                        width  : 50,
+                        height : 50
+                    }
+                }
+            });
+
+            /*
+             *  Media helper. Group items, disable animations, hide arrows, enable media and button helpers.
+            */
+            $('.fancybox-media')
+                .attr('rel', 'media-gallery')
+                .fancybox({
+                    openEffect : 'none',
+                    closeEffect : 'none',
+                    prevEffect : 'none',
+                    nextEffect : 'none',
+
+                    arrows : false,
+                    helpers : {
+                        media : {},
+                        buttons : {}
+                    }
+                });
+
+            /*
+             *  Open manually
+             */
+
+            $("#fancybox-manual-a").click(function() {
+                $.fancybox.open('1_b.jpg');
+            });
+
+            $("#fancybox-manual-b").click(function() {
+                $.fancybox.open({
+                    href : 'iframe.html',
+                    type : 'iframe',
+                    padding : 5
+                });
+            });
+
+            $("#fancybox-manual-c").click(function() {
+                $.fancybox.open([
+                    {
+                        href : '1_b.jpg',
+                        title : 'My title'
+                    }, {
+                        href : '2_b.jpg',
+                        title : '2nd title'
+                    }, {
+                        href : '3_b.jpg'
+                    }
+                ], {
+                    helpers : {
+                        thumbs : {
+                            width: 75,
+                            height: 50
+                        }
+                    }
+                });
+            });
+
+
+        });
+   </script> 
        
     <script>
 $(function() {
