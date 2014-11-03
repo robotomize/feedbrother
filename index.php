@@ -33,8 +33,8 @@ session_start();
 
 
 $vk = new VkApi(array(
-    'apiKey' => 'E8tyn9sgbwaM2MG9ZCSq',
-    'appId' => '4581515',
+    'apiKey' => '',
+    'appId' => '',
     'authRedirectUrl' => 'http://192.168.1.141/index.php',
 ));
   session_write_close();
@@ -94,16 +94,19 @@ body {
 .toppullrightlink
 {
   
-   
-    color: #FFF;
  
+    color: #4D4D4D;
+    font-size: 16px;
+ text-decoration: underline;
 
 }
 .toppullrightlink:hover
 {
    
- 
-    color: #FFF;
+
+    color: #4D4D4D;
+      font-size: 16px;
+ text-decoration: underline;
    
    
 
@@ -135,11 +138,11 @@ body {
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
                 <li>
-                 <center><a href=<?php echo $urlMyPage; ?>>   <img src=<?php echo $_SESSION['img']; ?> width="50px" heigth="50px"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</center>
+                 <center><a href=<?php echo $urlMyPage; ?>>   <img src=<?php echo $_SESSION['img']; ?> width="50px" heigth="50px"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</center>
                 </li>
                     <li  class="toppullrightlink">  
 
-                      <a href="http://192.168.1.141/index.php?act=logout" class="toppullrightlink"><font class="toppullrightlink"><strong>&nbsp;Выйти</strong></font></a>
+                      <a href="http://192.168.1.141/index.php?act=logout" class="toppullrightlink"><font class="toppullrightlink"><strong>выйти</strong></font></a>
                         </li>
                 </ul>
             </div>
@@ -151,30 +154,8 @@ body {
         ?>
 
     </nav>
-    <div id="mars" style="display:none"></div>
+    
 
-    <script>
-    var opts = {
-  lines: 17, // The number of lines to draw
-  length: 27, // The length of each line
-  width: 10, // The line thickness
-  radius: 60, // The radius of the inner circle
-  corners: 1, // Corner roundness (0..1)
-  rotate: 56, // The rotation offset
-  direction: 1, // 1: clockwise, -1: counterclockwise
-  color: '#000', // #rgb or #rrggbb or array of colors
-  speed: 2, // Rounds per second
-  trail: 60, // Afterglow percentage
-  shadow: false, // Whether to render a shadow
-  hwaccel: false, // Whether to use hardware acceleration
-  className: 'spinner', // The CSS class to assign to the spinner
-  zIndex: 2e9, // The z-index (defaults to 2000000000)
-  top: '50%', // Top position relative to parent
-  left: '50%' // Left position relative to parent
-};
-var target = document.getElementById('mars');
-var spinner = new Spinner(opts).spin(target);
-    </script>
 
 
 <?php
@@ -543,6 +524,8 @@ class FriendFeed
 
 if(!empty($_GET['news']))
 {
+
+
 
 //echo "ok";
 session_start();
@@ -914,7 +897,10 @@ $memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 86400);
                          <?php
                         }
 
-                    }                
+                    }  
+
+
+              $memcache_obj->set($_SESSION['id']."countnewmessage", 0, false, 300);                    
                       ?>
  <script>
 $(function() {
@@ -936,7 +922,18 @@ exit;
 if(!empty($_GET['groups']))
 {
 
-    // задача №1 по оптимизации это првоерять дату до выгребания переменных
+
+if($memcache_obj->get($_SESSION['id']."countnewmessage") == 0)
+{
+    echo "0";
+    $memcache_obj->set($_SESSION['id']."countnewmessage", 1, false, 300);
+    exit;
+}
+else
+{
+     if(rand(0,15) == 4)
+     {
+             // задача №1 по оптимизации это првоерять дату до выгребания переменных
 
         $GroupIds[] = $vk->getGroupsforWall($_GET['groups']);
 for($mm=0;$mm<count($GroupIds['0']);$mm++)
@@ -1129,13 +1126,26 @@ session_write_close();
 //var_dump($FriendFeedarray);
 //$memcache_obj->set('our_var1', $FriendFeednewarr, false, 1200);
 
-?>
- 
-<?php
+     }  
+     else
+     {
+        if($memcache_obj->get($_SESSION['id']."countnewmessage") == 1)
+        {
+            echo "0";
+            $memcache_obj->set($_SESSION['id']."countnewmessage",0,false,300);
+        }
+        else
+        {
+            echo $memcache_obj->get($_SESSION['id']."countnewmessage");
+        }
+     }     
 
 
+}
+
+
+   
 exit;
-
 }
 
 if(isset($_GET['oldcache']))
@@ -1999,7 +2009,7 @@ $urlMyProfile = "http://192.168.1.141/index.php?id=".$_SESSION['id'];
    // var_dump($FriendFeedarray);
     ?>
 
-  <center> <button class="btn" onclick="Intercooler.refresh($('#manual-update'));">Показать <font ic-src=<?php echo $urlFeedCountUpdate; ?> ic-poll="15s"></font> новых записей </button></center><br>
+  <center> <button class="btn" onclick="Intercooler.refresh($('#manual-update'));">Показать <font ic-src=<?php echo $urlFeedCountUpdate; ?> ic-poll="2s"></font> новых записей </button></center><br>
 
       <!--   -->
 
@@ -2992,7 +3002,7 @@ session_write_close();
     <script src="js/agency.js"></script>
       <script src="js/cutstring.js"></script>
      <script src="https://s3.amazonaws.com/intercoolerjs.org/release/intercooler-0.4.1.min.js"></script>
-     <script src="js/spin.js"> </script>
+     
        
     <script>
 $(function() {
