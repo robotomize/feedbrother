@@ -1,5 +1,53 @@
 <?php
+xdebug_start_trace();
+if (isset($_GET['act']) AND $_GET['act']=="logout") {
+  session_start();
+  session_destroy();
+  header("Location: http://".$_SERVER['HTTP_HOST']."/index.php");
+  exit;
+}
 
+set_time_limit(3600);
+//замер времени выполнения кода 
+
+
+// пока не используется PDO, используется обычный драйвер, отлвоа ошибок ничего нет
+$host = "localhost";   
+$user = "root";   
+$pass = "13";    
+ if(!mysql_connect($host, $user, $pass)) exit(mysql_error()); 
+mysql_query("SET character_set_client='UTF8'"); 
+mysql_query("SET character_set_results='UTF8'"); 
+mysql_query("SET collation_connection='UTF8'");
+mysql_query("SET NAMES UTF8");
+mysql_select_db("frfeed") or die(mysql_error()); 
+
+ //Создаём новый объект. Также можно писать и в процедурном стиле
+    $memcache_obj = new Memcache;
+ 
+    //Соединяемся с нашим сервером
+    $memcache_obj->connect('127.0.0.1', 11211) or die("could not connect");
+
+
+session_start();
+
+
+$vk = new VkApi(array(
+    'apiKey' => 'E8tyn9sgbwaM2MG9ZCSq',
+    'appId' => '4581515',
+    'authRedirectUrl' => 'http://192.168.1.141/index.php',
+));
+  session_write_close();
+ // строка для отправки запроса в виде строки с gids групп для groups.get 
+$GroupIdsStr = "";
+$FriendFeedarray = [];
+
+                //$friendid['0']['last_name'] = "";
+               // $friendid['0']['first_name'] = $_SESSION['fullname'];
+                //$friendid['0']['photo_medium'] = $_SESSION['img'];
+session_start();
+$urlMyPage = "http://192.168.1.141/index.php?id=".$_SESSION['id'];
+session_write_close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -13,7 +61,7 @@
     <meta name="author" content="">
 
     <title>FriendFeed просматривай ленты друзей</title>
-
+     <link href='http://fonts.googleapis.com/css?family=Hammersmith+One' rel='stylesheet' type='text/css'>
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.css" rel="stylesheet">
 
@@ -27,6 +75,7 @@
     <link href='http://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet' type='text/css'>
+   
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -42,6 +91,23 @@ body {
      background-color: #E8E8E8;
 }
 
+.toppullrightlink
+{
+  
+   
+    color: #FFF;
+ 
+
+}
+.toppullrightlink:hover
+{
+   
+ 
+    color: #FFF;
+   
+   
+
+}
 </style>
 
  
@@ -62,19 +128,28 @@ body {
                 </button>
                 <a class="navbar-brand" href="http://192.168.1.141/index.php">  <font class="menutexttopglyph"> <span class="glyphicon glyphicon-th-list "></span></font><font class="menutexttop">&nbsp;FriendFeed</a></font> 
             </div>
-
+            <?php 
+            session_start();
+            ?>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="navbar-right">
-                
-                         
+                <ul class="nav navbar-nav navbar-right">
+                <li>
+                 <center><a href=<?php echo $urlMyPage; ?>>   <img src=<?php echo $_SESSION['img']; ?> width="50px" heigth="50px"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</center>
+                </li>
+                    <li  class="toppullrightlink">  
 
+                      <a href="http://192.168.1.141/index.php?act=logout" class="toppullrightlink"><font class="toppullrightlink"><strong>&nbsp;Выйти</strong></font></a>
+                        </li>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
         </div>
         <!-- /.container-fluid -->
-<hr>
+        <?php
+        session_write_close();
+        ?>
+
     </nav>
     <div id="mars" style="display:none"></div>
 
@@ -132,26 +207,7 @@ function checkdatearr($datear)
         return 1;
     }
 }
-set_time_limit(3600);
-//замер времени выполнения кода 
 
-
-// пока не используется PDO, используется обычный драйвер, отлвоа ошибок ничего нет
-$host = "localhost";   
-$user = "root";   
-$pass = "13";    
- if(!mysql_connect($host, $user, $pass)) exit(mysql_error()); 
-mysql_query("SET character_set_client='UTF8'"); 
-mysql_query("SET character_set_results='UTF8'"); 
-mysql_query("SET collation_connection='UTF8'");
-mysql_query("SET NAMES UTF8");
-mysql_select_db("frfeed") or die(mysql_error()); 
-
- //Создаём новый объект. Также можно писать и в процедурном стиле
-    $memcache_obj = new Memcache;
- 
-    //Соединяемся с нашим сервером
-    $memcache_obj->connect('127.0.0.1', 11211) or die("could not connect");
 
 
 /**
@@ -871,18 +927,7 @@ $(function() {
 exit;
 }
 
-session_start();
 
-
-$vk = new VkApi(array(
-    'apiKey' => '',
-    'appId' => '',
-    'authRedirectUrl' => 'http://192.168.1.141/index.php',
-));
-  session_write_close();
- // строка для отправки запроса в виде строки с gids групп для groups.get 
-$GroupIdsStr = "";
-$FriendFeedarray = [];
 
 //$CurrentUsrarray = mysql_fetch_assoc(mysql_query("SELECT * from users WHERE id_vk='$_SESSION[id]'"));
 
@@ -1105,7 +1150,7 @@ if(isset($_GET['oldcache']))
                                  //  echo "bitch".$offset."bitch";
                                    //echo "nyid".$myid."fucks";
                                             // дебагерские переменные
-                                         //   $memcache_obj->set($_SESSION['id']."debid",$myid,false,7200);
+                                           $memcache_obj->set($_SESSION['id']."debid",$myid,false,7200);
 
                                                                 $GroupIds[] = $vk->getGroupsforWall($myid);
 
@@ -1118,7 +1163,7 @@ if(isset($_GET['oldcache']))
                                                     //echo $GroupIdsStr;
                                                             $Groupinfo[] = $vk->getGroupsById($GroupIdsStr);
                                                          // дебагерская переменаня
-                                                         // $memcache_obj->set($_SESSION['id']."debgroup",$Groupinfo,false,7200);
+                                                          $memcache_obj->set($_SESSION['id']."debgroup",$Groupinfo,false,7200);
                                                     // целое число запросов к группам 
 
                                                     $CountDivGroups = floor(count($Groupinfo['0'])/24);
@@ -2120,7 +2165,7 @@ $urlFeedupdateoldcache = "http://192.168.1.141/index.php?oldcache=".$_GET['id'];
               <img class="media-object" src=<?php echo $_SESSION['img']; ?> width="80px" heigth="60px">
                
                 <div class="media-body">
-                  <a href=<?php echo $urlMyProfile; ?> class="profilelink"><h6><strong>&nbsp;<?php echo $_SESSION['fullname']; ?>&nbsp;</strong></h6></a>
+                  <a href=<?php echo $urlMyProfile; ?> class="profilelink"><h6><strong>&nbsp;<b><?php echo $_SESSION['fullname']; ?>&nbsp;</b></strong></h6></a>
                    
                 </div>
 
@@ -2958,3 +3003,6 @@ $(function() {
 </body>
 
 </html>
+<?php
+xdebug_stop_trace();
+?>
