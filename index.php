@@ -76,16 +76,17 @@ $vk = new VkApi(array(
     'appId' => '',
     'authRedirectUrl' => 'http://192.168.1.141/index.php',
 ));
-  session_write_close();
+ 
  // строка для отправки запроса в виде строки с gids групп для groups.get 
 $GroupIdsStr = "";
 $FriendFeedarray = [];
+$sessionid = $_SESSION['id'];
 
                 //$friendid['0']['last_name'] = "";
                // $friendid['0']['first_name'] = $_SESSION['fullname'];
                 //$friendid['0']['photo_medium'] = $_SESSION['img'];
-session_start();
-$urlMyPage = "http://192.168.1.141/index.php?back=".$_SESSION['id'];
+
+$urlMyPage = "http://192.168.1.141/index.php?back=".$sessionid;
 session_write_close();
 ?>
 <!DOCTYPE html>
@@ -169,7 +170,7 @@ body {
                 </li>
                     <li  class="toppullrightlink">  
 
-                      <a href="http://192.168.1.141/index.php?act=logout" class="toppullrightlink"><font class="toppullrightlink"><strong>выйти</strong></font></a>
+                      <a href="http://192.168.1.141/index.php?act=logout" class="toppullrightlink"><font class="toppullrightlink smalarrow">выйти</font></a>
                         </li>
                 </ul>
             </div>
@@ -551,34 +552,36 @@ class FriendFeed
 //$CurrentUsrarray = mysql_fetch_assoc(mysql_query("SELECT * from users WHERE id_vk='$_SESSION[id]'"));
 if(isset($_GET['back']))
 {
-    $FriendFeedarray = $memcache_obj->get($_SESSION['id']."me"); 
-    session_start();
+    $FriendFeedarray = $memcache_obj->get($sessionid."me"); 
+  
   $FF = new FriendFeed();
  // $FriendFeedarray = $memcache_obj->get($_SESSION['id'].$_SESSION['id']);
  // $NewmessageCount = $memcache_obj->get($_SESSION['id']."countnewmessage");
  
      // кешируем список друзей пользователя 
   
-    if(empty($memcache_obj->get($_SESSION['id']."friends")))
+    if(empty($memcache_obj->get($sessionid."friends")))
     {
         $listFriends[] = $vk->getFriends();
        
-        $memcache_obj->set($_SESSION['id']."friends", $listFriends, false, 1200);
+        $memcache_obj->set($sessionid."friends", $listFriends, false, 1200);
     }
     else
     {
-        $listFriends = $memcache_obj->get($_SESSION['id']."friends");
+        $listFriends = $memcache_obj->get($sessionid."friends");
     }
     
 
  // определение текущей активной ленты 
       $friendid = [];
-      $frlist[] = $memcache_obj->get($_SESSION['id']."friends");    
-       if($_GET['back'] == $_SESSION['id'])
+      $frlist[] = $memcache_obj->get($sessionid."friends");    
+       if($_GET['back'] == $sessionid)
             {
+                  session_start();
                 $friendid['0']['last_name'] = "";
                 $friendid['0']['first_name'] = $_SESSION['fullname'];
                 $friendid['0']['photo_medium'] = $_SESSION['img'];
+                session_write_close();
                // var_dump($friendid);
                // break;
             }
@@ -595,7 +598,7 @@ if(isset($_GET['back']))
 
                      }
             }
-session_write_close();
+
     ?>
 
 <div class="container">
@@ -647,7 +650,7 @@ session_write_close();
 <?php
 $urlFeedupdate = "http://192.168.1.141/index.php?news=".$_GET['back'];
 $urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['back'];
-$urlMyProfile = "http://192.168.1.141/index.php?id=".$_SESSION['id'];
+$urlMyProfile = "http://192.168.1.141/index.php?id=".$sessionid;
 session_write_close();
 $FF = new FriendFeed();
 ?>
@@ -759,9 +762,9 @@ $FF = new FriendFeed();
 
 <?php
 }
-session_start();
-$memcache_obj->set($_SESSION['id']."offset", 4, false, 1200);
-session_write_close();
+
+$memcache_obj->set($sessionid."offset", 4, false, 1200);
+
 $urlFeedupdateold = "http://192.168.1.141/index.php?old=".$_GET['back'];
 $urlFeedupdateoldcache = "http://192.168.1.141/index.php?oldcache=".$_GET['back'];
 
@@ -789,13 +792,13 @@ $urlFeedupdateoldcache = "http://192.168.1.141/index.php?oldcache=".$_GET['back'
         <div class="col-md-12 leftprofile disabled"> 
        <?php 
       $friendid = [];
-      $frlist[] = $memcache_obj->get($_SESSION['id']."friends");
+      $frlist[] = $memcache_obj->get($sessionid."friends");
       //var_dump($frlist);
     //  echo $_GET['id']."\n";
-    //  echo $_SESSION['id'];
+    //  echo $sessionid;
      // echo $_SESSION['fullname'];
       session_start();
-       if($_GET['back'] == $_SESSION['id'])
+       if($_GET['back'] == $sessionid)
             {
                 $friendid['0']['last_name'] = "";
                 $friendid['0']['first_name'] = $_SESSION['fullname'];
@@ -816,7 +819,7 @@ $urlFeedupdateoldcache = "http://192.168.1.141/index.php?oldcache=".$_GET['back'
 
                      }
             }
-            session_write_close();
+         
        ?>
 
       &nbsp;&nbsp;<h5>Профиль</h5>
@@ -852,7 +855,7 @@ $urlFeedupdateoldcache = "http://192.168.1.141/index.php?oldcache=".$_GET['back'
 
 
 
-
+<?php    session_write_close(); ?>
  </div>
 <br>
   
@@ -896,12 +899,12 @@ if(!empty($_GET['news']))
 
 
 //echo "ok";
-session_start();
+
 
 
   $FF = new FriendFeed();
-  $FriendFeedarray = $memcache_obj->get($_SESSION['id'].$_SESSION['id']);
-  $NewmessageCount = $memcache_obj->get($_SESSION['id']."countnewmessage");
+  $FriendFeedarray = $memcache_obj->get($sessionid.$sessionid);
+  $NewmessageCount = $memcache_obj->get($sessionid."countnewmessage");
   session_write_close();
   if(!empty($FriendFeedarray))
   {
@@ -964,7 +967,7 @@ session_start();
                                             {
                                             ?>
                                     
-                                            <img src=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?> width="98%"> <br> 
+                                           <a class="fancybox-effects-a" href=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?> data-fancybox-group="gallery" title=""><img src=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?> width="90%" alt="" /></a>
                                         <br>
                                             <?php
                                         }
@@ -1047,7 +1050,7 @@ session_start();
                                             {
                                             ?>
                                     
-                                            <img src=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?> width="98%"> <br> 
+                                            <a class="fancybox-effects-a" href=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?> data-fancybox-group="gallery" title=""><img src=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?> width="90%" alt="" /></a>
                                         <br>
                                             <?php
                                         }
@@ -1132,7 +1135,7 @@ session_start();
                  
                             ?>
                     
-                            <img src=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?>> <br> 
+                           <a class="fancybox-effects-a" href=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?> data-fancybox-group="gallery" title=""><img src=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?> width="90%" alt="" /></a>
                         <br>
                             <?php
                             }
@@ -1177,14 +1180,14 @@ session_start();
 }
 //echo $iiii;
 }
-session_start();
 
-$memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 86400);
+
+$memcache_obj->set($sessionid, $FriendFeedarray, false, 86400);
   }
   else
   {
-    $FriendFeedarray = $memcache_obj->get($_SESSION['id']);
-    session_write_close();
+    $FriendFeedarray = $memcache_obj->get($sessionid);
+
 //var_dump($FriendFeedarray);
         for ($iiii=0; $iiii < count($FriendFeedarray); $iiii++) 
                 { 
@@ -1228,7 +1231,7 @@ $memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 86400);
                  
                             ?>
                     
-                            <img src=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?>> <br> 
+                          <a class="fancybox-effects-a" href=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?> data-fancybox-group="gallery" title=""><img src=<?php echo $FriendFeedarray[$iiii]['photo'][$ii];   ?> width="90%" alt="" /></a>
                         <br>
                             <?php
                             }
@@ -1268,7 +1271,7 @@ $memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 86400);
                     }  
 
 
-              $memcache_obj->set($_SESSION['id']."countnewmessage", 0, false, 300);                    
+              $memcache_obj->set($sessionid."countnewmessage", 0, false, 300);                    
                       ?>
  <script>
 $(function() {
@@ -1289,15 +1292,17 @@ if(!empty($_GET['groups']))
 {
 
 
-if($memcache_obj->get($_SESSION['id']."countnewmessage") == 0)
+if($memcache_obj->get($sessionid."countnewmessage") == 0)
 {
     echo "0";
-    $memcache_obj->set($_SESSION['id']."countnewmessage", 1, false, 300);
+    
+    $memcache_obj->set($sessionid."countnewmessage", 1, false, 300);
+   
     exit;
 }
 else
 {
-     if(rand(0,10) == 4)
+     if(rand(0,12) == 4)
      {
              // задача №1 по оптимизации это првоерять дату до выгребания переменных
 
@@ -1428,15 +1433,18 @@ if($CounterModGroups != 0)
 
 // Этот блок нужен для выполнения многих фоновых задач кеширования, обновление счетчика новых постов в ленте, кеширование друзей и кеширвоание ленты, 
 //склейка и обрезование кеширвоанной ленты
- 
-   if(empty($memcache_obj->get($_SESSION['id']."friends")))
-    {
+  
+      
+   if(empty($memcache_obj->get($sessionid."friends")))
+   {
+   
         $listFriends[] = $vk->getFriends();
-        $memcache_obj->set($_SESSION['id']."friends", $listFriends, false, 1200);
+        $memcache_obj->set($sessionid."friends", $listFriends, false, 1200);
+
     }
     else
     {
-        $listFriends = $memcache_obj->get($_SESSION['id']."friends");
+        $listFriends = $memcache_obj->get($sessionid."friends");
     }
 
 // наш главный класс в котором пока есть методы только для сортировки и работы с датами
@@ -1444,25 +1452,30 @@ $FF = new FriendFeed();
 //$oldFeedarray = [];
 $FriendFeednewarr = $FF->TimeFeedSort($FriendFeedarray);
 //$FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
-$oldFeedarray = $memcache_obj->get($_SESSION['id']);
+$oldFeedarray = $memcache_obj->get($sessionid);
 //$FriendFeedarray = $FF->Newsdiffarray($FriendFeedarray,$oldFeedarray);
 
 $FriendFeedarray = array_udiff($FriendFeednewarr, $oldFeedarray, "FeedDiffarray");
-
+//sleep(2);
 echo count($FriendFeedarray);
-$memcache_obj->set($_SESSION['id']."countnewmessage", count($FriendFeedarray), false, 300);
-session_start();
+$memcache_obj->set($sessionid."countnewmessage", count($FriendFeedarray), false, 300);
 
-$memcache_obj->set($_SESSION['id'].$_SESSION['id'], $FriendFeednewarr, false, 86400);
+
+$memcache_obj->set($sessionid.$sessionid, $FriendFeednewarr, false, 86400);
+
+if($sessionid == $_GET['groups'])
+{
+    $memcache_obj->set($sessionid."me", $FriendFeedarray, false, 86400);
+}
 
 
 // Для модуля обработки статистики решил оставить этот код и только, когда приложение не работает с лентой, хотя если на главной будет выводиться моя лена, то уберу
 // удаление из базы в случае если ты выписался из сообществ, пока не реализовано
  /*
-    $viewMyGroups[] = $vk->getGroups($_SESSION['id']);  //список групп
+    $viewMyGroups[] = $vk->getGroups($sessionid);  //список групп
 for ($i=1; $i <count($viewMyGroups['0']) ; $i++) 
     { 
-        $myid = $_SESSION['id'];
+        $myid = $sessionid;
         $gidGroup = $viewMyGroups['0'][$i]['gid'];
        if(empty(mysql_fetch_assoc(mysql_query("SELECT id FROM Cachegroups WHERE id_user='$myid' and id_group='$gidGroup'"))))
         {
@@ -1480,7 +1493,7 @@ for ($i=1; $i <count($viewMyGroups['0']) ; $i++)
     }
 */
 
-session_write_close();
+
 
 
 
@@ -1496,14 +1509,15 @@ session_write_close();
      else
      {
         // ошибка если новых записей 1, будет вечно 1 менятся на 0, нужно потом исправить
-        if($memcache_obj->get($_SESSION['id']."countnewmessage") == 1)
+        if($memcache_obj->get($sessionid."countnewmessage") == 1)
         {
             echo "0";
-            $memcache_obj->set($_SESSION['id']."countnewmessage",0,false,300);
+            $memcache_obj->set($sessionid."countnewmessage",0,false,300);
         }
         else
         {
-            echo $memcache_obj->get($_SESSION['id']."countnewmessage");
+           // sleep(2);
+            echo $memcache_obj->get($sessionid."countnewmessage");
         }
      }     
 
@@ -1517,19 +1531,19 @@ exit;
 
 if(isset($_GET['oldcache']))
 {
-    session_start();
+ 
   
-                                                $offset = $memcache_obj->get($_SESSION['id']."offset");
-                                   // $FriendFeedarray = $memcache_obj->get($_SESSION['id'].$_SESSION['id']);
-                                    //$FriendFeedarray1 = $memcache_obj->get($_SESSION['id']);
-                                            $myid = $memcache_obj->get($_SESSION['id']."idpage");
+                                                $offset = $memcache_obj->get($sessionid."offset");
+                                   // $FriendFeedarray = $memcache_obj->get($sessionid.$sessionid);
+                                    //$FriendFeedarray1 = $memcache_obj->get($sessionid);
+                                            $myid = $memcache_obj->get($sessionid."idpage");
                                                // echo $myid."\n";
                                                // exit;
                                    // if(empty($FriendFeedarray)) $FriendFeedarray = $FriendFeedarray1;
                                  //  echo "bitch".$offset."bitch";
                                    //echo "nyid".$myid."fucks";
                                             // дебагерские переменные
-                                           $memcache_obj->set($_SESSION['id']."debid",$myid,false,7200);
+                                           $memcache_obj->set($sessionid."debid",$myid,false,7200);
 
                                                                 $GroupIds[] = $vk->getGroupsforWall($myid);
 
@@ -1541,10 +1555,11 @@ if(isset($_GET['oldcache']))
                                                                 }
                                                     //echo $GroupIdsStr;
                                                             $Groupinfo[] = $vk->getGroupsById($GroupIdsStr);
+                                                     
                                                          // дебагерская переменаня
-                                                          $memcache_obj->set($_SESSION['id']."debgroup",$Groupinfo,false,7200);
+                                                          $memcache_obj->set($sessionid."debgroup",$Groupinfo,false,7200);
                                                     // целое число запросов к группам 
- session_write_close();
+ 
                                                     $CountDivGroups = floor(count($Groupinfo['0'])/24);
 
                                                     // остаток от деления на 24, максимальное число запросов в группам
@@ -1661,8 +1676,8 @@ if(isset($_GET['oldcache']))
                                                    
 
                                                     //var_dump($FriendFeedarray);
-                                                  //  $memcache_obj->set($_SESSION['id']., $FriendFeedarray, false, 86400);
-                                                    //$memcache_obj->set($_SESSION['id'].$_SESSION['id'], $FriendFeedarray, false, 86400);
+                                                  //  $memcache_obj->set($sessionid., $FriendFeedarray, false, 86400);
+                                                    //$memcache_obj->set($sessionid.$sessionid, $FriendFeedarray, false, 86400);
                                                         }
                                                     } 
                                                      $FF = new FriendFeed();
@@ -1670,9 +1685,9 @@ if(isset($_GET['oldcache']))
                                                     $FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray); 
 
                                                    // var_dump($FriendFeedarray)."\n"; 
-                                                    session_start();
-                                                       $memcache_obj->set($_SESSION['id']."oldentriescache", $FriendFeedarray, false, 86400);
-                                                       session_write_close();
+                                              
+                                                       $memcache_obj->set($sessionid."oldentriescache", $FriendFeedarray, false, 86400);
+                                                     
                                               exit;            
                                           
 
@@ -1681,14 +1696,14 @@ if(isset($_GET['oldcache']))
 if(isset($_GET['old']))
 {   
 
-   // echo $memcache_obj->get($_SESSION['id']."offset");
+   // echo $memcache_obj->get($sessionid."offset");
     //exit;
     while(true)
     {
-         $FriendFeedarray = $memcache_obj->get($_SESSION['id']."oldentriescache");  
+         $FriendFeedarray = $memcache_obj->get($sessionid."oldentriescache");  
          if(!empty($FriendFeedarray)) break;
     }
-     //$myid = $memcache_obj->get($_SESSION['id']."idpage");
+     //$myid = $memcache_obj->get($sessionid."idpage");
       // echo $myid."\n";
       $FF = new FriendFeed();
                   
@@ -1775,13 +1790,13 @@ if(isset($_GET['old']))
             <?php
             
             }
-             $myid = $memcache_obj->get($_SESSION['id']."idpage");
-             $offset = $memcache_obj->get($_SESSION['id']."offset");
+             $myid = $memcache_obj->get($sessionid."idpage");
+             $offset = $memcache_obj->get($sessionid."offset");
              $offset = $offset+4; 
-             session_start();                        
-             $memcache_obj->set($_SESSION['id']."offset", $offset, false, 86400);
-             $memcache_obj->set($_SESSION['id']."idpage", $myid, false, 86400);
-             session_write_close();
+                                   
+             $memcache_obj->set($sessionid."offset", $offset, false, 86400);
+             $memcache_obj->set($sessionid."idpage", $myid, false, 86400);
+            
              $urlFeedupdateold = "http://192.168.1.141/index.php?old=".$myid;
 ?>
 
@@ -1805,15 +1820,15 @@ if(!empty($_GET['id']))
 
     // кешируем список друзей пользователя 
   
-    if(empty($memcache_obj->get($_SESSION['id']."friends")))
+    if(empty($memcache_obj->get($sessionid."friends")))
     {
         $listFriends[] = $vk->getFriends();
-        session_start();
-        $memcache_obj->set($_SESSION['id']."friends", $listFriends, false, 1200);
+       
+        $memcache_obj->set($sessionid."friends", $listFriends, false, 1200);
     }
     else
     {
-        $listFriends = $memcache_obj->get($_SESSION['id']."friends");
+        $listFriends = $memcache_obj->get($sessionid."friends");
     }
     
    
@@ -1824,8 +1839,8 @@ if(!empty($_GET['id']))
  <?php 
  // определение текущей активной ленты 
       $friendid = [];
-      $frlist[] = $memcache_obj->get($_SESSION['id']."friends");    
-       if($_GET['id'] == $_SESSION['id'])
+      $frlist[] = $memcache_obj->get($sessionid."friends");    
+       if($_GET['id'] == $sessionid)
             {
                 $friendid['0']['last_name'] = "";
                 $friendid['0']['first_name'] = $_SESSION['fullname'];
@@ -1846,7 +1861,7 @@ if(!empty($_GET['id']))
 
                      }
             }
-session_write_close();
+
     ?>
 
 <div class="container">
@@ -1900,18 +1915,18 @@ session_write_close();
 
 <?php
 
-//$memcache_obj->set($_SESSION['id']."idpage", $listFriends, false, 1200);
-$FriendFeedarray = $memcache_obj->get($_SESSION['id'].$_SESSION['id']);
-$FriendFeedarray1 = $memcache_obj->get($_SESSION['id']);
+//$memcache_obj->set($sessionid."idpage", $listFriends, false, 1200);
+$FriendFeedarray = $memcache_obj->get($sessionid.$sessionid);
+$FriendFeedarray1 = $memcache_obj->get($sessionid);
 //var_dump($FriendFeedarray);
 //var_dump($FriendFeedarray1);
-session_start();
-if(empty($memcache_obj->get($_SESSION['id']."idpage")))
+
+if(empty($memcache_obj->get($sessionid."idpage")))
 {
-   $memcache_obj->set($_SESSION['id']."idpage", $_GET['id'], false, 1200);
-session_write_close();
+   $memcache_obj->set($sessionid."idpage", $_GET['id'], false, 1200);
+
     // echo $_GET['id']."\n";
-      //  echo $memcache_obj->get($_SESSION['id']."idpage");
+      //  echo $memcache_obj->get($sessionid."idpage");
    unset($FriendFeedarray);
    unset($FriendFeedarray1);
    if(empty($FriendFeedarray))
@@ -2049,9 +2064,9 @@ if($CounterModGroups != 0)
 // наш главный класс в котором пока есть методы только для сортировки и работы с датами
 $FF = new FriendFeed();
 $FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
-session_start();
-$memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 86400);
-session_write_close();
+
+$memcache_obj->set($sessionid, $FriendFeedarray, false, 86400);
+
     }
     else
     {
@@ -2063,18 +2078,18 @@ session_write_close();
 $FF = new FriendFeed();
 //var_dump($FriendFeedarray);
 //$FriendFeedarray = $FF->FeedArraySlayer($FriendFeedarray);
-session_start();
-$memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 86400);
-session_write_close();
+
+$memcache_obj->set($sessionid, $FriendFeedarray, false, 86400);
+
 }
 else
 {
-    if($_GET['id'] == $memcache_obj->get($_SESSION['id']."idpage"))
+    if($_GET['id'] == $memcache_obj->get($sessionid."idpage"))
     {
 
        // echo "hui";
          // echo $_GET['id']."\n";
-        //echo $memcache_obj->get($_SESSION['id']."idpage");
+        //echo $memcache_obj->get($sessionid."idpage");
         // тут находится спорный код кеширования
       // unset($FriendFeedarray);
       // unset($FriendFeedarray1);
@@ -2213,11 +2228,11 @@ else
             // наш главный класс в котором пока есть методы только для сортировки и работы с датами
             $FF = new FriendFeed();
             $FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
-            session_start();
-            $memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 86400);
-            $memcache_obj->set($_SESSION['id'].$_SESSION['id'], $FriendFeedarray, false, 86400);
-            session_write_close();
-            //$memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 86400);
+       
+            $memcache_obj->set($sessionid, $FriendFeedarray, false, 86400);
+            $memcache_obj->set($sessionid.$sessionid, $FriendFeedarray, false, 86400);
+           
+            //$memcache_obj->set($sessionid, $FriendFeedarray, false, 86400);
             }
         else
             {
@@ -2230,16 +2245,16 @@ else
   //  var_dump($FriendFeedarray);
     $FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);
     //echo "vse ok";
-    session_start();
-   $memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 86400);
-$memcache_obj->set($_SESSION['id'].$_SESSION['id'], $FriendFeedarray, false, 86400);
-session_write_close();
-  //var_dump($memcache_obj->get($_SESSION['id']));
-  // var_dump($memcache_obj->get($_SESSION['id'].$_SESSION['id']));
-    //echo $memcache_obj->get($_SESSION['id']."friends")."\n";
-    //echo $memcache_obj->get($_SESSION['id']."idpage")."\n";
+ 
+   $memcache_obj->set($sessionid, $FriendFeedarray, false, 86400);
+$memcache_obj->set($sessionid.$sessionid, $FriendFeedarray, false, 86400);
+
+  //var_dump($memcache_obj->get($sessionid));
+  // var_dump($memcache_obj->get($sessionid.$sessionid));
+    //echo $memcache_obj->get($sessionid."friends")."\n";
+    //echo $memcache_obj->get($sessionid."idpage")."\n";
     //var_dump($FriendFeedarray);
-    //$memcache_obj->set($_SESSION['id'].$_SESSION['id'], $FriendFeedarray, false, 86400);
+    //$memcache_obj->set($sessionid.$sessionid, $FriendFeedarray, false, 86400);
     }
     else
     {
@@ -2247,16 +2262,16 @@ session_write_close();
           unset($FriendFeedarray);
           unset($FriendFeedarray1);
         //echo $_GET['id']."\n";
-       // echo $memcache_obj->get($_SESSION['id']."idpage")."\n";
+       // echo $memcache_obj->get($sessionid."idpage")."\n";
             //echo $_GET['id'];
-         // echo $_SESSION['id'];
-          session_start();
-             $memcache_obj->set($_SESSION['id']."idpage", $_GET['id'], false, 1200);
-             session_write_close();
-          //echo $memcache_obj->get($_SESSION['id']."idpage");
+         // echo $sessionid;
+        
+             $memcache_obj->set($sessionid."idpage", $_GET['id'], false, 1200);
+       
+          //echo $memcache_obj->get($sessionid."idpage");
             // exit;
 //exit;
-           //  echo $memcache_obj->get($_SESSION['id']."idpage");
+           //  echo $memcache_obj->get($sessionid."idpage");
             // unset($FriendFeedarray);
             $GroupIds[] = $vk->getGroupsforWall($_GET['id']);
             for($mm=0;$mm<count($GroupIds['0']);$mm++)
@@ -2381,36 +2396,36 @@ if($CounterModGroups != 0)
         } 
 $FF = new FriendFeed();
 $FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray); 
-session_start();
-$memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 86400);
-$memcache_obj->set($_SESSION['id'].$_SESSION['id'], $FriendFeedarray, false, 86400);
-session_write_close();
-//var_dump($FriendFeedarray);
+
+$memcache_obj->set($sessionid, $FriendFeedarray, false, 86400);
+$memcache_obj->set($sessionid.$sessionid, $FriendFeedarray, false, 86400);
 
 //var_dump($FriendFeedarray);
 
+//var_dump($FriendFeedarray);
 
 
-//$memcache_obj->set($_SESSION['id'].$_SESSION['id'], $FriendFeedarray, false, 86400);
+
+//$memcache_obj->set($sessionid.$sessionid, $FriendFeedarray, false, 86400);
     }
 }
 
 }
 }
-session_start();
-$memcache_obj->set($_SESSION['id'], $FriendFeedarray, false, 86400);
-$memcache_obj->set($_SESSION['id'].$_SESSION['id'], $FriendFeedarray, false, 86400);
+
+$memcache_obj->set($sessionid, $FriendFeedarray, false, 86400);
+$memcache_obj->set($sessionid.$sessionid, $FriendFeedarray, false, 86400);
 
 // код для проверки на кешевый массив самого себя, если у нас совпадает что мы открыли сами себя то обновляем переменную с ешем
-if($_SESSION['id'] == $_GET['id'])
+if($sessionid == $_GET['id'])
 {
-    $memcache_obj->set($_SESSION['id']."me", $FriendFeedarray, false, 86400);
+    $memcache_obj->set($sessionid."me", $FriendFeedarray, false, 86400);
 }
 
 $urlFeedupdate = "http://192.168.1.141/index.php?news=".$_GET['id'];
 $urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['id'];
-$urlMyProfile = "http://192.168.1.141/index.php?id=".$_SESSION['id'];
-session_write_close();
+$urlMyProfile = "http://192.168.1.141/index.php?id=".$sessionid;
+
 $FF = new FriendFeed();
 ?>
 
@@ -2521,9 +2536,9 @@ $FF = new FriendFeed();
 
 <?php
 }
-session_start();
-$memcache_obj->set($_SESSION['id']."offset", 4, false, 1200);
-session_write_close();
+
+$memcache_obj->set($sessionid."offset", 4, false, 1200);
+
 $urlFeedupdateold = "http://192.168.1.141/index.php?old=".$_GET['id'];
 $urlFeedupdateoldcache = "http://192.168.1.141/index.php?oldcache=".$_GET['id'];
 
@@ -2551,13 +2566,13 @@ $urlFeedupdateoldcache = "http://192.168.1.141/index.php?oldcache=".$_GET['id'];
         <div class="col-md-12 leftprofile disabled"> 
        <?php 
       $friendid = [];
-      $frlist[] = $memcache_obj->get($_SESSION['id']."friends");
+      $frlist[] = $memcache_obj->get($sessionid."friends");
       //var_dump($frlist);
     //  echo $_GET['id']."\n";
-    //  echo $_SESSION['id'];
+    //  echo $sessionid;
      // echo $_SESSION['fullname'];
       session_start();
-       if($_GET['id'] == $_SESSION['id'])
+       if($_GET['id'] == $sessionid)
             {
                 $friendid['0']['last_name'] = "";
                 $friendid['0']['first_name'] = $_SESSION['fullname'];
@@ -2578,7 +2593,7 @@ $urlFeedupdateoldcache = "http://192.168.1.141/index.php?oldcache=".$_GET['id'];
 
                      }
             }
-            session_write_close();
+          
        ?>
 
       &nbsp;&nbsp;<h5>Профиль</h5>
@@ -2612,7 +2627,7 @@ $urlFeedupdateoldcache = "http://192.168.1.141/index.php?oldcache=".$_GET['id'];
 
 
 
-
+<?php   session_write_close(); ?>
 
 
  </div>
@@ -2640,9 +2655,9 @@ $urlFeedupdateoldcache = "http://192.168.1.141/index.php?oldcache=".$_GET['id'];
 </div>
 
 <?php
-session_start();
-     $memcache_obj->set($_SESSION['id']."friends", $listFriends, false, 1200);   
- session_write_close();
+
+     $memcache_obj->set($sessionid."friends", $listFriends, false, 1200);   
+
 //exit;
 }
 else
