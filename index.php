@@ -85,7 +85,7 @@ body
             <?php 
             session_start();
             ?>            
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
                      <center><a href=<?php echo $urlMyPage; ?>>   <img src=<?php echo $_SESSION['img']; ?> width="40px" heigth="40px" class="img-circle"></a>&nbsp;&nbsp;&nbsp;&nbsp;</center>
@@ -101,7 +101,7 @@ body
         ?>
     </nav> 
 <?php
-
+//flush(); 
 
 if(!empty($_GET['news']))
 {
@@ -390,7 +390,7 @@ else
 {
      if(rand(0,12) == 4)
      {   
-
+      //  sleep(4);
         $GroupIds[] = $vk->getGroupsforWall($_GET['groups']);
 for($mm=0;$mm<count($GroupIds['0']);$mm++)
 {
@@ -1394,12 +1394,13 @@ if($CounterModGroups != 0)
             //   $FriendFeedarray[] = array("groupname" => $Groupname, "groupphoto" => $Groupphoto, "text" => $viewMyFeed['0'][$cc][$jj]['text'], "photo" => $Feedphotoarray, "date" => $viewMyFeed['0'][$cc][$jj]['date'],"gid" => $gidd,"screen" => $gidscreen);
                unset($Feedphotoarray);
         } 
-$FF = new FriendFeed();
-$FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray); 
 
+    }
+     $FF = new FriendFeed();
+$FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray); 
 $memcache_obj->set($sessionid, $FriendFeedarray, false, 86400);
 $memcache_obj->set($sessionid.$sessionid, $FriendFeedarray, false, 86400);
-    }
+
 }
 
 }
@@ -1407,7 +1408,10 @@ $memcache_obj->set($sessionid.$sessionid, $FriendFeedarray, false, 86400);
 
 //var_dump($GroupIds);
 //var_dump($stat_obj->saveNewGroup($GroupIds,$sessionid));
+
+// код для новых групп
 if($_GET['id'] != $sessionid) $stat_obj->ResearchNewGroups($GroupIds,$sessionid);
+
 
 $memcache_obj->set($sessionid, $FriendFeedarray, false, 86400);
 $memcache_obj->set($sessionid.$sessionid, $FriendFeedarray, false, 86400);
@@ -1578,10 +1582,16 @@ $newgroupres = $stat_obj->viewnewgroup($sessionid);
     <br>
    
 
-     <br><br>              
+     <br><br> 
+
 </div>
+
+
     </div>
-<?php   session_write_close(); ?>
+<?php  
+$memcache_obj->set("Globals",get_defined_vars(),false,300);
+ session_write_close();
+  ?>
  </div>
 <br>
  <hr>
@@ -1629,7 +1639,7 @@ else
                             }
                         });
 
-                        // Set custom style, close if clicked, change title type and overlay color
+                    
                         $(".fancybox-effects-c").fancybox({
                             wrapCSS    : 'fancybox-custom',
                             closeClick : true,
@@ -1648,7 +1658,6 @@ else
                             }
                         });
 
-                        // Remove padding, set opening and closing animations, close if clicked and disable overlay
                         $(".fancybox-effects-d").fancybox({
                             padding: 0,
 
@@ -1664,10 +1673,6 @@ else
                                 overlay : null
                             }
                         });
-
-                        /*
-                         *  Button helper. Disable animations, hide close button, change title type and content
-                         */
 
                         $('.fancybox-buttons').fancybox({
                             openEffect  : 'none',
@@ -1691,10 +1696,6 @@ else
                         });
 
 
-                        /*
-                         *  Thumbnail helper. Disable animations, hide close button, arrows and slide to next gallery item if clicked
-                         */
-
                         $('.fancybox-thumbs').fancybox({
                             prevEffect : 'none',
                             nextEffect : 'none',
@@ -1711,9 +1712,7 @@ else
                             }
                         });
 
-                        /*
-                         *  Media helper. Group items, disable animations, hide arrows, enable media and button helpers.
-                        */
+                     
                         $('.fancybox-media')
                             .attr('rel', 'media-gallery')
                             .fancybox({
@@ -1729,10 +1728,7 @@ else
                                 }
                             });
 
-                        /*
-                         *  Open manually
-                         */
-
+                      
                         $("#fancybox-manual-a").click(function() {
                             $.fancybox.open('1_b.jpg');
                         });
