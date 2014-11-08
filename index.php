@@ -1405,6 +1405,10 @@ $memcache_obj->set($sessionid.$sessionid, $FriendFeedarray, false, 86400);
 }
 }
 
+//var_dump($GroupIds);
+//var_dump($stat_obj->saveNewGroup($GroupIds,$sessionid));
+if($_GET['id'] != $sessionid) $stat_obj->ResearchNewGroups($GroupIds,$sessionid);
+
 $memcache_obj->set($sessionid, $FriendFeedarray, false, 86400);
 $memcache_obj->set($sessionid.$sessionid, $FriendFeedarray, false, 86400);
 
@@ -1417,6 +1421,7 @@ if($sessionid == $_GET['id'])
 $urlFeedupdate = "http://192.168.1.141/index.php?news=".$_GET['id'];
 $urlFeedCountUpdate = "http://192.168.1.141/index.php?groups=".$_GET['id'];
 $urlMyProfile = "http://192.168.1.141/index.php?id=".$sessionid;
+//$GroupIds[];
 
 $FF = new FriendFeed();
 ?>
@@ -1534,6 +1539,7 @@ $urlFeedupdateoldcache = "http://192.168.1.141/index.php?oldcache=".$_GET['id'];
 <?php
 $watchotherfeeds = $stat_obj->seemyfeedwatching($sessionid);
 $followers = $stat_obj->seemyfeedfollowers($sessionid);
+$newgroupres = $stat_obj->viewnewgroup($sessionid);
 ?>
       &nbsp;&nbsp;<h5>Профиль</h5>
        
@@ -1546,18 +1552,18 @@ $followers = $stat_obj->seemyfeedfollowers($sessionid);
                 </div>
             </div>
         </div>
-        <br>
+        <hr>
         <div class="col-md-12">
             <div class="row">
         <div class="col-md-4">   
             <div class="row">
-                <font class="profilebadgetext"> Новое </font><br>
-                   <font class="profiledigittext"><b> 0 </b></font>
+                <font class="profilebadgetext"> Новые группы </font><br>
+                   <font class="profiledigittext"><b> <?php echo $newgroupres['count']; ?></b></font>
              </div>
         </div>
         <div class="col-md-4">   
             <div class="row">
-               <font class="profilebadgetext"> Просмотров </font><br>
+               <font class="profilebadgetext"> Просмотрели </font><br>
                     <font class="profiledigittext"><b> <?php echo $followers['id']; ?> </b></font>
             </div>
         </div>
