@@ -20,8 +20,11 @@ $GroupIdsStr = "";
 $FriendFeedarray = [];
 $sessionid = $_SESSION['id'];
 $urlMyPage = "http://192.168.1.141/me.php?back=".$sessionid;
+if(!isset($_GET['id'])) $_GET['id'] = $sessionid;
  $stat_obj = new Statistic();
+ $cache_obj = new Caching();
 session_write_close();
+flush();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -59,7 +62,6 @@ body
      padding-top: 100px; 
      background-color: #E8E8E8;
 }
-
 </style>
 </head>
 <body>
@@ -73,6 +75,7 @@ body
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="http://192.168.1.141/index.php">  <font class="menutexttopglyph"> <span class="glyphicon glyphicon-th-list "></span></font><font class="menutexttop">&nbsp;FriendFeed</a></font> 
+                 <a class="navbar-brand" href="http://192.168.1.141/index.php"><font class="menutexttopsm">&nbsp;<b>Получи доступ к лентам друзей, просматривай <font class="menutexttopsminterest">интересное </font></b> </a></font>  
             </div>
             <?php 
             session_start();
@@ -80,10 +83,10 @@ body
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                     <center><a href=<?php echo $urlMyPage; ?>>   <img src=<?php echo $_SESSION['img']; ?> width="40px" heigth="40px" class="img-circle"></a>&nbsp;&nbsp;&nbsp;&nbsp;</center>
+                     <center><font class="ownfeedtextsm">моя лента</font><a href=<?php echo $urlMyPage; ?>>   <img src=<?php echo $_SESSION['img']; ?> width="40px" heigth="40px" class="img-circle"></a></center>
                     </li>
                     <li  class="toppullrightlink">  
-                      <a href="http://192.168.1.141/index.php?act=logout" class="toppullrightlink"><font class="toppullrightlink smalarrow">выйти</font></a>
+                      <a href="http://192.168.1.141/index.php?act=logout" class="toppullrightlink"><font class="toppullrightlink smalarrow"><b>выйти</b></font></a>
                     </li>
                 </ul>
             </div>      
@@ -93,9 +96,11 @@ body
         ?>
     </nav> 
 <?php
-//flush(); 
+ 
+
 if(!empty($_GET['news']))
 {
+
   $FF = new FriendFeed();
   $FriendFeedarray = $memcache_obj->get($sessionid.$sessionid);
   $NewmessageCount = $memcache_obj->get($sessionid."countnewmessage");
@@ -735,10 +740,10 @@ if(!empty($_GET['id']))
             <div class="col-md-2 friendlistblock">
                  <div class="row">
                 <div class="feedactiveprofile">
-                 &nbsp;&nbsp;<h5>Активная лента</h5>                
+                 &nbsp;&nbsp;<h5><b><strong>Активная лента</strong></b></h5>                
                 <div class="media">
                 <a class="pull-left" href="#">                  
-                <img class="media-object" src=<?php echo $friendid['0']['photo_medium']; ?> width="80px" heigth="60px">
+                <img class="media-object img-circle" src=<?php echo $friendid['0']['photo_medium']; ?> width="80px" heigth="60px">
                 </a>
                 <div class="media-body"><br>               
                  </div>
@@ -746,13 +751,13 @@ if(!empty($_GET['id']))
                       <h6><strong>&nbsp;<?php echo $friendid['0']['first_name']." ".$friendid['0']['last_name']; ?>&nbsp;</strong></h6><br>
                     </div>
                     </div>               
-                    <h5>Ленты друзей</h5>                   
+                    <h5><b>Ленты друзей</b></h5>                   
                     <div class="row">
                     <div class="col-md-12">
                      <?php                         
                      for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) 
                         {
-                        ?> <div class="row"><div class="friends"><a href=<?php echo "http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']; ?> class="friendsfont"> <strong><b><?php echo $listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']; ?></b></strong></a><br><a href=<?php echo "http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']; ?>><img src=<?php echo $listFriends[$i][$j]['photo_medium']; ?>></a><br></div></div>
+                        ?> <div class="row"><div class="friends"><a href=<?php echo "http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']; ?> class="friendsfont"> <strong><b><?php echo $listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']; ?></b></strong></a><br><a href=<?php echo "http://192.168.1.141/index.php?id=".$listFriends[$i][$j]['uid']; ?>><img src=<?php echo $listFriends[$i][$j]['photo_medium']; ?> class="img-circle"></a><br></div></div>
                         <?php
                          } 
                          ?>             
@@ -767,14 +772,13 @@ $FriendFeedarray1 = $memcache_obj->get($sessionid);
 if(empty($memcache_obj->get($sessionid."idpage")))
 {
    $memcache_obj->set($sessionid."idpage", $_GET['id'], false, 1200);
-
    unset($FriendFeedarray);
    unset($FriendFeedarray1);
    if(empty($FriendFeedarray))
     {
     if(empty($FriendFeedarray1))
     {        
-            $GroupIds[] = $vk->getGroupsforWall($_GET['id']);
+    $GroupIds[] = $vk->getGroupsforWall($_GET['id']);
     for($mm=0;$mm<count($GroupIds['0']);$mm++)
     {
         if($GroupIdsStr == "") $GroupIdsStr = $GroupIds['0'][$mm];
@@ -1151,6 +1155,8 @@ $memcache_obj->set($sessionid.$sessionid, $FriendFeedarray, false, 86400);
 $memcache_obj->set($sessionid, $FriendFeedarray, false, 86400);
 $memcache_obj->set($sessionid.$sessionid, $FriendFeedarray, false, 86400);
 
+$MyProfilegroupcache = $cache_obj->creategroupsidscaching($GroupIds,$memcache_obj,$_GET['id'],$sessionid);
+
 
 if($sessionid == $_GET['id']) $memcache_obj->set($sessionid."me", $FriendFeedarray, false, 86400);
 
@@ -1176,7 +1182,25 @@ $FF = new FriendFeed();
         ?>
          <table class="table table-bordered row-fluid leftprofile1 feedliner">
         <tr>
-            <td >               
+            <td > 
+            
+             <?php
+                       if($_GET['id'] != $sessionid) 
+                       {                    
+                        if($MyProfilegroupcache != 0) 
+                            {                               
+                                if($cache_obj->checkNewGroup($FriendFeedarray[$iiii]['gid'],$MyProfilegroupcache) == 1)
+                                {
+                                  ?><h5><span class="label label-danger">Не подписан</span></h5><?php  
+                                }
+                                else
+                                {
+                                   ?><h5><span class="label label-success">&nbsp;&nbsp;Подписан</span></h5> <?php
+                                }
+                            }
+                        }    
+                        ?> 
+                                 
                  <div class="media">
                 <a class="pull-left" href=<?php echo "http://vk.com/".$FriendFeedarray[$iiii]['screen']; ?> target="_blank">                  
                 <img class="media-object" src= <?php echo $FriendFeedarray[$iiii]['groupphoto'];   ?>>
@@ -1217,7 +1241,11 @@ $FF = new FriendFeed();
                     <div class="col-md-3">
                          &nbsp;&nbsp; <font class="timetextago"><span class="glyphicon glyphicon-time"> </span>&nbsp;<?php echo $FF->timeAgo($FriendFeedarray[$iiii]['date']);   ?></font> 
                             </div>
-                                <div class="col-md-5 col-md-offset-4">
+                    <div class="col-md-3">
+                       
+                    
+                    </div>        
+                                <div class="col-md-5 col-md-offset-1">
                         <a href=<?php echo "http://vk.com/".$FriendFeedarray[$iiii]['screen']; ?> target="_blank"><font class="groupslink">Открыть группу  <?php echo iconv_substr($FriendFeedarray[$iiii]['groupname'], 0, 10, 'UTF-8')."...";  ?>&nbsp;<span class="glyphicon glyphicon-share-alt"> </span></font></a>
                             </div>                          
                              </div>                     
@@ -1236,8 +1264,9 @@ $urlFeedupdateoldcache = "http://192.168.1.141/index.php?oldcache=".$_GET['id'];
   <div ic-src=<?php echo $urlFeedupdateold; ?> ic-trigger-on="scrolled-into-view" ic-indicator="mars">   
   </div>  
 </div>
+<div class="row">
  <div class="col-md-3">   
-    <div class="row">
+    
         <div class="col-md-12 leftprofile disabled"> 
       <?php 
       $friendid = [];
@@ -1247,11 +1276,11 @@ $watchotherfeeds = $stat_obj->seemyfeedwatching($sessionid);
 $followers = $stat_obj->seemyfeedfollowers($sessionid);
 $newgroupres = $stat_obj->viewnewgroup($sessionid);
 ?>
-      &nbsp;&nbsp;<h5>Профиль</h5>       
+      &nbsp;&nbsp;<h5><b>Профиль</b></h5>       
        <div class="row">     
               <div class="media">
                 <a class="pull-left" href=<?php echo $urlMyProfile; ?>>                  
-              <img class="media-object" src=<?php echo $_SESSION['img']; ?> width="80px" heigth="60px">               
+              <img class="media-object img-circle" src=<?php echo $_SESSION['img']; ?> width="80px" heigth="60px">               
                 <div class="media-body">
                 <a href=<?php echo $urlMyProfile; ?> class="profilelink"><h6><strong>&nbsp;<b><?php echo $_SESSION['fullname']; ?>&nbsp;</b></strong></h6></a>                   
                 </div>
@@ -1287,10 +1316,16 @@ $newgroupres = $stat_obj->viewnewgroup($sessionid);
 </div>
 </div>
 <?php  
-$memcache_obj->set("Globals",get_defined_vars(),false,300);
+//$memcache_obj->set("Globals",get_defined_vars(),false,300);
  session_write_close();
   ?>
  </div>
+ <div class="row">
+    <div class="col-md-3 col-md-offset-9">
+        fhgfjg
+    </div>
+ </div>
+
 <br>
  <hr>
  <footer>
