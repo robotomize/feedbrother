@@ -6,6 +6,7 @@ class InitUriFromRouter
 {
     public $sessionid = '';
     public $newiduser = '';
+
      function __construct($ses) 
      {
         $this->sessionid = $ses;        
@@ -23,6 +24,7 @@ class Urlstorage
     const urlFeedupdateoldcache = "http://192.168.1.141/oldcache";
     const urlMyProfile = "http://192.168.1.141/profile";
     const urlFeedupdate = "http://192.168.1.141/news";
+    const urlhome = "http://192.168.1.141/";
      
      function __construct($urlfeedupd) 
      {
@@ -84,9 +86,7 @@ class uSitemap
         $this->params = null;
  
         $map = &$GLOBALS['sitemap'];
-        $this->request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        //var_dump($this->request_uri);
-        //exit;
+        $this->request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);       
         $this->url_info = parse_url($this->request_uri);
         $uri = urldecode($this->url_info['path']);
         $data = false;
@@ -125,10 +125,8 @@ class uSitemap
         return $this->classname;
     }
 }
-/**
- * @class VkApi
- * @author Maslakov Alexander <jmas.ukraine@gmail.com> класс для работы с VK написал вот этот чувачек
- */
+
+
 
 class VkApi
 {
@@ -153,10 +151,7 @@ class VkApi
    
    
     private function _auth()
-    {
-
-
-       // $token = file_get_contents('./Cookies.txt');
+    {       
        $token = $_SESSION['tok'];
         if (isset($_GET['code'])) {
             $url  = 'https://oauth.vk.com/access_token?client_id='.$this->appId.'&client_secret='. $this->apiKey .'&code=' . $_GET['code'] . '&redirect_uri=' . $this->authRedirectUrl;
@@ -168,46 +163,55 @@ class VkApi
             curl_setopt($ch, CURLOPT_HEADER, false);
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_REFERER, $url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-           
-            $responce = curl_exec($ch);
-           
-            curl_close($ch);
-   
-            $responce = json_decode($responce);
-       
-            if (isset($responce->access_token)) {
-                $_SESSION['tok'] = $responce->access_token;
-             //    file_put_contents('./Cookies.txt', $responce->access_token);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);           
+            $responce = curl_exec($ch);           
+            curl_close($ch);   
+            $responce = json_decode($responce);       
+            if (isset($responce->access_token)) 
+            {
+                $_SESSION['tok'] = $responce->access_token;          
                  $token = $responce->access_token;
-                 $owner_id = $responce->user_id;
-                 //поулчаем данные о себе чтобы записать нас в сессию
+                 $owner_id = $responce->user_id;                 
                  $GetProfile = file_get_contents("https://api.vk.com/method/users.get?fields=nickname,screen_name,photo_medium,photo_big,city,bdate,sex&uid=$owner_id&access_token=$token");
                  $profile = json_decode($GetProfile , true);
-
                  $fullName = $profile['response']['0']['first_name']." ".$profile['response']['0']['last_name'];
                  $profileimg = $profile['response']['0']['photo_medium'];
                  $profilescreenname = $profile['response']['0']['nickname'];
-                 // скидываем себя самого в сессию, чтобы быстро извлекать после авторизации
+                 $provider = "vk";
+                 $email = $responce->email;
                  $_SESSION['id'] = $owner_id;
                 $_SESSION['fullname'] = $fullName;
-                $_SESSION['img'] = $profileimg;
-            // если такой есть в базе то ничего, идем дальше, то есть мы
-            if(empty(mysql_fetch_assoc(mysql_query("SELECT * FROM users WHERE id_vk = '$owner_id'"))))
-               {                
-                    mysql_query("INSERT INTO users VALUES (null, '$owner_id', '$profileimg', '$fullName', '$profilescreenname')") or die(mysql_error());
-                    mysql_close();                
-            
-                }
+                $_SESSION['img'] = $profileimg;                 
+                $id = null;
+
+                $newuser = new UserModel($id,$owner_id, $profileimg,$fullName, $profilescreenname, $provider, $email);  
+                 $modeldb = new PdoModel();
+                $data = array($newuser->id,$newuser->id_vk,$newuser->img_src,$newuser->name, $newuser->screenname, $newuser->provider, $newuser->email);        
+                try 
+                {  
+                  $DBH = new PDO("mysql:host=$modeldb->host;dbname=$modeldb->dbname", $modeldb->user, $modeldb->pass,array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));  
+                  $DBH->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );                     
+                }  
+                catch(PDOException $e) { file_put_contents('/var/www/FeedBrother/PDOErrors.txt', $e->getMessage(), FILE_APPEND); }
+               try 
+                {  
+                    $STH = $DBH->prepare("INSERT INTO usersVk (id,id_vk, img_src, name, screenname, provider, email) values (?,?,?,?,?,?,?)");
+                    $STH->execute($data);  
+                }  
+                catch(PDOException $e) 
+                {                      
+                    file_put_contents('/var/www/FeedBrother/PDOErrors.txt', "ошибка создания пользователя", FILE_APPEND);  
+                }                          
 
             } else  throw new Exception('VK API error.');             
             
         }
        
-        if (empty($token)) {
+        if (empty($token)) 
+        {
 
             $url = "https://oauth.vk.com/authorize?client_id="
-                   . $this->appId . "&redirect_uri=http://192.168.1.141/me&display=page&response_type=code&scope=video,offline,groups,friends,photos,notify";
+                   . $this->appId . "&redirect_uri=http://192.168.1.141/me&display=page&response_type=code&scope=video,offline,groups,friends,photos,notify,email";
  
             header('Location: ' . $url); 
       
@@ -569,10 +573,6 @@ class FriendFeed
     return count($FriendFeedarray);
  }
 
-} 
-class Validatevalues
-{
-
 }
 
  class Friends
@@ -615,7 +615,7 @@ class Validatevalues
     return $listFriends;  
     }
  }
- class Caching
+ class Caching extends FriendFeed
  {
 
      public function createusergroupsidscaching($GroupIds,$memcache_obj,$curid,$sessionid)
@@ -704,7 +704,7 @@ class Validatevalues
  /*
     В классе статистики находятся методы по работе с базой данных в основном. Методы отображающие статистические данные о пользователях или событиях, их действиях
  */
- class Statistic
+ class Statistic extends FriendFeed
  {
    //   if(empty(mysql_fetch_assoc(mysql_query("SELECT id FROM Cachegroups WHERE id_user='$myid' and id_group='$gidGroup'"))))
 //mysql_query("INSERT INTO Cachegroups VALUES (null, '$_SESSION[id]', '$nameGroup', '$descriptionGroup', '$screen_nameGroup', '$activityGroup', '$members_countGroup','$gidGroup')") or die(mysql_error()); 
@@ -815,11 +815,72 @@ class Validatevalues
         else return 0;
 
     }
-
-
-
-
  }
 
+class PdoModel
+{
+    public $user = 'root';
+    public $host = 'localhost';
+    public $dbname = 'frfeed';
+    public $pass = '13';
+
+    function __construct($user,$host,$dbname,$pass)
+    {
+        if(isset($user) & isset($dbname) & isset($pass) & isset($host))
+        {
+            $this->user = $user;  
+            $this->host = $host;  
+            $this->dbname = $dbname;
+            $this->pass = $pass;  
+        }
+    }
+}
+/*
+    пока главный класс работы с пользователями
+*/
+class UserModel extends PdoModel
+{
+    public $id;
+    public $id_vk = '';
+    public $img_src = '';
+    public $name = '';
+    public $screenname = '';
+    public $provider = 'vk';
+    public $email = '';
+
+      function __construct($id,$id_vk,$img_src,$name,$screenname,$provider,$email) 
+        {  
+            $this->id = $id;  
+            $this->id_vk = $id_vk;  
+            $this->img_src = $img_src;
+            $this->name = $name;
+            $this->screenname = $screenname;
+            $this->provider = $provider;
+            $this->email = $email;
+        }
+
+
+}
+
+class UserModelFB extends PdoModel
+{
+
+}
+
+class UserModelIG extends PdoModel
+{
+
+
+}
+
+class StatisticModel extends PdoModel
+{
+
+}
+
+
+
+
+    
  session_write_close();
 ?>

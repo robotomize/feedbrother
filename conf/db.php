@@ -1,8 +1,13 @@
 <?php
 
+/*
+	Расширение Mysql пока для совместимость, пока перевожу код на PDO
+*/
 $host = "localhost";   
 $user = "root";   
-$pass = "13";    
+$pass = "13"; 
+$dbname = "frfeed"; 
+
  if(!mysql_connect($host, $user, $pass)) exit(mysql_error()); 
 mysql_query("SET character_set_client='UTF8'"); 
 mysql_query("SET character_set_results='UTF8'"); 

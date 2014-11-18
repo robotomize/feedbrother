@@ -5,15 +5,20 @@ set_time_limit(3600);
 
 session_start();
 $vk = new VkApi(array(
-    'apiKey' => '',
-    'appId' => '',
+    'apiKey' => 'E8tyn9sgbwaM2MG9ZCSq',
+    'appId' => '4581515',
     'authRedirectUrl' => 'http://192.168.1.141/me',
 ));
 
-if(isset($_GET['code']))  
+
+
+//$grab = explode("?", $_SERVER['REQUEST_URI']);
+//$grab = explode("=", $grab['1']);
+
+if($grab['0'] == "code")
 {
-header('Location: ' . "http://192.168.1.141/me"); 
-exit;
+    header('Location: ' . "http://192.168.1.141/me"); 
+    exit;
 }
 
 $FriendFeedarray = [];
