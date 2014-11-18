@@ -184,18 +184,11 @@ class VkApi
                 $_SESSION['img'] = $profileimg;                 
                 $id = null;
 
-                $newuser = new UserModel($id,$owner_id, $profileimg,$fullName, $profilescreenname, $provider, $email);  
-                 $modeldb = new PdoModel();
-                $data = array($newuser->id,$newuser->id_vk,$newuser->img_src,$newuser->name, $newuser->screenname, $newuser->provider, $newuser->email);        
-                try 
-                {  
-                  $DBH = new PDO("mysql:host=$modeldb->host;dbname=$modeldb->dbname", $modeldb->user, $modeldb->pass,array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));  
-                  $DBH->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );                     
-                }  
-                catch(PDOException $e) { file_put_contents('/var/www/FeedBrother/PDOErrors.txt', $e->getMessage(), FILE_APPEND); }
+                $newuser = new UserModel($id,$owner_id, $profileimg,$fullName, $profilescreenname, $provider, $email);             
+                $data = array($newuser->id,$newuser->id_vk,$newuser->img_src,$newuser->name, $newuser->screenname, $newuser->provider, $newuser->email);    
                try 
                 {  
-                    $STH = $DBH->prepare("INSERT INTO usersVk (id,id_vk, img_src, name, screenname, provider, email) values (?,?,?,?,?,?,?)");
+                    $STH = DBmodel::getInstance()->prepare("INSERT INTO usersVk (id,id_vk, img_src, name, screenname, provider, email) values (?,?,?,?,?,?,?)");
                     $STH->execute($data);  
                 }  
                 catch(PDOException $e) 
@@ -682,9 +675,7 @@ class FriendFeed
         }
 
     public function isMecacheMyArray($in, $out,$memcache_obj,$feedarray)
-    {
-        //$memcache_obj = new Memcache;
-      //  $memcache_obj->connect('127.0.0.1', 11211) or die("could not connect");
+    {     
         if($in == $out) $memcache_obj->set($in."me", $feedarray, false, 86400);
     }
 
@@ -705,9 +696,7 @@ class FriendFeed
     В классе статистики находятся методы по работе с базой данных в основном. Методы отображающие статистические данные о пользователях или событиях, их действиях
  */
  class Statistic extends FriendFeed
- {
-   //   if(empty(mysql_fetch_assoc(mysql_query("SELECT id FROM Cachegroups WHERE id_user='$myid' and id_group='$gidGroup'"))))
-//mysql_query("INSERT INTO Cachegroups VALUES (null, '$_SESSION[id]', '$nameGroup', '$descriptionGroup', '$screen_nameGroup', '$activityGroup', '$members_countGroup','$gidGroup')") or die(mysql_error()); 
+ {   
     public function iswatching($in,$out)
     {
         if($in == $out) return "1";
@@ -718,9 +707,20 @@ class FriendFeed
        if(empty(mysql_fetch_assoc(mysql_query("SELECT * from FeedWatching WHERE id_vkuser='$iduser' and id_vkuserwatch='$iduserwatch'")))) return 0;
        else return 1; 
     }
-    protected function determineiduser($user)
+    protected function determineiduser($user,$DBH)
     {
-      return mysql_fetch_assoc(mysql_query("SELECT id from users WHERE id_vk='$user'"));
+     try
+     { 
+        $result = DBmodel::getInstance()->prepare("SELECT id from usersVk where id_vk=?");
+        $result->setFetchMode(PDO::FETCH_ASSOC); 
+        $result->execute(array($user)); 
+        while($row = $result->fetch()) 
+        {  
+            return $row['id'];       
+        }
+    }
+    catch(PDOException $e){ echo $e->getMessage(); } 
+     
     }
     protected function saveFeedWatching($iduser,$idvkuser,$idwatchuser,$idvkwatchuser)
     {
@@ -749,9 +749,17 @@ class FriendFeed
 
     public function addFeedWatchingrecord($iduser,$iduserwatch)
     {
+        $modeldb = new PdoModel();
+         try 
+            {  
+            $DBH = new PDO("mysql:host=$modeldb->host;dbname=$modeldb->dbname", $modeldb->user, $modeldb->pass,array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));  
+            $DBH->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );                     
+            }  
+            catch(PDOException $e) { file_put_contents('/var/www/FeedBrother/PDOErrors.txt', $e->getMessage(), FILE_APPEND); }
+
         if($this->iswatching($iduser,$iduserwatch) == 0)
         {            
-                $myid = $this->determineiduser($iduser);
+                $myid = $this->determineiduser($iduser,$DBH);
                 $iduserwatchf = $this->determineiduser($iduserwatch);
                 $this->saveFeedWatching($myid['id'],$iduser,$iduserwatchf['id'],$iduserwatch);
                 return 1;            
@@ -817,28 +825,46 @@ class FriendFeed
     }
  }
 
+//singleton
+class DBmodel 
+{
+    private static $instance = NULL;
+    private static $host = 'localhost';
+    private static $dbname = 'frfeed';
+    private static $pass = '13';
+    private static $user = 'root';
+
+    private function __construct()
+    {
+
+    }
+    private function __clone()
+    {
+
+    }
+    public static function getInstance()
+    {
+        if(!self::$instance)
+        {
+            self::$instance = new PDO('mysql:host='.self::$host.';dbname='.self::$dbname, self::$user, self::$pass,array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
+            self::$instance-> setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+        }
+        return self::$instance;
+    }
+}
+
 class PdoModel
 {
     public $user = 'root';
     public $host = 'localhost';
     public $dbname = 'frfeed';
     public $pass = '13';
-
-    function __construct($user,$host,$dbname,$pass)
-    {
-        if(isset($user) & isset($dbname) & isset($pass) & isset($host))
-        {
-            $this->user = $user;  
-            $this->host = $host;  
-            $this->dbname = $dbname;
-            $this->pass = $pass;  
-        }
-    }
+    
 }
 /*
     пока главный класс работы с пользователями
 */
-class UserModel extends PdoModel
+class UserModel extends DBmodel
 {
     public $id;
     public $id_vk = '';
@@ -862,18 +888,18 @@ class UserModel extends PdoModel
 
 }
 
-class UserModelFB extends PdoModel
+class UserModelFB extends DBmodel
 {
 
 }
 
-class UserModelIG extends PdoModel
+class UserModelIG extends DBmodel
 {
 
 
 }
 
-class StatisticModel extends PdoModel
+class StatisticModel extends DBmodel
 {
 
 }
