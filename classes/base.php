@@ -702,11 +702,14 @@ class FriendFeed
         if($in == $out) return "1";
         else return "0";
     }
+    /* 
+    метод на рефакторе, пока не используется
     protected function isfirsttimewatching($iduser,$iduserwatch)
     {
        if(empty(mysql_fetch_assoc(mysql_query("SELECT * from FeedWatching WHERE id_vkuser='$iduser' and id_vkuserwatch='$iduserwatch'")))) return 0;
        else return 1; 
     }
+    */
     protected function determineiduser($user,$DBH)
     {
      try
@@ -732,20 +735,33 @@ class FriendFeed
                 }  
                 catch(PDOException $e) 
                 {                      
-                    file_put_contents('/var/www/FeedBrother/PDOErrors.txt', $e->getMessage(), FILE_APPEND);  
+                    file_put_contents('/var/www/FeedBrother/PDOErrors.txt', "Ошибка в методе для счетчика просмотров".$e->getMessage(), FILE_APPEND);  
                 }   
 
        // mysql_query("INSERT into FeedWatching values('','$iduser','$idvkuser','0','$idvkwatchuser')");
     }
-
+    /*
+    Метод временно не нужен, на ерфакторинге
+   
     protected function isfirsttimefollowers($iduser,$iduserfollower)
     {
        if(empty(mysql_fetch_assoc(mysql_query("SELECT * from FeedFollowers WHERE id_vkuser='$iduser' and id_vkuserfollow='$iduserwatch'")))) return 0;
        else return 1; 
     }
+    */
       protected function saveFeedmyfollowers($idvkuser,$idvkfollower)
     {
-        mysql_query("INSERT into FeedFollowers values('','$idvkuser','$idvkfollower','0')");
+        $data = array(null,$idvkuser,$idvkfollower,'0');    
+               try 
+                {  
+                    $STH = DBmodel::getInstance()->prepare("INSERT INTO FeedWatching (id, id_vkuser, id_vkuserfollow, `like`) values (?,?,?,?)");
+                    $STH->execute($data);  
+                }  
+                catch(PDOException $e) 
+                {                      
+                    file_put_contents('/var/www/FeedBrother/PDOErrors.txt', "Ошибка в методе для обновления счетчика просмотренных".$e->getMessage(), FILE_APPEND);  
+                }
+       
     }
 
     public function addFeedFollowersrecord($iduser,$iduserfollower)
@@ -763,8 +779,7 @@ class FriendFeed
 
         if($this->iswatching($iduser,$iduserwatch) == 0)
         {            
-                $myid = $this->determineiduser($iduser);
-                //$iduserwatchf = $this->determineiduser($iduserwatch);
+                $myid = $this->determineiduser($iduser);                
                 $this->saveFeedWatching($myid['id'],$iduser,$iduserwatch);
                 return 1;            
         }
@@ -774,26 +789,45 @@ class FriendFeed
 
     public function seemyfeedwatching($user)
     {
-       $arr['id'] = 0;
-       if(!empty(mysql_fetch_assoc(mysql_query("SELECT count(id) as id from FeedWatching WHERE id_vkuser='$user'")))) return mysql_fetch_assoc(mysql_query("SELECT count(id) as id from FeedWatching WHERE id_vkuser='$user'"));
-       else return $arr['id'];
+        
+        try
+        { 
+            $result = DBmodel::getInstance()->prepare("SELECT count(id) as id from FeedWatching where id_vkuser=?");
+            $result->setFetchMode(PDO::FETCH_ASSOC); 
+            $result->execute(array($user)); 
+            return $result->fetchColumn();           
+        }
+        catch(PDOException $e){  file_put_contents('/var/www/FeedBrother/PDOErrors.txt', "ошибка получения id пользователя из базы", FILE_APPEND);  } 
    
     }
       public function seemyfeedfollowers($user)
     {
-         $arr['id'] = 0;
-        if(!empty(mysql_fetch_assoc(mysql_query("SELECT count(id) as id from FeedFollowers WHERE id_vkuser='$user'")))) return mysql_fetch_assoc(mysql_query("SELECT count(id) as id from FeedFollowers WHERE id_vkuser='$user'"));
-        else return $arr['id'];      
+        try
+        { 
+            $result = DBmodel::getInstance()->prepare("SELECT count(id) as id from FeedFollowers where id_vkuser=?");
+            $result->setFetchMode(PDO::FETCH_ASSOC); 
+            $result->execute(array($user)); 
+            return $result->fetchColumn();           
+        }
+        catch(PDOException $e){  file_put_contents('/var/www/FeedBrother/PDOErrors.txt', "ошибка получения id пользователя из базы", FILE_APPEND);  } 
+
     }
 
-    public function viewnewgroup($myidvk)
+    public function viewnewgroup($user)
     {
-         $arr['id'] = 0;
-        if(!empty(mysql_fetch_assoc(mysql_query("SELECT count(id) as count from GroupsResearched WHERE id_vkuser='$myidvk'")))) return mysql_fetch_assoc(mysql_query("SELECT count(id) as count from GroupsResearched WHERE id_vkuser='$myidvk'"));
-        else return $arr['id'];
-      
+         try
+        { 
+            $result = DBmodel::getInstance()->prepare("SELECT count(id) as id from GroupsResearched where id_vkuser=?");
+            $result->setFetchMode(PDO::FETCH_ASSOC); 
+            $result->execute(array($user)); 
+            return $result->fetchColumn();           
+        }
+        catch(PDOException $e){  file_put_contents('/var/www/FeedBrother/PDOErrors.txt', "ошибка получения id пользователя из базы", FILE_APPEND);  }      
     }
 
+    /*
+        Методы временно не работает и на рефакторинге изза производительности
+    */
     protected function isNewResearchGroup($groupsids,$user)
     {
         $buf = 0;

@@ -11,10 +11,14 @@ $vk = new VkApi(array(
 ));
 
 
+if(isset($_GET['code']))  
+{
+header('Location: ' . "http://192.168.1.141/me"); 
+exit;
+}
 
-//$grab = explode("?", $_SERVER['REQUEST_URI']);
-//$grab = explode("=", $grab['1']);
-
+$grab = explode("?", $_SERVER['REQUEST_URI']);
+$grab = explode("=", $grab['1']);
 if($grab['0'] == "code")
 {
     header('Location: ' . "http://192.168.1.141/me"); 
@@ -59,8 +63,8 @@ session_write_close();
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="http://192.168.1.141/FriendFeed/">  <font class="menutexttopglyph"> <span class="glyphicon glyphicon-th-list "></span></font><font class="menutexttop">&nbsp;<b>FeedBrother</b></a></font> 
-                 <a class="navbar-brand" href="http://192.168.1.141/FriendFeed/"><font class="menutexttopsm">&nbsp;<b>Получи доступ к <font class="menutexttopsminterest">лентам друзей</font>, просматривай <font class="menutexttopsminterest">интересное </font></b> </a></font>  
+                <a class="navbar-brand" href="http://192.168.1.141/">  <font class="menutexttopglyph"> <span class="glyphicon glyphicon-th-list "></span></font><font class="menutexttop">&nbsp;<b>FeedBrother</b></a></font> 
+                 <a class="navbar-brand" href="http://192.168.1.141/"><font class="menutexttopsm">&nbsp;<b>Получи доступ к <font class="menutexttopsminterest">лентам друзей</font>, просматривай <font class="menutexttopsminterest">интересное </font></b> </a></font>  
                  
             </div>
             <?php 
@@ -307,19 +311,19 @@ $memcache_obj->set($init_obj->sessionid."offset", 3, false, 86400);
         <div class="col-md-4">   
             <div class="row">
                 <font class="profilebadgetext"> Новых групп </font><br>
-                   <font class="profiledigittext"><b> <?php echo $newgroupres['count']; ?></b></font>
+                   <font class="profiledigittext"><b> <?php echo $newgroupres; ?></b></font>
              </div>
         </div>
         <div class="col-md-4">   
             <div class="row">
                <font class="profilebadgetext"> Просмотров </font><br>
-                    <font class="profiledigittext"><b> <?php echo $followers['id']; ?> </b></font>
+                    <font class="profiledigittext"><b> <?php echo $followers; ?> </b></font>
             </div>
         </div>
         <div class="col-md-4">   
             <div class="row">
            <font class="profilebadgetext">  Посмотрел </font><br>
-               <font class="profiledigittext"><b> <?php echo $watchotherfeeds['id']; ?> </b></font>
+               <font class="profiledigittext"><b> <?php echo $watchotherfeeds; ?> </b></font>
             </div>
         </div>
     </div>

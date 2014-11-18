@@ -43,8 +43,8 @@ $url_obj = new Urlstorage($init_obj->newiduser);
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="http://192.168.1.141/FriendFeed/">  <font class="menutexttopglyph"> <span class="glyphicon glyphicon-th-list "></span></font><font class="menutexttop">&nbsp;<b>FriendFeed</b></a></font> 
-                 <a class="navbar-brand" href="http://192.168.1.141/FriendFeed/"><font class="menutexttopsm">&nbsp;<b>Получи доступ к <font class="menutexttopsminterest">лентам друзей</font>, просматривай <font class="menutexttopsminterest">интересное </font></b> </a></font>  
+                <a class="navbar-brand" href="http://192.168.1.141/">  <font class="menutexttopglyph"> <span class="glyphicon glyphicon-th-list "></span></font><font class="menutexttop">&nbsp;<b>FeedBrother</b></a></font> 
+                 <a class="navbar-brand" href="http://192.168.1.141/"><font class="menutexttopsm">&nbsp;<b>Получи доступ к <font class="menutexttopsminterest">лентам друзей</font>, просматривай <font class="menutexttopsminterest">интересное </font></b> </a></font>  
                  
             </div>
             <?php 
