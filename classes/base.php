@@ -719,12 +719,23 @@ class FriendFeed
             return $row['id'];       
         }
     }
-    catch(PDOException $e){ echo $e->getMessage(); } 
+    catch(PDOException $e){  file_put_contents('/var/www/FeedBrother/PDOErrors.txt', "ошибка получения id пользователя из базы", FILE_APPEND);  } 
      
     }
-    protected function saveFeedWatching($iduser,$idvkuser,$idwatchuser,$idvkwatchuser)
+    protected function saveFeedWatching($iduser,$idvkuser,$idvkwatchuser)
     {
-        mysql_query("INSERT into FeedWatching values('','$iduser','$idvkuser','0','$idvkwatchuser')");
+         $data = array(null,$iduser,$idvkuser,'0',$idvkwatchuser);    
+               try 
+                {  
+                    $STH = DBmodel::getInstance()->prepare("INSERT INTO FeedWatching (id, id_user, id_vkuser, `like`, id_vkuserwatch) values (?,?,?,?,?)");
+                    $STH->execute($data);  
+                }  
+                catch(PDOException $e) 
+                {                      
+                    file_put_contents('/var/www/FeedBrother/PDOErrors.txt', $e->getMessage(), FILE_APPEND);  
+                }   
+
+       // mysql_query("INSERT into FeedWatching values('','$iduser','$idvkuser','0','$idvkwatchuser')");
     }
 
     protected function isfirsttimefollowers($iduser,$iduserfollower)
@@ -748,20 +759,13 @@ class FriendFeed
     }
 
     public function addFeedWatchingrecord($iduser,$iduserwatch)
-    {
-        $modeldb = new PdoModel();
-         try 
-            {  
-            $DBH = new PDO("mysql:host=$modeldb->host;dbname=$modeldb->dbname", $modeldb->user, $modeldb->pass,array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));  
-            $DBH->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );                     
-            }  
-            catch(PDOException $e) { file_put_contents('/var/www/FeedBrother/PDOErrors.txt', $e->getMessage(), FILE_APPEND); }
+    {       
 
         if($this->iswatching($iduser,$iduserwatch) == 0)
         {            
-                $myid = $this->determineiduser($iduser,$DBH);
-                $iduserwatchf = $this->determineiduser($iduserwatch);
-                $this->saveFeedWatching($myid['id'],$iduser,$iduserwatchf['id'],$iduserwatch);
+                $myid = $this->determineiduser($iduser);
+                //$iduserwatchf = $this->determineiduser($iduserwatch);
+                $this->saveFeedWatching($myid['id'],$iduser,$iduserwatch);
                 return 1;            
         }
         else return 0;
