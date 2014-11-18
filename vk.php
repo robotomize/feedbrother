@@ -5,8 +5,8 @@ set_time_limit(3600);
 
 session_start();
 $vk = new VkApi(array(
-    'apiKey' => 'E8tyn9sgbwaM2MG9ZCSq',
-    'appId' => '4581515',
+    'apiKey' => '',
+    'appId' => '',
     'authRedirectUrl' => 'http://192.168.1.141/me',
 ));
 
