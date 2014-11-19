@@ -754,7 +754,7 @@ class FriendFeed
         $data = array(null,$idvkuser,$idvkfollower,'0');    
                try 
                 {  
-                    $STH = DBmodel::getInstance()->prepare("INSERT INTO FeedWatching (id, id_vkuser, id_vkuserfollow, `like`) values (?,?,?,?)");
+                    $STH = DBmodel::getInstance()->prepare("INSERT INTO FeedFollowers (id, id_vkuser, id_vkuserfollow, `like`) values (?,?,?,?)");
                     $STH->execute($data);  
                 }  
                 catch(PDOException $e) 
@@ -822,32 +822,44 @@ class FriendFeed
             $result->execute(array($user)); 
             return $result->fetchColumn();           
         }
-        catch(PDOException $e){  file_put_contents('/var/www/FeedBrother/PDOErrors.txt', "ошибка получения id пользователя из базы", FILE_APPEND);  }      
+        catch(PDOException $e){  file_put_contents('/var/www/FeedBrother/PDOErrors.txt', "ошибка получения id пользователя из базы".$e->getMessage(), FILE_APPEND);  }      
     }
 
-    /*
-        Методы временно не работает и на рефакторинге изза производительности
-    */
+  
     protected function isNewResearchGroup($groupsids,$user)
     {
         $buf = 0;
         $outputids = [];
+        $result = DBmodel::getInstance()->prepare("SELECT count(id) as id from GroupsResearched where id_vkuser=:id AND id_vkgroup=:group");
+        $result->setFetchMode(PDO::FETCH_ASSOC);
         for ($i=0; $i < count($groupsids['0']); $i++) 
             {
                 $buf = $groupsids['0'][$i];
-                if(empty(mysql_fetch_assoc(mysql_query("SELECT id from GroupsResearched WHERE id_vkuser='$user' and id_vkgroup='$buf'")))) $outputids[] = $buf;
-            }   
-          
-        return $outputids;
+                 try
+                    {                         
+                        $result->bindValue(':id', $user, PDO::PARAM_INT);
+                        $result->bindValue(':group', $buf, PDO::PARAM_STR);
+                        $result->execute();                                           
+                        $count = $result->fetchColumn();
+                        if($count == 0) $outputids[] = $buf;           
+                    }
+                    catch(PDOException $e){  file_put_contents('/var/www/FeedBrother/PDOErrors.txt', "ошибка кол.ва записей из GroupsResearched".$e->getMessage(), FILE_APPEND);  } 
+                //if(empty(mysql_fetch_assoc(mysql_query("SELECT id from GroupsResearched WHERE id_vkuser='$user' and id_vkgroup='$buf'")))) $outputids[] = $buf;
+            } 
+       return $outputids;
     }
     protected function saveNewGroup($newgroupids,$myvkid)
     {
         $buf = 0;
         $myrealid = $this->determineiduser($myvkid);
+        $STH = DBmodel::getInstance()->prepare("INSERT INTO GroupsResearched (id, id_user, id_vkgroup, id_vkuser) values (?,?,?,?)");
         for ($i=0; $i < count($newgroupids); $i++) 
             {
-                $buf = $newgroupids[$i];
-                mysql_query("INSERT into GroupsResearched values('','$myrealid[id]','$buf','$myvkid')");    
+               $buf = $newgroupids[$i];
+               $data = array(null,$myrealid,$buf,$myvkid);    
+               try { $STH->execute($data); }  
+                catch(PDOException $e) { file_put_contents('/var/www/FeedBrother/PDOErrors.txt', "Ошибка в методе для добавления новых записей в GroupsResearched".$e->getMessage(), FILE_APPEND); }
+              //  mysql_query("INSERT into GroupsResearched values('','$myrealid[id]','$buf','$myvkid')");    
             }   
     }
     public function ResearchNewGroups($newgroupids,$myvkid)
