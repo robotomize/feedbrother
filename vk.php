@@ -1,8 +1,6 @@
 <?php
 //xdebug_start_trace();
 set_time_limit(3600);
-
-
 session_start();
 $vk = new VkApi(array(
     'apiKey' => '',
@@ -32,9 +30,8 @@ $init_obj = new InitUriFromRouter($sessionid);
 $m = $init_obj->mainf($sm->params['1']);
 $init_obj->newiduser = $m['1'];
 $m = $init_obj->mainf($sm->params['0']);
-if($m['1'] == "me") $init_obj->newiduser = $init_obj->sessionid; 
 
-$urlMyPage = "http://192.168.1.141/profile";
+if($m['1'] == "me") $init_obj->newiduser = $init_obj->sessionid; 
 
  $stat_obj = new Statistic();
  $cache_obj = new Caching();
@@ -88,18 +85,15 @@ session_write_close();
 <?php
 
 if(!empty($init_obj->newiduser))
-{   
-  
+{     
  try { $listFriends = $FriendObj->CheckFriendlistFromCache($memcache_obj,$init_obj->sessionid,$vk); }   // -->class friends
  catch (Exception $e) { echo "Не сработал метод кеширования друзей vk.php"; }
-
              /*
               высляем имя и тп типа, который у нас в активном фиде   
              */
               $friendid = [];
               $frlist[] = $memcache_obj->get($init_obj->sessionid."friends");               
-              $friendid = $FriendObj->CheckActiveFeedFriend($init_obj->newiduser,$init_obj->sessionid,$frlist); // -->class friends
-            
+              $friendid = $FriendObj->CheckActiveFeedFriend($init_obj->newiduser,$init_obj->sessionid,$frlist); // -->class friends            
     ?>
 <div class="container">
         <div class="row">
@@ -185,11 +179,9 @@ $FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);  // -->class friendfeed
 $memcache_obj->set($init_obj->sessionid, $FriendFeedarray, false, 86400);
 $memcache_obj->set($init_obj->sessionid.$init_obj->sessionid, $FriendFeedarray, false, 86400);
 
-// код для занесения новых групп, отключен не вывозит по производительности, подключим в след. верссии
-//if($init_obj->newiduser != $init_obj->sessionid) $stat_obj->ResearchNewGroups($GroupIds,$init_obj->sessionid);
+if(empty($memcache_obj->get($init_obj->sessionid."groups"))) $GroupIds[] = $vk->getGroupsforWall($idusr);
+$MyProfilegroupcache = $cache_obj->createmegroupsidscaching($GroupIds,$memcache_obj,$init_obj->newiduser,$init_obj->sessionid); // -->class Caching
 
-$MyProfilegroupcache = $cache_obj->createmegroupsidscaching($GroupIds,$memcache_obj,$init_obj->newiduser,$init_obj->sessionid);
-// на будующее
 //$UserProfilegroupcache = $cache_obj->createusergroupsidscaching($GroupIds,$memcache_obj,$init_obj->newiduser,$init_obj->sessionid);
 
 if($init_obj->sessionid == $init_obj->newiduser) $memcache_obj->set($init_obj->sessionid."me", $FriendFeedarray, false, 86400);
@@ -200,7 +192,7 @@ if($init_obj->sessionid == $init_obj->newiduser) $memcache_obj->set($init_obj->s
     <strong>   <b><font class="maintextforfeedactiveprofile"> Новостная лента </font></b></strong>
     </h5><br>
 
-  <center> <button class="btn" onclick="Intercooler.refresh($('#manual-update'));"><b>Показать <font ic-src=<?php echo $url_obj->urlFeedCountUpdate; ?> ic-poll="2s"></font> новых записей </b></button></center><br>
+  <center> <button class="btn" onclick="Intercooler.refresh($('#manual-update'));"><b>Показать <font class="micro" ic-src=<?php echo $url_obj->urlFeedCountUpdate; ?> ic-poll="2s"></font> новых записей </b></button></center><br>
       <div id="manual-update" ic-src=<?php echo Urlstorage::urlFeedupdate; ?>>              
         <?php       
             for ($iiii=0; $iiii < count($FriendFeedarray); $iiii++) 
@@ -291,7 +283,7 @@ $memcache_obj->set($init_obj->sessionid."offset", 3, false, 86400);
 <div class="row">
  <div class="col-md-3">   
     
-        <div class="col-md-12 leftprofile disabled"> 
+        <div class="col-md-12 leftprofile disabled col.phone-hide"> 
       <?php     
       session_start();
 ?>

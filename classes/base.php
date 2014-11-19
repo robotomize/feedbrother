@@ -642,13 +642,17 @@ class FriendFeed
         {
             if($curid == $sessionid)
             {
-            $memcache_obj->set($sessionid."groups", $GroupIds, false, 86400);  
+            $memcache_obj->set($sessionid."groups", $GroupIds, false, 86400); 
             
             }
             else 
             {
               if(!empty($memcache_obj->get($sessionid."groups"))) return $memcache_obj->get($sessionid."groups");
-              else return 0;
+              else 
+              {
+               $memcache_obj->set($sessionid."groups", $GroupIds, false, 86400); 
+               return $GroupIds; 
+              }
             }
     
         }
