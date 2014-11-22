@@ -1,6 +1,8 @@
 <?php
 //xdebug_start_trace();
 set_time_limit(3600);
+
+
 session_start();
 $vk = new VkApi(array(
     'apiKey' => '',
@@ -49,8 +51,7 @@ if($m['1'] == "me") $init_obj->newiduser = $init_obj->sessionid;
 session_write_close();
 
 ?>
-<body>
-  
+<body> 
    <nav class="navbar navbar-default navbar-fixed-top navbar-shrink">
         <div class="container">
             <div class="navbar-header page-scroll">
@@ -182,9 +183,9 @@ $memcache_obj->set($init_obj->sessionid.$init_obj->sessionid, $FriendFeedarray, 
 if(empty($memcache_obj->get($init_obj->sessionid."groups"))) $GroupIds[] = $vk->getGroupsforWall($idusr);
 $MyProfilegroupcache = $cache_obj->createmegroupsidscaching($GroupIds,$memcache_obj,$init_obj->newiduser,$init_obj->sessionid); // -->class Caching
 
-//$UserProfilegroupcache = $cache_obj->createusergroupsidscaching($GroupIds,$memcache_obj,$init_obj->newiduser,$init_obj->sessionid);
-
-if($init_obj->sessionid == $init_obj->newiduser) $memcache_obj->set($init_obj->sessionid."me", $FriendFeedarray, false, 86400);
+if($init_obj->sessionid == $init_obj->newiduser) $memcache_obj->set($init_obj->sessionid."me", $FriendFeedarray, false, 86400); 
+ //var_dump($rr);
+  //exit;
 
 ?>
    <div class="col-md-7">
@@ -296,7 +297,7 @@ $memcache_obj->set($init_obj->sessionid."offset", 3, false, 86400);
                 <a href=<?php echo Urlstorage::urlMyProfile; ?> class="profilelink"><h6><strong>&nbsp;<b><font class="maintextforfeedactiveprofile"><?php echo $_SESSION['fullname']; ?></font>&nbsp;</b></strong></h6></a>                   
                 </div>
             </div>
-        </div>
+            </div>
         <hr>
         <div class="col-md-12">
             <div class="row">
@@ -323,9 +324,37 @@ $memcache_obj->set($init_obj->sessionid."offset", 3, false, 86400);
     <br>   
 
      <br><br> 
+ <?php
+                    $grstat_obj = new GetNewGroupInfo();
+                    $GroupsInfoarray = $grstat_obj->ListNewGroupsInfo($memcache_obj,$init_obj->sessionid);                    
+ ?>   
+</div>
+<div class="col-md-12 leftprofile newgroupsblock">
+  &nbsp;&nbsp;<h5><b><font class="maintextforfeedactiveprofile">Новые группы</font></b></h5>
+      <div class="row"> 
+             <?php
+              for ($i=0; $i < count($GroupsInfoarray); $i++) 
+              {           
+               ?> 
+              <div class="media">
+                <a class="pull-left" href=<?php echo "http://vk.com/".$GroupsInfoarray[$i]["screen_name"]; ?> target="_blank">                  
+                <img class="media-object img-rounded" src=<?php echo $GroupsInfoarray[$i]["photo_medium"]; ?> width="60px" heigth="60px">               
+                <div class="media-body newgroupblockinside">
+                   <a href=<?php echo "http://vk.com/".$GroupsInfoarray[$i]["screen_name"]; ?> class="profilelink" target="_blank"><?php echo iconv_substr($GroupsInfoarray[$i]["name"], 0, 55, 'UTF-8')."..."; ?></a><br>
+                   <a href=<?php echo "http://vk.com/".$GroupsInfoarray[$i]["screen_name"]; ?> class="profilelink" target="_blank">Подписаться</a>
+                </div>
+              </div>
+            <?php
+              }
+            ?>
+
+
+      </div>
+  </div>
 
 </div>
-</div>
+
+
 <?php  
 
  session_write_close();
@@ -352,6 +381,7 @@ $memcache_obj->set($init_obj->sessionid."offset", 3, false, 86400);
 <?php
 $memcache_obj->set($init_obj->sessionid."friends", $listFriends, false, 1200); 
 }
+
 ?>  
                     <script type="text/javascript">
                     $(document).ready(function() {
@@ -516,4 +546,3 @@ $memcache_obj->set($init_obj->sessionid."friends", $listFriends, false, 1200);
 </html>
 <?php
 //xdebug_stop_trace();
-?>

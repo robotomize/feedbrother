@@ -43,7 +43,7 @@ function FeedDiffarray($a, $b) {
     return ($a > $b)? 1:-1;
 }
 
-function FeedArraySlayer($array)
+function FeedArraySlayer($array,$num)
     {
         return array_slice($array, 0, 100);
     }
@@ -304,6 +304,16 @@ class VkApi
         return $this->_responce($request);
     }
 
+    public function getGroupsFordifference($owner_id)
+    {
+        $request = $this->get('groups.get', array(
+            'user_id' => $owner_id,            
+            'extended' => '1',            
+        ));
+ 
+        return $this->_responce($request);
+    }
+
      public function getGroupsforWall($owner_id)
     {
         $request = $this->get('groups.get', array(
@@ -453,10 +463,7 @@ class FriendFeed
                         { 
                             $Feedphotoarray[] = $viewMyFeed['0'][$cc][$jj]['attachments'][$vv]['photo']['src_big'];
                         }
-                         if(checkdatearr($viewMyFeed['0'][$cc][$jj]['date']) == 1)
-                        {
-                            $FriendFeedarray[] = array("groupname" => $Groupname, "groupphoto" => $Groupphoto, "text" => $viewMyFeed['0'][$cc][$jj]['text'], "photo" => $Feedphotoarray, "date" => $viewMyFeed['0'][$cc][$jj]['date'],"gid" => $gidd, "screen" => $gidscreen); 
-                        }               
+                         if(checkdatearr($viewMyFeed['0'][$cc][$jj]['date']) == 1) $FriendFeedarray[] = array("groupname" => $Groupname, "groupphoto" => $Groupphoto, "text" => $viewMyFeed['0'][$cc][$jj]['text'], "photo" => $Feedphotoarray, "date" => $viewMyFeed['0'][$cc][$jj]['date'],"gid" => $gidd, "screen" => $gidscreen);    
                   unset($Feedphotoarray);     
                 }
             }
@@ -700,20 +707,14 @@ class FriendFeed
     В классе статистики находятся методы по работе с базой данных в основном. Методы отображающие статистические данные о пользователях или событиях, их действиях
  */
  class Statistic extends FriendFeed
- {   
+ { 
+
     public function iswatching($in,$out)
     {
         if($in == $out) return "1";
         else return "0";
     }
-    /* 
-    метод на рефакторе, пока не используется
-    protected function isfirsttimewatching($iduser,$iduserwatch)
-    {
-       if(empty(mysql_fetch_assoc(mysql_query("SELECT * from FeedWatching WHERE id_vkuser='$iduser' and id_vkuserwatch='$iduserwatch'")))) return 0;
-       else return 1; 
-    }
-    */
+
     protected function determineiduser($user,$DBH)
     {
      try
@@ -740,20 +741,10 @@ class FriendFeed
                 catch(PDOException $e) 
                 {                      
                     file_put_contents('/var/www/FeedBrother/PDOErrors.txt', "Ошибка в методе для счетчика просмотров".$e->getMessage(), FILE_APPEND);  
-                }   
-
-       // mysql_query("INSERT into FeedWatching values('','$iduser','$idvkuser','0','$idvkwatchuser')");
+                }       
     }
-    /*
-    Метод временно не нужен, на ерфакторинге
-   
-    protected function isfirsttimefollowers($iduser,$iduserfollower)
-    {
-       if(empty(mysql_fetch_assoc(mysql_query("SELECT * from FeedFollowers WHERE id_vkuser='$iduser' and id_vkuserfollow='$iduserwatch'")))) return 0;
-       else return 1; 
-    }
-    */
-      protected function saveFeedmyfollowers($idvkuser,$idvkfollower)
+  
+    protected function saveFeedmyfollowers($idvkuser,$idvkfollower)
     {
         $data = array(null,$idvkuser,$idvkfollower,'0');    
                try 
@@ -847,8 +838,7 @@ class FriendFeed
                         $count = $result->fetchColumn();
                         if($count == 0) $outputids[] = $buf;           
                     }
-                    catch(PDOException $e){  file_put_contents('/var/www/FeedBrother/PDOErrors.txt', "ошибка кол.ва записей из GroupsResearched".$e->getMessage(), FILE_APPEND);  } 
-                //if(empty(mysql_fetch_assoc(mysql_query("SELECT id from GroupsResearched WHERE id_vkuser='$user' and id_vkgroup='$buf'")))) $outputids[] = $buf;
+                    catch(PDOException $e){  file_put_contents('/var/www/FeedBrother/PDOErrors.txt', "ошибка кол.ва записей из GroupsResearched".$e->getMessage(), FILE_APPEND);  }               
             } 
        return $outputids;
     }
@@ -863,8 +853,7 @@ class FriendFeed
                $data = array(null,$myrealid,$buf,$myvkid);    
                try { $STH->execute($data); }  
                 catch(PDOException $e) { file_put_contents('/var/www/FeedBrother/PDOErrors.txt', "Ошибка в методе для добавления новых записей в GroupsResearched".$e->getMessage(), FILE_APPEND); }
-              //  mysql_query("INSERT into GroupsResearched values('','$myrealid[id]','$buf','$myvkid')");    
-            }   
+             }   
     }
     public function ResearchNewGroups($newgroupids,$myvkid)
     {
@@ -875,11 +864,71 @@ class FriendFeed
                 return 1;
         }     
         else return 0;
-
     }
+         
  }
 
-//singleton
+class GetNewGroupInfo extends Statistic
+{
+
+   static function FeedDiffarray($a, $b) 
+   {
+    if ($a === $b) { return 0; }
+    return ($a > $b)? 1:-1;
+    }
+
+   static private function FeedArraySlayer($array,$num)
+    {
+        return array_slice($array, 0, $num);
+    } 
+    public function InitGroupDifference($me,$user,$vk,$memcache_obj)
+    {    
+            $Groupsme = $vk->getGroupsforWall($me);                  
+            $Groupsuser = $vk->getGroupsforWall($user);
+            array_shift($Groupsme); 
+            array_shift($Groupsuser);
+
+            $resultarray = array_udiff($Groupsuser,$Groupsme, "FeedDiffarray");            
+            sort($resultarray);
+
+            $newgroupsfromcache = $memcache_obj->get($me."newgroupdiffids");
+
+            if(!empty($newgroupsfromcache)) 
+                {
+                    $resultarrayforcache = array_merge($resultarray,$newgroupsfromcache);                    
+                    sort($resultarrayforcache);
+                    $resultarrayforcache = array_unique($resultarrayforcache);
+                    sort($resultarrayforcache);
+                    $memcache_obj->set($me."newgroupdiffids",$resultarrayforcache, false, 286400);
+                } 
+                else $memcache_obj->set($me."newgroupdiffids",$resultarray, false, 286400);       
+                
+           return $resultarray;           
+        }
+
+    public function GetGroupInfoFromIds($memcache_obj,$vk,$me)
+    {   $GroupIdsStr = "";
+        $GroupIds = $memcache_obj->get($me."newgroupdiffids");
+           for($mm=0;$mm<count($GroupIds);$mm++)
+            {
+                if($GroupIdsStr == "") $GroupIdsStr = $GroupIds[$mm];
+                else $GroupIdsStr = $GroupIdsStr.",".$GroupIds[$mm];
+            }
+       return $vk->getGroupsById($GroupIdsStr); 
+    }
+    public function ListNewGroupsInfo($memcache_obj,$me)
+    {
+        $Groupinfo = $memcache_obj->get($me."newgroupdiff");
+        shuffle($Groupinfo);
+        return self::FeedArraySlayer($Groupinfo,3);
+    }
+
+}
+
+
+/*
+    Обертка для БД к PDO
+*/
 class DBmodel 
 {
     private static $instance = NULL;
@@ -907,14 +956,6 @@ class DBmodel
     }
 }
 
-class PdoModel
-{
-    public $user = 'root';
-    public $host = 'localhost';
-    public $dbname = 'frfeed';
-    public $pass = '13';
-    
-}
 /*
     пока главный класс работы с пользователями
 */
@@ -957,10 +998,5 @@ class StatisticModel extends DBmodel
 {
 
 }
-
-
-
-
     
- session_write_close();
-?>
+session_write_close();
