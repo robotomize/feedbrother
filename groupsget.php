@@ -3,9 +3,9 @@
 
 
 $vk = new VkApi(array(
-    'apiKey' => 'lUdVGPiTt52v81jjJEzK',
-    'appId' => '4667352',
-    'authRedirectUrl' => 'http://feedbrother.com/me',
+    'apiKey' => '',
+    'appId' => '',
+    'authRedirectUrl' => 'http://192.168.1.141/me',
 ));
 
 $FriendFeedarray = [];
@@ -38,7 +38,7 @@ else
         try { $listFriends = $FriendObj->CheckFriendlistFromCache($memcache_obj,$init_obj->sessionid,$vk); }   // -->class friends
         catch (Exception $e) { echo "Не сработал метод кеширования друзей groupsget.php"; }
 
-        $FriendFeednewarr = $FF->TimeFeedSort($FriendFeedarray); // -->class friendfeed
+        $FriendFeednewarr = $FF->TimeFeedSort($FriendFeedarray);
         $oldFeedarray = $memcache_obj->get($init_obj->newiduser);
 
         $FriendFeedarray = array_udiff($FriendFeednewarr, $oldFeedarray, "FeedDiffarray");
@@ -61,3 +61,6 @@ else
      
      }
 }   
+
+
+?>

@@ -37,3 +37,5 @@ while($row = $result->fetch()) {
      
 }
 }catch(PDOException $e){ echo $e->getMessage(); }
+
+            ?>    

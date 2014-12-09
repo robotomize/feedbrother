@@ -2,9 +2,9 @@
 
 
 $vk = new VkApi(array(
-    'apiKey' => 'lUdVGPiTt52v81jjJEzK',
-    'appId' => '4667352',
-    'authRedirectUrl' => 'http://feedbrother.com/me',
+    'apiKey' => '',
+    'appId' => '',
+    'authRedirectUrl' => 'http://192.168.1.141/me',
 ));
 
 $FriendFeedarray = [];
