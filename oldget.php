@@ -1,9 +1,9 @@
 <?php
 
 $vk = new VkApi(array(
-    'apiKey' => '',
-    'appId' => '',
-    'authRedirectUrl' => 'http://192.168.1.141/me',
+    'apiKey' => 'lUdVGPiTt52v81jjJEzK',
+    'appId' => '4667352',
+    'authRedirectUrl' => 'http://feedbrother.com/me',
 ));
 $FriendFeedarray = [];
 session_start();
@@ -81,7 +81,7 @@ $FF = new FriendFeed();
              $offset = $offset+3;                                   
              $memcache_obj->set($init_obj->sessionid."offset", $offset, false, 86400);
              $memcache_obj->set($init_obj->sessionid."idpage", $myid, false, 86400);
-             $urlFeedupdateold = "http://192.168.1.141/old";
+             $urlFeedupdateold = "http://feedbrother.com/old";
              /*
              	Остальыне блоки в том числе с версткой нормально
              */
@@ -94,10 +94,4 @@ $(function() {
     $('.cutstring').cutstring();
 });
 </script>
-  <?php
-exit;
 
-
-
-
-?>

@@ -2,9 +2,9 @@
 set_time_limit(3600);
 session_start();
 $vk = new VkApi(array(
-    'apiKey' => '',
-    'appId' => '',
-    'authRedirectUrl' => 'http://192.168.1.141/me',
+    'apiKey' => 'lUdVGPiTt52v81jjJEzK',
+    'appId' => '4667352',
+    'authRedirectUrl' => 'http://feedbrother.com/me',
 )); 
 $sessionid = $_SESSION['id'];
     /*
@@ -15,7 +15,7 @@ $sessionid = $_SESSION['id'];
     $friendid['0']['photo_medium'] = $_SESSION['img'];
 session_write_close();
 $FriendFeedarray = [];
-$urlMyPage = "http://192.168.1.141/profile";
+$urlMyPage = "http://feedbrother.com/profile";
 $sessionid = $_SESSION['id'];
 
 $init_obj = new InitUriFromRouter($sessionid);
@@ -43,8 +43,8 @@ $url_obj = new Urlstorage($init_obj->newiduser);
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="http://192.168.1.141/">  <font class="menutexttopglyph"> <span class="glyphicon glyphicon-th-list "></span></font><font class="menutexttop">&nbsp;<b>FeedBrother</b></a></font> 
-                 <a class="navbar-brand" href="http://192.168.1.141/"><font class="menutexttopsm">&nbsp;<b>Получи доступ к <font class="menutexttopsminterest">лентам друзей</font>, просматривай <font class="menutexttopsminterest">интересное </font></b> </a></font>  
+                <a class="navbar-brand" href="http://feedbrother.com/">  <font class="menutexttopglyph"> <span class="glyphicon glyphicon-th-list "></span></font><font class="menutexttop">&nbsp;<b>FeedBrother</b></a></font> 
+                 <a class="navbar-brand" href="http://feedbrother.com/"><font class="menutexttopsm">&nbsp;<b>Получи доступ к <font class="menutexttopsminterest">лентам друзей</font>, просматривай <font class="menutexttopsminterest">интересное </font></b> </a></font>  
                  
             </div>
             <?php 
@@ -56,7 +56,7 @@ $url_obj = new Urlstorage($init_obj->newiduser);
                      <center><font class="ownfeedtextsm"></font><a href=<?php echo $urlMyPage; ?>>   <img src=<?php echo $_SESSION['img']; ?> width="40px" heigth="40px" class="img-circle"></a></center>
                     </li>
                     <li  class="toppullrightlink">  
-                      <a href="http://192.168.1.141/logout" class="toppullrightlink"><font class="toppullrightlink smalarrow"><b>выйти</b></font></a>
+                      <a href="http://feedbrother.com/logout" class="toppullrightlink"><font class="toppullrightlink smalarrow"><b>выйти</b></font></a>
                     </li>
                 </ul>
             </div>      
@@ -103,11 +103,11 @@ $url_obj = new Urlstorage($init_obj->newiduser);
                     </div>               
                     <h5><b>Ленты друзей</b></h5>                   
                     <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-12 friendlistscroll">
                      <?php                         
                      for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) 
                         {
-                        ?> <div class="row"><div class="friends"><a href=<?php echo "http://192.168.1.141/user/".$listFriends[$i][$j]['uid']; ?> class="friendsfont"> <strong><b><?php echo $listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']; ?></b></strong></a><br><a href=<?php echo "http://192.168.1.141/user/".$listFriends[$i][$j]['uid']; ?>><img src=<?php echo $listFriends[$i][$j]['photo_medium']; ?> class="img-circle"></a><br></div></div>
+                        ?> <div class="row"><div class="friends"><a href=<?php echo "http://feedbrother.com/user/".$listFriends[$i][$j]['uid']; ?> class="friendsfont"> <strong><b><?php echo $listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']; ?></b></strong></a><br><a href=<?php echo "http://feedbrother.com/user/".$listFriends[$i][$j]['uid']; ?>><img src=<?php echo $listFriends[$i][$j]['photo_medium']; ?> class="img-circle"></a><br></div></div>
                         <?php
                          } 
                          ?>             
@@ -231,19 +231,19 @@ $url_obj = new Urlstorage($init_obj->newiduser);
                         <div class="col-md-4">   
             <div class="row">
                 <font class="profilebadgetext"> Новых групп </font><br>
-                   <font class="profiledigittext"><b> <?php echo $newgroupres['count']; ?></b></font>
+                   <font class="profiledigittext"><b> <?php echo $newgroupres; ?></b></font>
              </div>
         </div>
         <div class="col-md-4">   
             <div class="row">
                <font class="profilebadgetext"> Просмотров </font><br>
-                    <font class="profiledigittext"><b> <?php echo $followers['id']; ?> </b></font>
+                    <font class="profiledigittext"><b> <?php echo $followers; ?> </b></font>
             </div>
         </div>
         <div class="col-md-4">   
             <div class="row">
            <font class="profilebadgetext">  Посмотрел </font><br>
-               <font class="profiledigittext"><b> <?php echo $watchotherfeeds['id']; ?> </b></font>
+               <font class="profiledigittext"><b> <?php echo $watchotherfeeds; ?> </b></font>
             </div>
         </div>
     </div>
@@ -423,7 +423,16 @@ $url_obj = new Urlstorage($init_obj->newiduser);
     	$('.cutstring').cutstring();
 		});
 	</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
+  ga('create', 'UA-57407371-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
 </body>
 
 </html>
