@@ -5,15 +5,15 @@ set_time_limit(3600);
 
 session_start();
 $vk = new VkApi(array(
-    'apiKey' => '',
-    'appId' => '',
-    'authRedirectUrl' => 'http://192.168.1.141/me',
+    'apiKey' => 'lUdVGPiTt52v81jjJEzK',
+    'appId' => '4667352',
+    'authRedirectUrl' => 'http://feedbrother.com/me',
 ));
 
 
 if(isset($_GET['code']))  
 {
-header('Location: ' . "http://192.168.1.141/me"); 
+header('Location: ' . "http://feedbrother.com/me"); 
 exit;
 }
 
@@ -21,7 +21,7 @@ $grab = explode("?", $_SERVER['REQUEST_URI']);
 $grab = explode("=", $grab['1']);
 if($grab['0'] == "code")
 {
-    header('Location: ' . "http://192.168.1.141/me"); 
+    header('Location: ' . "http://feedbrother.com/me"); 
     exit;
 }
 
@@ -54,27 +54,22 @@ session_write_close();
 <body> 
    <nav class="navbar navbar-default navbar-fixed-top navbar-shrink">
         <div class="container">
-            <div class="navbar-header page-scroll">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="http://192.168.1.141/">  <font class="menutexttopglyph"> <span class="glyphicon glyphicon-th-list "></span></font><font class="menutexttop">&nbsp;<b>FeedBrother</b></a></font> 
-                 <a class="navbar-brand" href="http://192.168.1.141/"><font class="menutexttopsm">&nbsp;<b>Получи доступ к <font class="menutexttopsminterest">лентам друзей</font>, просматривай <font class="menutexttopsminterest">интересное </font></b> </a></font>  
+              <div class="navbar-header page-scroll">
+               
+                <a class="navbar-brand" href="http://feedbrother.com/">  <font class="menutexttopglyph"> <span class="glyphicon glyphicon-th-list "></span></font><font class="menutexttop">&nbsp;<b>FeedBrother</b></a></font> 
+                 <a class="navbar-brand" href="http://feedbrother.com/"><font class="menutexttopsm hidden-xs">&nbsp;<b>Получи доступ к <font class="menutexttopsminterest hidden-xs">лентам друзей</font>, просматривай <font class="menutexttopsminterest hidden-xs">интересное </font></b> </a></font>  
                  
-            </div>
+                </div>
             <?php 
             session_start();
             ?>            
-            <div class="collapse navbar-collapse">
+            <div class="collapse navbar-collapse hidden-xs">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
                      <center><font class="ownfeedtextsm"></font><a href=<?php echo $urlMyPage; ?>>   <img src=<?php echo $_SESSION['img']; ?> width="40px" heigth="40px" class="img-circle"></a></center>
                     </li>
                     <li  class="toppullrightlink">  
-                      <a href="http://192.168.1.141/logout" class="toppullrightlink"><font class="toppullrightlink smalarrow"><b>выйти</b></font></a>
+                      <a href="http://feedbrother.com/logout" class="toppullrightlink"><font class="toppullrightlink smalarrow"><b>выйти</b></font></a>
                     </li>
                 </ul>
             </div>      
@@ -114,11 +109,11 @@ if(!empty($init_obj->newiduser))
                     </div>               
                     <h5><b>Ленты друзей</b></h5>                   
                     <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-12 friendlistscroll">
                      <?php                         
                      for ($i=0; $i <1 ; $i++) for ($j=0; $j < count($listFriends['0']) ; $j++) 
                         {
-                        ?> <div class="row"><div class="friends"><a href=<?php echo "http://192.168.1.141/user/".$listFriends[$i][$j]['uid']; ?> class="friendsfont"> <strong><b><?php echo $listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']; ?></b></strong></a><br><a href=<?php echo "http://192.168.1.141/user/".$listFriends[$i][$j]['uid']; ?>><img src=<?php echo $listFriends[$i][$j]['photo_medium']; ?> class="img-circle"></a><br></div></div>
+                        ?> <div class="row"><div class="friends linkz"><a href=<?php echo "http://feedbrother.com/user/".$listFriends[$i][$j]['uid']; ?> class="friendsfont"> <strong><b><?php echo $listFriends[$i][$j]['first_name']." ".$listFriends[$i][$j]['last_name']; ?></b></strong></a><br><a href=<?php echo "http://feedbrother.com/user/".$listFriends[$i][$j]['uid']; ?>><img src=<?php echo $listFriends[$i][$j]['photo_medium']; ?> width="80px" height="80px" class="img-circle"></a><br></div></div>
                         <?php
                          } 
                          ?>             
@@ -180,11 +175,11 @@ $FriendFeedarray = $FF->TimeFeedSort($FriendFeedarray);  // -->class friendfeed
 $memcache_obj->set($init_obj->sessionid, $FriendFeedarray, false, 86400);
 $memcache_obj->set($init_obj->sessionid.$init_obj->sessionid, $FriendFeedarray, false, 86400);
 
-if(empty($memcache_obj->get($init_obj->sessionid."groups"))) $GroupIds[] = $vk->getGroupsforWall($idusr);
+if(empty($memcache_obj->get($init_obj->sessionid."groups"))) $GroupIds[] = $vk->getGroupsforWall($init_obj->sessionid);
 $MyProfilegroupcache = $cache_obj->createmegroupsidscaching($GroupIds,$memcache_obj,$init_obj->newiduser,$init_obj->sessionid); // -->class Caching
 
 if($init_obj->sessionid == $init_obj->newiduser) $memcache_obj->set($init_obj->sessionid."me", $FriendFeedarray, false, 86400); 
- //var_dump($rr);
+ //var_dump($MyProfilegroupcache);
   //exit;
 
 ?>
@@ -209,7 +204,7 @@ if($init_obj->sessionid == $init_obj->newiduser) $memcache_obj->set($init_obj->s
                             {                               
                                 if($cache_obj->checkNewGroup($FriendFeedarray[$iiii]['gid'],$MyProfilegroupcache) == 1)
                                 {
-                                  ?><h5><span class="label label-danger">Не подписан</span></h5><?php  
+                                ?><h5><span class="label label-danger">Не подписан</span></h5><?php  
                                 }
                                 else
                                 {
@@ -321,32 +316,34 @@ $memcache_obj->set($init_obj->sessionid."offset", 3, false, 86400);
         </div>
     </div>
     </div>
-    <br>   
-
+    <br>
      <br><br> 
- <?php
+        <?php
                     $grstat_obj = new GetNewGroupInfo();
-                    $GroupsInfoarray = $grstat_obj->ListNewGroupsInfo($memcache_obj,$init_obj->sessionid);                    
- ?>   
-</div>
-<div class="col-md-12 leftprofile newgroupsblock">
-  &nbsp;&nbsp;<h5><b><font class="maintextforfeedactiveprofile">Новые группы</font></b></h5>
-      <div class="row"> 
-             <?php
-              for ($i=0; $i < count($GroupsInfoarray); $i++) 
-              {           
-               ?> 
-              <div class="media">
-                <a class="pull-left" href=<?php echo "http://vk.com/".$GroupsInfoarray[$i]["screen_name"]; ?> target="_blank">                  
-                <img class="media-object img-rounded" src=<?php echo $GroupsInfoarray[$i]["photo_medium"]; ?> width="60px" heigth="60px">               
-                <div class="media-body newgroupblockinside">
-                   <a href=<?php echo "http://vk.com/".$GroupsInfoarray[$i]["screen_name"]; ?> class="profilelink" target="_blank"><?php echo iconv_substr($GroupsInfoarray[$i]["name"], 0, 55, 'UTF-8')."..."; ?></a><br>
-                   <a href=<?php echo "http://vk.com/".$GroupsInfoarray[$i]["screen_name"]; ?> class="profilelink" target="_blank">Подписаться</a>
-                </div>
-              </div>
-            <?php
-              }
-            ?>
+                    $GroupsInfoarray = $grstat_obj->ListNewGroupsInfo($memcache_obj,$init_obj->sessionid);
+                    if(!empty($GroupsInfoarray))
+                    {                    
+                       ?>   
+                      </div>
+                      <div class="col-md-12 leftprofile newgroupsblock">
+                        &nbsp;&nbsp;<h5><b><font class="maintextforfeedactiveprofile">Новые группы</font></b></h5>
+                            <div class="row"> 
+                                   <?php
+                                    for ($i=0; $i < count($GroupsInfoarray); $i++) 
+                                    {           
+                                     ?> 
+                                    <div class="media">
+                                      <a class="pull-left" href=<?php echo "http://vk.com/".$GroupsInfoarray[$i]["screen_name"]; ?> target="_blank">                  
+                                      <img class="media-object img-rounded" src=<?php echo $GroupsInfoarray[$i]["photo_medium"]; ?> width="60px" heigth="60px">               
+                                      <div class="media-body newgroupblockinside">
+                                         <a href=<?php echo "http://vk.com/".$GroupsInfoarray[$i]["screen_name"]; ?> class="profilelink" target="_blank"><?php echo iconv_substr($GroupsInfoarray[$i]["name"], 0, 55, 'UTF-8')."..."; ?></a><br>
+                                         <a href=<?php echo "http://vk.com/".$GroupsInfoarray[$i]["screen_name"]; ?> class="profilelink" target="_blank">Подписаться</a>
+                                      </div>
+                                    </div>
+                                  <?php
+                                    }
+                    }                
+                                  ?>
 
 
       </div>
@@ -355,14 +352,14 @@ $memcache_obj->set($init_obj->sessionid."offset", 3, false, 86400);
 </div>
 
 
-<?php  
+<?php
 
  session_write_close();
   ?>
  </div>
  <div class="row">
     <div class="col-md-3 col-md-offset-9">
-        fhgfjg
+       
     </div>
  </div>
 
@@ -540,6 +537,16 @@ $memcache_obj->set($init_obj->sessionid."friends", $listFriends, false, 1200);
                 $('.cutstring').cutstring();
             });
             </script>
+            <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-57407371-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
                    
 
 </body>
