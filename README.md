@@ -1,6 +1,4 @@
 FeedBrother
 ==========
 
-Приложение позволяющее смотреть ленты друзей vk. Можно переключаться между друзьями и смотреть их ленты. На основе приложения строится одноименный онлайн сервис.
-
-
+The app lets you watch tapes of friends social network vk.com. You can switch between your friends and watch them tape. On the basis of applications built the eponymous online service.
